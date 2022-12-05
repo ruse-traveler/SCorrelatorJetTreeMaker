@@ -7,7 +7,7 @@
 // events.
 //
 // Derived from code by Antonio
-// Da Silva (thanks!)
+// Silva (thanks!!)
 
 #ifndef SINCLUSIVEJETTREE_H
 #define SINCLUSIVEJETTREE_H
@@ -89,20 +89,20 @@ class SInclusiveJetTree : public SubsysReco {
     int End(PHCompositeNode *topNode)           override;
 
     // particle flow setters
-    void setParticleFlowMinEta(double etamin)                {m_particleflow_mineta = etamin;}
-    void setParticleFlowMaxEta(double etamax)                {m_particleflow_maxeta = etamax;}
-    void setParticleFlowEtaAcc(double etamin, double etamax) {m_particleflow_mineta = etamin; m_particleflow_maxeta = etamax;}
+    void setParticleFlowMinEta(double etamin) {m_particleflow_mineta = etamin;}
+    void setParticleFlowMaxEta(double etamax) {m_particleflow_maxeta = etamax;}
+    void setParticleFlowEtaAcc(double etamin, double etamax);
     // particle flow getters
     double getParticleFlowMinEta() {return m_particleflow_mineta;}
     double getParticleFlowMaxEta() {return m_particleflow_maxeta;}
 
     // track setters
-    void setTrackMinPt(double ptmin)                  {m_track_minpt = ptmin;}
-    void setTrackMaxPt(double ptmax)                  {m_track_maxpt = ptmax;}
-    void setTrackMinEta(double etamin)                {m_track_mineta = etamin;}
-    void setTrackMaxEta(double etamax)                {m_track_maxeta = etamax;}
-    void setTrackPtAcc(double ptmin, double ptmax)    {m_track_minpt = ptmin; m_track_maxpt = ptmax;}
-    void setTrackEtaAcc(double etamin, double etamax) {m_track_mineta = etamin; m_track_maxeta = etamax;}
+    void setTrackMinPt(double ptmin)   {m_track_minpt = ptmin;}
+    void setTrackMaxPt(double ptmax)   {m_track_maxpt = ptmax;}
+    void setTrackMinEta(double etamin) {m_track_mineta = etamin;}
+    void setTrackMaxEta(double etamax) {m_track_maxeta = etamax;}
+    void setTrackPtAcc(double ptmin, double ptmax);
+    void setTrackEtaAcc(double etamin, double etamax);
     // track getters
     double getTrackMinPt()  {return m_track_minpt;}
     double getTrackMaxPt()  {return m_track_maxpt;}
@@ -110,12 +110,12 @@ class SInclusiveJetTree : public SubsysReco {
     double getTrackMaxEta() {return m_track_maxeta;}
 
     // emcal setters
-    void setEMCalClusterMinPt(double ptmin)                  {m_EMCal_cluster_minpt = ptmin;}
-    void setEMCalClusterMaxPt(double ptmax)                  {m_EMCal_cluster_maxpt = ptmax;}
-    void setEMCalClusterMinEta(double etamin)                {m_EMCal_cluster_mineta = etamin;}
-    void setEMCalClusterMaxEta(double etamax)                {m_EMCal_cluster_maxeta = etamax;}
-    void setEMCalClusterPtAcc(double ptmin, double ptmax)    {m_EMCal_cluster_minpt = ptmin; m_EMCal_cluster_maxpt = ptmax;}
-    void setEMCalClusterEtaAcc(double etamin, double etamax) {m_EMCal_cluster_mineta = etamin; m_EMCal_cluster_maxeta = etamax;}
+    void setEMCalClusterMinPt(double ptmin)   {m_EMCal_cluster_minpt = ptmin;}
+    void setEMCalClusterMaxPt(double ptmax)   {m_EMCal_cluster_maxpt = ptmax;}
+    void setEMCalClusterMinEta(double etamin) {m_EMCal_cluster_mineta = etamin;}
+    void setEMCalClusterMaxEta(double etamax) {m_EMCal_cluster_maxeta = etamax;}
+    void setEMCalClusterPtAcc(double ptmin, double ptmax);
+    void setEMCalClusterEtaAcc(double etamin, double etamax);
     // emcal getters
     double getEMCalClusterMinPt()  {return m_EMCal_cluster_minpt;}
     double getEMCalClusterMaxPt()  {return m_EMCal_cluster_maxpt;}
@@ -123,12 +123,12 @@ class SInclusiveJetTree : public SubsysReco {
     double getEMCalClusterMaxEta() {return m_EMCal_cluster_maxeta;}
 
     // hcal setters
-    void setHCalClusterMinPt(double ptmin)                  {m_HCal_cluster_minpt = ptmin;}
-    void setHCalClusterMaxPt(double ptmax)                  {m_HCal_cluster_maxpt = ptmax;}
-    void setHCalClusterMinEta(double etamin)                {m_HCal_cluster_mineta = etamin;}
-    void setHCalClusterMaxEta(double etamax)                {m_HCal_cluster_maxeta = etamax;}
-    void setHCalClusterPtAcc(double ptmin, double ptmax)    {m_HCal_cluster_minpt = ptmin; m_HCal_cluster_maxpt = ptmax;}
-    void setHCalClusterEtaAcc(double etamin, double etamax) {m_HCal_cluster_mineta = etamin; m_HCal_cluster_maxeta = etamax;}
+    void setHCalClusterMinPt(double ptmin)   {m_HCal_cluster_minpt = ptmin;}
+    void setHCalClusterMaxPt(double ptmax)   {m_HCal_cluster_maxpt = ptmax;}
+    void setHCalClusterMinEta(double etamin) {m_HCal_cluster_mineta = etamin;}
+    void setHCalClusterMaxEta(double etamax) {m_HCal_cluster_maxeta = etamax;}
+    void setHCalClusterPtAcc(double ptmin, double ptmax);
+    void setHCalClusterEtaAcc(double etamin, double etamax);
     // hcal getters
     double getHCalClusterMinPt()  {return m_HCal_cluster_minpt;}
     double getHCalClusterMaxPt()  {return m_HCal_cluster_maxpt;}
@@ -148,37 +148,11 @@ class SInclusiveJetTree : public SubsysReco {
 
     // jet setters
     void setR(double r) {m_jetr = r;}
-    void setJetAlgo(ALGO jetalgo) {
-      switch(jetalgo) {
-        case ALGO::ANTIKT:
-          m_jetalgo = fastjet::antikt_algorithm;
-        case ALGO::KT:
-          m_jetalgo = fastjet::kt_algorithm;
-        case ALGO::CAMBRIDGE:
-          m_jetalgo = fastjet::cambridge_algorithm;
-      }
-    }
-    void setRecombScheme(RECOMB recomb_scheme) {
-      switch(recomb_scheme) {
-        case RECOMB::E_SCHEME:
-          m_recomb_scheme = fastjet::E_scheme;
-        case RECOMB::PT_SCHEME:
-          m_recomb_scheme = fastjet::pt_scheme;
-        case RECOMB::PT2_SCHEME:
-          m_recomb_scheme = fastjet::pt2_scheme;
-        case RECOMB::ET_SCHEME:
-          m_recomb_scheme = fastjet::Et_scheme;
-        case RECOMB::ET2_SCHEME:
-          m_recomb_scheme = fastjet::Et2_scheme;
-      }
-    }
-    void setJetParameters(double r, ALGO jetalgo, RECOMB recomb_scheme) {
-      setR(r);
-      setJetAlgo(jetalgo);
-      setRecombScheme(recomb_scheme);
-    }
+    void setJetAlgo(ALGO jetalgo);
+    void setRecombScheme(RECOMB recomb_scheme);
+    void setJetParameters(double r, ALGO jetalgo, RECOMB recomb_scheme);
     // jet getters
-    double                       getR(double r)    {return m_jetr;}
+    double                       getR()            {return m_jetr;}
     fastjet::JetAlgorithm        getJetAlgo()      {return m_jetalgo;}
     fastjet::RecombinationScheme getRecombScheme() {return m_recomb_scheme;}
 

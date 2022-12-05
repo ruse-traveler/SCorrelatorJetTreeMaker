@@ -5,6 +5,9 @@
 // Class to construct a tree of
 // jets from a specified set of
 // events.
+//
+// Derived from code by Antonio
+// Silva (thanks!!)
 
 // user include
 #include "SInclusiveJetTree.h"
