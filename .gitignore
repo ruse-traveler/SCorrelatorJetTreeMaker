@@ -1,3 +1,11 @@
 input/
 reference/
 EnergyEnergyCorrelators/
+src/*
+!src/SInclusiveJetTree.h
+!src/SInclusiveJetTree.cc
+!src/SInclusiveJetTree.io.h
+!src/SInclusiveJetTreeLinkDef.h
+!src/autogen.sh
+!src/configure.ac
+!src/Makefile.am
