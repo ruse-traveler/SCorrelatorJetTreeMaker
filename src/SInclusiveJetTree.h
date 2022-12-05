@@ -184,7 +184,7 @@ class SInclusiveJetTree : public SubsysReco {
     bool isAcceptableTrack(SvtxTrack *track);
     bool isAcceptableEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
     bool isAcceptableHCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
-    // io methods
+    // i/o methods
     void initializeVariables();
     void initializeTrees();
     int  createJetNode(PHCompositeNode* topNode);
@@ -225,13 +225,11 @@ class SInclusiveJetTree : public SubsysReco {
     JetMapv1                     *m_truth_taggedJetMap;
     // i/o parameters
     std::string  m_outfilename;
-    int          m_tag_pdg;
+    std::string  m_jetcontainer_name;
     bool         m_qualy_plots;
     bool         m_save_dst;
     bool         m_save_truth_dst;
     bool         m_ismc;
-    unsigned int m_jet_id(0);
-    unsigned int m_truth_jet_id(0);
 
     // output file & tree
     TFile *m_outFile;
@@ -244,16 +242,18 @@ class SInclusiveJetTree : public SubsysReco {
     double        m_partonMomY[NPart] = {-9999., -9999.};
     double        m_partonMomZ[NPart] = {-9999., -9999.};
     // output jet variables
-    unsigned long m_numCts = 0;
-    double        m_jetPt  = -9999.;
-    double        m_jetEta = -9999.;
-    double        m_jetPhi = -9999.;
+    std::vector<unsigned long> m_numCst;
+    std::vector<unsigned int>  m_jetId;
+    std::vector<unsigned int>  m_jetTruId;
+    std::vector<double>        m_jetPt;
+    std::vector<double>        m_jetEta;
+    std::vector<double>        m_jetPhi;
     // output constituent variables
-    double        m_cstZ   = -9999.;
-    double        m_cstDr  = -9999.;
-    double        m_cstJt  = -9999.;
-    double        m_cstEta = -9999.;
-    double        m_cstPhi = -9999.;
+    std::vector<std::vector<double>> m_cstZ;
+    std::vector<std::vector<double>> m_cstDr;
+    std::vector<std::vector<double>> m_cstJt;
+    std::vector<std::vector<double>> m_cstEta;
+    std::vector<std::vector<double>> m_cstPhi;
 
 };
 
