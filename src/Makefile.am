@@ -20,11 +20,11 @@ if ! MAKEROOT6
     SInclusiveJetTree_Dict.cc
 endif
 
-libjettagging_la_SOURCES = \
+libsinclusivejettree_la_SOURCES = \
   $(ROOT5_DICTS) \
   SInclusiveJetTree.cc
 
-libjettagging_la_LDFLAGS = \
+libsinclusivejettree_la_LDFLAGS = \
   -L$(libdir) \
   -L$(OFFLINE_MAIN)/lib \
   -lcalo_io \
