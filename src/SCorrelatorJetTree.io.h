@@ -1,4 +1,4 @@
-// 'SInclusiveJetTree.io.h'
+// 'SCorrelatorJetTree.io.h'
 // Derek Anderson
 // 12.04.202
 //
@@ -13,7 +13,7 @@
 
 
 
-void SInclusiveJetTree::setParticleFlowEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::setParticleFlowEtaAcc(double etamin, double etamax) {
   m_particleflow_mineta = etamin;
   m_particleflow_maxeta = etamax;
   return;
@@ -21,7 +21,7 @@ void SInclusiveJetTree::setParticleFlowEtaAcc(double etamin, double etamax) {
 
 
 
-void SInclusiveJetTree::setTrackPtAcc(double ptmin, double ptmax) {
+void SCorrelatorJetTree::setTrackPtAcc(double ptmin, double ptmax) {
   m_track_minpt = ptmin;
   m_track_maxpt = ptmax;
   return;
@@ -29,7 +29,7 @@ void SInclusiveJetTree::setTrackPtAcc(double ptmin, double ptmax) {
 
 
 
-void SInclusiveJetTree::setTrackEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::setTrackEtaAcc(double etamin, double etamax) {
   m_track_mineta = etamin;
   m_track_maxeta = etamax;
   return;
@@ -37,7 +37,7 @@ void SInclusiveJetTree::setTrackEtaAcc(double etamin, double etamax) {
 
 
 
-void SInclusiveJetTree::setEMCalClusterPtAcc(double ptmin, double ptmax) {
+void SCorrelatorJetTree::setEMCalClusterPtAcc(double ptmin, double ptmax) {
   m_EMCal_cluster_minpt = ptmin;
   m_EMCal_cluster_maxpt = ptmax;
   return;
@@ -45,7 +45,7 @@ void SInclusiveJetTree::setEMCalClusterPtAcc(double ptmin, double ptmax) {
 
 
 
-void SInclusiveJetTree::setEMCalClusterEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::setEMCalClusterEtaAcc(double etamin, double etamax) {
   m_EMCal_cluster_mineta = etamin;
   m_EMCal_cluster_maxeta = etamax;
   return;
@@ -53,7 +53,7 @@ void SInclusiveJetTree::setEMCalClusterEtaAcc(double etamin, double etamax) {
 
 
 
-void SInclusiveJetTree::setHCalClusterPtAcc(double ptmin, double ptmax) {
+void SCorrelatorJetTree::setHCalClusterPtAcc(double ptmin, double ptmax) {
   m_HCal_cluster_minpt = ptmin;
   m_HCal_cluster_maxpt = ptmax;
   return;
@@ -61,7 +61,7 @@ void SInclusiveJetTree::setHCalClusterPtAcc(double ptmin, double ptmax) {
 
 
 
-void SInclusiveJetTree::setHCalClusterEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::setHCalClusterEtaAcc(double etamin, double etamax) {
   m_HCal_cluster_mineta = etamin;
   m_HCal_cluster_maxeta = etamax;
   return;
@@ -69,7 +69,7 @@ void SInclusiveJetTree::setHCalClusterEtaAcc(double etamin, double etamax) {
 
 
 
-void SInclusiveJetTree::setJetAlgo(ALGO jetalgo) {
+void SCorrelatorJetTree::setJetAlgo(ALGO jetalgo) {
   switch (jetalgo) {
     case ALGO::ANTIKT:
       m_jetalgo = fastjet::antikt_algorithm;
@@ -89,7 +89,7 @@ void SInclusiveJetTree::setJetAlgo(ALGO jetalgo) {
 
 
 
-void SInclusiveJetTree::setRecombScheme(RECOMB recomb_scheme) {
+void SCorrelatorJetTree::setRecombScheme(RECOMB recomb_scheme) {
   switch(recomb_scheme) {
     case RECOMB::E_SCHEME:
       m_recomb_scheme = fastjet::E_scheme;
@@ -115,7 +115,7 @@ void SInclusiveJetTree::setRecombScheme(RECOMB recomb_scheme) {
 
 
 
-void SInclusiveJetTree::setJetParameters(double r, ALGO jetalgo, RECOMB recomb_scheme) {
+void SCorrelatorJetTree::setJetParameters(double r, ALGO jetalgo, RECOMB recomb_scheme) {
   setR(r);
   setJetAlgo(jetalgo);
   setRecombScheme(recomb_scheme);

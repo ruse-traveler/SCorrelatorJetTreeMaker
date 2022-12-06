@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 
 lib_LTLIBRARIES = \
-    libsinclusivejettree.la
+    libscorrelatorjettree.la
 
 AM_LDFLAGS = \
   -L$(libdir) \
@@ -13,18 +13,18 @@ AM_CPPFLAGS = \
   -I$(ROOTSYS)/include
 
 pkginclude_HEADERS = \
-  SInclusiveJetTree.h
+  SCorrelatorJetTree.h
 
 if ! MAKEROOT6
   ROOT5_DICTS = \
-    SInclusiveJetTree_Dict.cc
+    SCorrelatorJetTree_Dict.cc
 endif
 
-libsinclusivejettree_la_SOURCES = \
+libscorrelatorjettree_la_SOURCES = \
   $(ROOT5_DICTS) \
-  SInclusiveJetTree.cc
+  SCorrelatorJetTree.cc
 
-libsinclusivejettree_la_LDFLAGS = \
+libcorrelatorjettree_la_LDFLAGS = \
   -L$(libdir) \
   -L$(OFFLINE_MAIN)/lib \
   -lcalo_io \
@@ -43,7 +43,7 @@ noinst_PROGRAMS = \
   testexternals
 
 testexternals_SOURCES = testexternals.C
-testexternals_LDADD = libsinclusivejettree.la
+testexternals_LDADD = libscorrelatorjettree.la
 
 testexternals.C:
 	echo "//*** this is a generated file. Do not commit, do not edit" > $@

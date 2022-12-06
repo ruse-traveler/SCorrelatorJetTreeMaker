@@ -2,10 +2,10 @@ input/
 reference/
 EnergyEnergyCorrelators/
 src/*
-!src/SInclusiveJetTree.h
-!src/SInclusiveJetTree.cc
-!src/SInclusiveJetTree.io.h
-!src/SInclusiveJetTreeLinkDef.h
+!src/SCorrelatorJetTree.h
+!src/SCorrelatorJetTree.cc
+!src/SCorrelatorJetTree.io.h
+!src/SCorrelatorJetTreeLinkDef.h
 !src/autogen.sh
 !src/configure.ac
 !src/Makefile.am

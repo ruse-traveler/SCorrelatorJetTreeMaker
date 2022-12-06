@@ -1,4 +1,4 @@
-// 'SInclusiveJetTree.cc'
+// 'SCorrelatorJetTree.cc'
 // Derek Anderson
 // 12.04.202
 //
@@ -9,8 +9,8 @@
 // Derived from code by Antonio
 // Silva (thanks!!)
 
-#ifndef SINCLUSIVEJETTREE_H
-#define SINCLUSIVEJETTREE_H
+#ifndef SCORRELATORJETTREE_H
+#define SCORRELATORJETTREE_H
 
 // f4a include
 #include <fun4all/SubsysReco.h>
@@ -61,7 +61,7 @@ static const unsigned long NComp(3);
 
 
 
-class SInclusiveJetTree : public SubsysReco {
+class SCorrelatorJetTree : public SubsysReco {
 
   public:
 
@@ -80,8 +80,8 @@ class SInclusiveJetTree : public SubsysReco {
     };
 
     // ctor/dtor
-    SInclusiveJetTree(const std::string &name = "SInclusiveJetTree", const std::string &outfile = "inclusive_jet_tree.root");
-    ~SInclusiveJetTree() override;
+    SCorrelatorJetTree(const std::string &name = "SCorrelatorJetTree", const std::string &outfile = "inclusive_jet_tree.root", const bool debug = true);
+    ~SCorrelatorJetTree() override;
 
     // F4A methods
     int Init(PHCompositeNode *topNode)          override;
@@ -230,6 +230,7 @@ class SInclusiveJetTree : public SubsysReco {
     bool         m_save_dst;
     bool         m_save_truth_dst;
     bool         m_ismc;
+    bool         m_doDebug;
 
     // output file & tree
     TFile *m_outFile;
