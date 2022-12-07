@@ -12,6 +12,9 @@
 #ifndef SCORRELATORJETTREE_H
 #define SCORRELATORJETTREE_H
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 // f4a include
 #include <fun4all/SubsysReco.h>
 // phool includes
@@ -35,6 +38,8 @@
 // standard c include
 #include <string>
 #include <vector>
+
+#pragma GCC diagnostic pop
 
 // forward declarations
 class TH1;
@@ -173,6 +178,7 @@ class SCorrelatorJetTree : public SubsysReco {
 
     // jet methods
     void findJets(PHCompositeNode *topNode);
+    void findMcJets(PHCompositeNode *topNode);
     void addParticleFlow(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     void addTracks(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     void addClusters(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
@@ -221,8 +227,8 @@ class SCorrelatorJetTree : public SubsysReco {
     double                        m_jetr;
     fastjet::JetAlgorithm         m_jetalgo;
     fastjet::RecombinationScheme  m_recomb_scheme;
-    JetMapv1                     *m_taggedJetMap;
-    JetMapv1                     *m_truth_taggedJetMap;
+    JetMapv1                     *m_jetMap;
+    JetMapv1                     *m_truth_jetMap;
     // i/o parameters
     std::string  m_outfilename;
     std::string  m_jetcontainer_name;
