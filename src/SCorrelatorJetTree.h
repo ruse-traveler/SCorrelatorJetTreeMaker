@@ -183,8 +183,6 @@ class SCorrelatorJetTree : public SubsysReco {
     void addTracks(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     void addClusters(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     void getTracks(PHCompositeNode *topNode);
-    void findNonRecMC(PHCompositeNode *topNode);
-    void doMCLoop(PHCompositeNode *topNode);
     // constituent methods
     bool isAcceptableParticleFlow(ParticleFlowElement* pfPart);
     bool isAcceptableTrack(SvtxTrack *track);

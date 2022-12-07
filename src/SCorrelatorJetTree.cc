@@ -17,9 +17,10 @@
 // f4a includes
 #include <fun4all/Fun4AllReturnCodes.h>
 #include <fun4all/Fun4AllHistoManager.h>
-#include <fun4all/Fun4AllReturnCodes.h>
 // phool includes
 #include <phool/phool.h>
+#include <phool/PHIODataNode.h>
+#include <phool/PHNodeIterator.h>
 #include <phool/PHCompositeNode.h>
 // tracking includes
 #include <trackbase_historic/SvtxTrack.h>
@@ -70,6 +71,9 @@
 using namespace std;
 using namespace fastjet;
 
+// global constants
+static const unsigned long NRange(2);
+
 
 
 // ctor/dtor ------------------------------------------------------------------
@@ -84,14 +88,21 @@ SCorrelatorJetTree::SCorrelatorJetTree(const string &name, const string &outfile
   m_outfilename = outfile;
   initializeVariables();
   initializeTrees();
+
 }  // end ctor(string, string)
 
 
 
 SCorrelatorJetTree::~SCorrelatorJetTree() {
+
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::~SCorrelatorJetTree() Calling dtor" << endl;
   }
+  delete m_hm;
+  delete m_outFile;
+  delete m_jetTree;
+
 }  // end dtor
 
 
@@ -99,28 +110,63 @@ SCorrelatorJetTree::~SCorrelatorJetTree() {
 // F4A methods ----------------------------------------------------------------
 
 int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
-  if (m_doDebug) {
-    cout << "SCorrelatorJetTree::Init(PHCompositeNode *topNode) Initializing" << endl;
+
+  // print debug statement
+  if (m_doDebug || (Verbosity() > 5)) {
+    cout << "SCorrelatorJetTree::Init(PHCompositeNode *topNode) Initializing..." << endl;
   }
+
+  // intitialize output file
+  m_outFile = new TFile(m_outfilename.c_str(), "RECREATE");
+  if (!m_outFile) {
+    cerr << "PANIC: couldn't open SCorrelatorJetTree output file!" << endl;
+  }
+
+  // create node for jet-tree
+  if (m_save_dst) {
+    createJetNode(topNode);
+  }
+
+  // create QA histograms
+  /* TODO: QA histograms will go here */
   return Fun4AllReturnCodes::EVENT_OK;
+
 }  // end 'Init(PHcompositeNode*)'
 
 
 
 int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
-  if (m_doDebug) {
+
+  // print debug statement
+  if (m_doDebug || (Verbosity() > 5)) {
     cout << "SCorrelatorJetTree::process_event(PHCompositeNode *topNode) Processing Event" << endl;
   }
+
+  // find jets
+  findJets(topNode);
+  if (m_ismc) {
+    findMcJets(topNode);
+  }
   return Fun4AllReturnCodes::EVENT_OK;
+
 }  // end 'process_event(PHCompositeNode*)'
 
 
 
 int SCorrelatorJetTree::End(PHCompositeNode *topNode) {
-  if (m_doDebug) {
+
+  // print debug statements
+  if (m_doDebug || (Verbosity() > 1)) {
     cout << "SCorrelatorJetTree::End(PHCompositeNode *topNode) This is the End..." << endl;
   }
+
+  // save output and close
+  m_outFile -> cd();
+  m_jetTree -> Write();
+  m_outFile -> Write();
+  m_outFile -> Close();
   return Fun4AllReturnCodes::EVENT_OK;
+
 }  // end 'End(PHcompositeNode*)'
 
 
@@ -128,11 +174,26 @@ int SCorrelatorJetTree::End(PHCompositeNode *topNode) {
 // jet methods ----------------------------------------------------------------
 
 void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
+
+  // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::findJets(PHCompositeNode *topNode) Finding jets" << endl;
+    cout << "SCorrelatorJetTree::findJets(PHCompositeNode *topNode) Finding jets..." << endl;
   }
   return;
+
 }  // end 'findJets(PHCompositeNode*)'
+
+
+
+void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::findJets(PHCompositeNode *topNode) Finding MC jets..." << endl;
+  }
+  return;
+
+}  // end 'findMcJets(PHCompositeNode*)'
 
 
 
@@ -169,24 +230,6 @@ void SCorrelatorJetTree::getTracks(PHCompositeNode *topNode) {
   }
   return;
 }  // end 'getTracks(PHCompositeNode*)'
-
-
-
-void SCorrelatorJetTree::findNonRecMC(PHCompositeNode *topNode) {
-  if (m_doDebug) {
-    cout << "SCorrelatorJetTree::findNonRecMC(PHCompositeNode *topNode) Finding non-reconstructed MC things" << endl;
-  }
-  return;
-}  // end 'findNonRecMC(PHCompositeNode*)'
-
-
-
-void SCorrelatorJetTree::doMCLoop(PHCompositeNode *topNode) {
-  if (m_doDebug) {
-    cout << "SCorrelatorJetTree::doMCLoop(PHCompositeNode *topNode) Looping over MC particles" << endl;
-  }
-  return;
-}  // end 'doMCLoop(PHCompositeNode*)'
 
 
 
@@ -234,7 +277,7 @@ void SCorrelatorJetTree::initializeVariables() {
 
   // print debugging statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::initializeVariables() Initializing class members" << endl;
+    cout << "SCorrelatorJetTree::initializeVariables() Initializing class members..." << endl;
   }
 
   // initialize class members as needed
@@ -263,6 +306,15 @@ void SCorrelatorJetTree::initializeVariables() {
   m_qualy_plots          = false;
   m_save_dst             = false;
   m_ismc                 = false;
+  m_numJets              = 0;
+  m_partonID[0]          = -9999;
+  m_partonID[1]          = -9999;
+  m_partonMomX[0]        = -9999.;
+  m_partonMomX[1]        = -9999.;
+  m_partonMomY[0]        = -9999.;
+  m_partonMomY[1]        = -9999.;
+  m_partonMomZ[0]        = -9999.;
+  m_partonMomZ[1]        = -9999.;
   m_numCst.clear();
   m_jetId.clear();
   m_jetTruId.clear();
@@ -285,7 +337,7 @@ void SCorrelatorJetTree::initializeTrees() {
 
   // print debugging statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::doMCLoop(PHCompositeNode *topNode) Looping over MC particles" << endl;
+    cout << "SCorrelatorJetTree::initializeTrees() Initializing output tree..." << endl;
   }
 
   // initialize output tree
@@ -313,5 +365,109 @@ void SCorrelatorJetTree::initializeTrees() {
   return;
 
 }  // end 'initializeTrees()'
+
+
+
+int SCorrelatorJetTree::createJetNode(PHCompositeNode* topNode) {
+
+  // print debugging statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::createJetNode(PHCompositeNode *topNode) Creating jet node..." << endl;
+  }
+
+  // create iterator & DST node
+  PHNodeIterator   iter(topNode);
+  PHCompositeNode *lowerNode = dynamic_cast<PHCompositeNode*>(iter.findFirst("PHCompositeNode", "DST"));
+  if (!lowerNode) {
+    lowerNode = new PHCompositeNode("DST");
+    topNode   -> addNode(lowerNode);
+    cout << "DST node added" << endl;
+  }
+
+  // construct jet tree name
+  string baseName;
+  string jetNodeName;
+  string jetNodeNameMC;
+  if (m_jetcontainer_name.empty()) {
+    baseName = "JetTree";
+  } else {
+    baseName = m_jetcontainer_name;
+  }
+
+  // cant have forward slashes in DST or else you make a subdirectory on save!!!
+  string undrscr = "_";
+  string nothing = "";
+
+  // define good strings to replace bad ones
+  map<std::string, std::string> forbiddenStrings;
+  forbiddenStrings["/"] = undrscr;
+  forbiddenStrings["("] = undrscr;
+  forbiddenStrings[")"] = nothing;
+  forbiddenStrings["+"] = "plus";
+  forbiddenStrings["-"] = "minus";
+  forbiddenStrings["*"] = "star";
+  for (auto const& [badString, goodString] : forbiddenStrings) {
+    size_t pos;
+    while ((pos = baseName.find(badString)) != std::string::npos) {
+      baseName.replace(pos, 1, goodString);
+    }
+  }
+
+  // construct jet node name
+  jetNodeName   = baseName + "_Jet_Container";
+  jetNodeNameMC = baseName + "_MC_Jet_Container";
+
+  // construct jet maps
+  m_jetMap = new JetMapv1();
+  if (m_ismc && m_save_truth_dst) {
+    m_truth_jetMap = new JetMapv1();
+  }
+
+  // add jet node
+  PHIODataNode<PHObject>* jetNode = new PHIODataNode<PHObject>(m_jetMap, jetNodeName.c_str(), "PHObject");
+  lowerNode -> addNode(jetNode);
+  cout << jetNodeName << " node added" << endl;
+
+  // save truth DST if needed
+  if(m_ismc && m_save_truth_dst) {
+    PHIODataNode<PHObject> *jetNodeMC = new PHIODataNode<PHObject>(m_truth_jetMap, jetNodeNameMC.c_str(), "PHObject");
+    lowerNode -> addNode(jetNodeMC);
+    cout << jetNodeNameMC << " node added" << endl;
+  }
+  return Fun4AllReturnCodes::EVENT_OK;
+
+}  // end 'createJetNode(PHCompositeNode*)'
+
+
+
+void SCorrelatorJetTree::resetTreeVariables() {
+
+  // print debugging statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::resetTreeVariables() Resetting tree variables..." << endl;
+  }
+  m_numJets       = 0;
+  m_partonID[0]   = -9999;
+  m_partonID[1]   = -9999;
+  m_partonMomX[0] = -9999.;
+  m_partonMomX[1] = -9999.;
+  m_partonMomY[0] = -9999.;
+  m_partonMomY[1] = -9999.;
+  m_partonMomZ[0] = -9999.;
+  m_partonMomZ[1] = -9999.;
+  m_numCst.clear();
+  m_jetId.clear();
+  m_jetTruId.clear();
+  m_jetPt.clear();
+  m_jetEta.clear();
+  m_jetPhi.clear();
+  m_cstZ.clear();
+  m_cstDr.clear();
+  m_cstJt.clear();
+  m_cstEta.clear();
+  m_cstPhi.clear();
+  return;
+
+}  // end 'resetTreeVariables()
 
 // end ------------------------------------------------------------------------
