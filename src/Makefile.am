@@ -24,7 +24,7 @@ libscorrelatorjettree_la_SOURCES = \
   $(ROOT5_DICTS) \
   SCorrelatorJetTree.cc
 
-libcorrelatorjettree_la_LDFLAGS = \
+libscorrelatorjettree_la_LDFLAGS = \
   -L$(libdir) \
   -L$(OFFLINE_MAIN)/lib \
   -lcalo_io \
