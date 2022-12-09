@@ -19,6 +19,7 @@
 #include <fun4all/Fun4AllHistoManager.h>
 // phool includes
 #include <phool/phool.h>
+#include <phool/getClass.h>
 #include <phool/PHIODataNode.h>
 #include <phool/PHNodeIterator.h>
 #include <phool/PHCompositeNode.h>
@@ -70,6 +71,7 @@
 
 using namespace std;
 using namespace fastjet;
+using namespace findNode;
 
 // global constants
 static const unsigned long NRange(2);
@@ -184,7 +186,7 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
   fastjet::JetDefinition     *jetdef = new fastjet::JetDefinition(m_jetalgo, m_jetr, m_recomb_scheme, fastjet::Best);
   vector<fastjet::PseudoJet>  particles;
 
-  // instantiate jet map
+  // instantiate fastjet map
   map<int, pair<Jet::SRC, int>> fjMap;
 
   // add constitutents
@@ -236,7 +238,7 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
     // get jet info
     const unsigned int jetNCst  = fastjets[iJet].constituents().size();
     const unsigned int jetID    = iJet;
-    const unsigned int jetTruID = iJet;  // FIXME: this will need to be changed to the matched truth jet
+    const unsigned int jetTruID = 99999;  // FIXME: this will need to be changed to the matched truth jet
     const double       jetPhi   = fastjets[iJet].phi_std();
     const double       jetEta   = fastjets[iJet].pseudorapidity();
     const double       jetE     = fastjets[iJet].E();
@@ -327,28 +329,280 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
 
 
 void SCorrelatorJetTree::addParticleFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::addParticleFlow(PHCompositeNode *topNode, vector<PseudoJet>&, map<int, parir<Jet::SRC, int>>&) Adding particle flow elements" << endl;
   }
+
+  // declare pf  objects
+  ParticleFlowElementContainer *pflowContainer = findNode::getClass<ParticleFlowElementContainer>(topNode, "ParticleFlowElements");
+
+  // loop over pf elements
+  unsigned int                                iPart     = particles.size();
+  ParticleFlowElementContainer::ConstRange    begin_end = pflowContainer -> getParticleFlowElements();
+  ParticleFlowElementContainer::ConstIterator rtiter;
+  for (rtiter = begin_end.first; rtiter != begin_end.second; ++rtiter) {
+
+    // get pf element
+    ParticleFlowElement *pflow = rtiter -> second;
+
+    // check if good
+    const bool isGoodElement = isAcceptableParticleFlow(pflow);
+    if(!pflow || !isGoodElement) continue;
+
+    // create pseudojet and add to constituent vector
+    const int    pfID = pflow -> get_id();
+    const double pfPx = pflow -> get_px();
+    const double pfPy = pflow -> get_py();
+    const double pfPz = pflow -> get_pz();
+    const double pfE  = pflow -> get_e();
+
+    fastjet::PseudoJet fjPartFlow(pfPx, pfPy, pfPz, pfE);
+    fjPartFlow.set_user_index(iPart);
+    particles.push_back(fjPartFlow);
+
+    // add pf element to fastjet map
+    pair<int, pair<Jet::SRC, int>> jetPartFlowPair(iPart, make_pair(Jet::SRC::PARTICLE, pfID));
+    fjMap.insert(jetPartFlowPair);
+    ++iPart;
+  }  // end pf element loop
   return;
+
 }  // end 'addParticleFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
 
 
 void SCorrelatorJetTree::addTracks(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+
+  // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addTracks(PHCompositeNode *topNode, vector<PseudoJet>&, map<int, pair<JET::SRC, int>>&) Adding tracks" << endl;
+    cout << "SCorrelatorJetTree::addTracks(PHCompositeNode *topNode, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding tracks" << endl;
   }
+
+  // get track map
+  SvtxTrackMap *trackmap = findNode::getClass<SvtxTrackMap>(topNode, "SvtxTrackMap");
+  if (!trackmap) {
+    cerr << PHWHERE
+         << "PANIC: SvtxTrackMap node is missing, can't collect tracks!"
+         << endl;
+    return;
+  }
+
+  // loop over tracks
+  unsigned int  iPart = particles.size();
+  SvtxTrack    *track = 0;
+  for (SvtxTrackMap::Iter iter = trackmap -> begin(); iter != trackmap -> end(); ++iter) {
+
+    // get track
+    track = iter -> second;
+
+    // check if good
+    const bool isGoodTrack = isAcceptableTrack(track);
+    if(!isGoodTrack) continue;
+
+    // create pseudojet and add to constituent vector
+    const int    trkID = track -> get_id();
+    const double trkPx = track -> get_px();
+    const double trkPy = track -> get_py();
+    const double trkPz = track -> get_pz();
+
+    fastjet::PseudoJet fjTrack(trkPx, trkPy, trkPz, 0.);  // FIXME: add track energy? (e.g. maybe assume a pion mass...)
+    fjTrack.set_user_index(iPart);
+    particles.push_back(fjTrack);
+
+    // add track to fastjet map
+    pair<int, pair<Jet::SRC, int>> jetTrkPair(iPart, make_pair(Jet::SRC::TRACK, trkID));
+    fjMap.insert(jetTrkPair);
+    ++iPart;
+  }  // end track loop
   return;
+
 }  // end 'addTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
 
 
 void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+
+  // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>&, map<int, pair<JET::SRC, int>>&) Adding clusters" << endl;
+    cout << "SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding clusters" << endl;
   }
+
+  // get vertex map
+  GlobalVertexMap *vertexmap = findNode::getClass<GlobalVertexMap>(topNode, "GlobalVertexMap");
+  if (!vertexmap) {
+    cerr << "SCorrelatorJetTree::getEmcalClusters - Fatal Error - GlobalVertexMap node is missing!\n"
+         << "  Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
+         << endl;
+    assert(vertexmap);
+    return;
+  }
+  if (vertexmap -> empty()) {
+    cerr << "JetTagging::getEmcalClusters - Fatal Error - GlobalVertexMap node is empty!\n"
+         << "  Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
+         << endl;
+    return;
+  }
+
+  // grab vertex
+  GlobalVertex *vtx = vertexmap -> begin() -> second;
+  if (vtx == nullptr) return;
+
+  // add emcal clusters if needed
+  int iPart = particles.size();
+  if (m_add_EMCal_clusters) {
+
+    // grab em cluster containter
+    RawClusterContainer *clustersEMC = findNode::getClass<RawClusterContainer>(topNode, "CLUSTER_CEMC");
+    if (!clustersEMC) {
+      cout << PHWHERE
+           << "PANIC: EMCal cluster node is missing, can't collect EMCal clusters!"
+           << endl;
+      return;
+    }
+
+    // loop over em clusters
+    RawClusterContainer::ConstRange    begin_end_EMC = clustersEMC->getClusters();
+    RawClusterContainer::ConstIterator clusIter_EMC;
+    for (clusIter_EMC = begin_end_EMC.first; clusIter_EMC != begin_end_EMC.second; ++clusIter_EMC) {
+
+      // grab cluster
+      const RawCluster *cluster = clusIter_EMC -> second;
+
+      // construct vertex and get 4-momentum
+      const double vX = vtx -> get_x();
+      const double vY = vtx -> get_y();
+      const double vZ = vtx -> get_z();
+
+      CLHEP::Hep3Vector vertex(vX, vY, vZ);
+      CLHEP::Hep3Vector E_vec_cluster = RawClusterUtility::GetECoreVec(*cluster, vertex);
+
+      // check if good
+      const bool isGoodClust = isAcceptableEMCalCluster(E_vec_cluster);
+      if(!isGoodClust) continue;
+
+      // create pseudojet and add to constituent vector
+      const int    emClustID  = cluster -> get_id();
+      const double emClustE   = E_vec_cluster.mag();
+      const double emClustPt  = E_vec_cluster.perp();
+      const double emClustPhi = E_vec_cluster.getPhi();
+      const double emClustPx  = emClustPt * cos(emClustPhi);
+      const double emClustPy  = emClustPt * sin(emClustPhi);
+      const double emClustPz  = sqrt((emClustE * emClustE) - (emClustPx * emClustPx) - (emClustPy * emClustPy));
+
+      fastjet::PseudoJet fjCluster(emClustPx, emClustPy, emClustPz, emClustE);
+      fjCluster.set_user_index(iPart);
+      particles.push_back(fjCluster);
+
+      // add em cluster to fastjet map
+      pair<int, pair<Jet::SRC, int>> jetEMClustPair(iPart, make_pair(Jet::SRC::CEMC_CLUSTER, emClustID));
+      fjMap.insert(jetEMClustPair);
+      ++iPart;
+    }  // end em cluster loop
+  }  // end if (m_add_EMCal_clusters)
+
+  //  add hcal clusters if needed
+  if (m_add_HCal_clusters) {
+
+    // grab ih cluster container
+    RawClusterContainer *clustersHCALIN = findNode::getClass<RawClusterContainer>(topNode, "CLUSTER_HCALIN");
+    if (!clustersHCALIN) {
+      cerr << PHWHERE
+           << "PANIC: Inner HCal cluster node is missing, can't collect inner HCal clusters!"
+           << endl;
+      return;
+    }
+
+    // Loop over ih clusters
+    RawClusterContainer::ConstRange    begin_end_HCALIN = clustersHCALIN->getClusters();
+    RawClusterContainer::ConstIterator clusIter_HCALIN;
+    for (clusIter_HCALIN = begin_end_HCALIN.first; clusIter_HCALIN != begin_end_HCALIN.second; ++clusIter_HCALIN) {
+
+      // get ih cluster
+      const RawCluster *cluster = clusIter_HCALIN -> second;
+
+      // construct vertex and get 4-momentum
+      const double vX = vtx -> get_x();
+      const double vY = vtx -> get_y();
+      const double vZ = vtx -> get_z();
+
+      CLHEP::Hep3Vector vertex(vX, vY, vZ);
+      CLHEP::Hep3Vector E_vec_cluster = RawClusterUtility::GetECoreVec(*cluster, vertex);
+
+      // check if good
+      const bool isGoodClust = isAcceptableHCalCluster(E_vec_cluster);
+      if (!isGoodClust) continue;
+
+      // create pseudojet and add to constituent vector
+      const int    ihClustID  = cluster -> get_id();
+      const double ihClustE   = E_vec_cluster.mag();
+      const double ihClustPt  = E_vec_cluster.perp();
+      const double ihClustPhi = E_vec_cluster.getPhi();
+      const double ihClustPx  = ihClustPt * cos(ihClustPhi);
+      const double ihClustPy  = ihClustPt * sin(ihClustPhi);
+      const double ihClustPz  = sqrt((ihClustE * ihClustE) - (ihClustPx * ihClustPx) - (ihClustPy * ihClustPy));
+
+      fastjet::PseudoJet fjCluster(ihClustPx, ihClustPy, ihClustPz, ihClustE);
+      fjCluster.set_user_index(iPart);
+      particles.push_back(fjCluster);
+
+      // add ih cluster to fastjet map
+      pair<int, pair<Jet::SRC, int>> jetIHClustPair(iPart, make_pair(Jet::SRC::HCALIN_CLUSTER, ihClustID));
+      fjMap.insert(jetIHClustPair);
+      ++iPart;
+    }  // end ih cluster loop
+
+    // grab oh cluster container
+    RawClusterContainer *clustersHCALOUT = findNode::getClass<RawClusterContainer>(topNode, "CLUSTER_HCALOUT");
+    if (!clustersHCALOUT) {
+      cerr << PHWHERE
+           << "PANIC: Outer HCal cluster node is missing, can't collect outer HCal clusters!"
+           << endl;
+      return;
+    }
+
+    // loop over oh clusters
+    RawClusterContainer::ConstRange    begin_end_HCALOUT = clustersHCALOUT->getClusters();
+    RawClusterContainer::ConstIterator clusIter_HCALOUT;
+    for (clusIter_HCALOUT = begin_end_HCALOUT.first; clusIter_HCALOUT != begin_end_HCALOUT.second; ++clusIter_HCALOUT) {
+
+      // get oh cluster
+      const RawCluster *cluster = clusIter_HCALOUT -> second;
+
+      // construct vertex and get 4-momentum
+      const double vX = vtx -> get_x();
+      const double vY = vtx -> get_y();
+      const double vZ = vtx -> get_z();
+
+      CLHEP::Hep3Vector vertex(vX, vY, vZ);
+      CLHEP::Hep3Vector E_vec_cluster = RawClusterUtility::GetECoreVec(*cluster, vertex);
+
+      // check if good
+      const bool isGoodClust = isAcceptableHCalCluster(E_vec_cluster);
+      if (!isGoodClust) continue;
+
+      // create pseudojet and add to constituent vector
+      const int    ohClustID  = cluster -> get_id();
+      const double ohClustE   = E_vec_cluster.mag();
+      const double ohClustPt  = E_vec_cluster.perp();
+      const double ohClustPhi = E_vec_cluster.getPhi();
+      const double ohClustPx  = ohClustPt * cos(ohClustPhi);
+      const double ohClustPy  = ohClustPt * sin(ohClustPhi);
+      const double ohClustPz  = sqrt((ohClustE * ohClustE) - (ohClustPx * ohClustPx) - (ohClustPy * ohClustPy));
+
+      fastjet::PseudoJet fjCluster(ohClustPx, ohClustPy, ohClustPz, ohClustE);
+      fjCluster.set_user_index(iPart);
+      particles.push_back(fjCluster);
+
+      // add oh cluster to fastjet map
+      pair<int, pair<Jet::SRC, int>> jetOHClustPair(iPart, make_pair(Jet::SRC::HCALOUT_CLUSTER, ohClustID));
+      fjMap.insert(jetOHClustPair);
+      ++iPart;
+    }  // end oh cluster loop
+  }  // end if (m_add_HCal_clusters)
   return;
+
 }  // end 'addClusters(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
 
