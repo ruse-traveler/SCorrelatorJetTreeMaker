@@ -179,6 +179,135 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::findJets(PHCompositeNode *topNode) Finding jets..." << endl;
   }
+
+  // declare fastjet objects
+  fastjet::JetDefinition     *jetdef = new fastjet::JetDefinition(m_jetalgo, m_jetr, m_recomb_scheme, fastjet::Best);
+  vector<fastjet::PseudoJet>  particles;
+
+  // instantiate jet map
+  map<int, pair<Jet::SRC, int>> fjMap;
+
+  // add constitutents
+  const bool doParticleFlow = m_add_particleflow;
+  const bool doTracks       = m_add_tracks;
+  const bool doCaloClusters = (m_add_EMCal_clusters || m_add_HCal_clusters);
+  if (doParticleFlow) addParticleFlow(topNode, particles, fjMap);
+  if (doTracks)       addTracks(topNode, particles, fjMap);
+  if (doCaloClusters) addClusters(topNode, particles, fjMap);
+
+  // cluster jets
+  fastjet::ClusterSequence   jetFinder(particles, *jetdef);
+  vector<fastjet::PseudoJet> fastjets = jetFinder.inclusive_jets();
+  delete jetdef;
+
+  // prepare vectors for filling
+  m_jetNCst.clear();
+  m_jetId.clear();
+  m_jetTruId.clear();
+  m_jetE.clear();
+  m_jetPt.clear();
+  m_jetEta.clear();
+  m_jetPhi.clear();
+  m_cstZ.clear();
+  m_cstDr.clear();
+  m_cstE.clear();
+  m_cstJt.clear();
+  m_cstEta.clear();
+  m_cstPhi.clear();
+
+  // declare vectors for storing constituents
+  vector<double> vecCstZ;
+  vector<double> vecCstDr;
+  vector<double> vecCstE;
+  vector<double> vecCstJt;
+  vector<double> vecCstEta;
+  vector<double> vecCstPhi;
+  vecCstZ.clear();
+  vecCstDr.clear();
+  vecCstE.clear();
+  vecCstJt.clear();
+  vecCstEta.clear();
+  vecCstPhi.clear();
+
+  // fill jet/constituent variables
+  unsigned int nJet(0);
+  for (unsigned int iJet = 0; iJet < fastjets.size(); ++iJet) {
+
+    // get jet info
+    const unsigned int jetNCst  = fastjets[iJet].constituents().size();
+    const unsigned int jetID    = iJet;
+    const unsigned int jetTruID = iJet;  // FIXME: this will need to be changed to the matched truth jet
+    const double       jetPhi   = fastjets[iJet].phi_std();
+    const double       jetEta   = fastjets[iJet].pseudorapidity();
+    const double       jetE     = fastjets[iJet].E();
+    const double       jetPt    = fastjets[iJet].perp();
+    const double       jetPx    = fastjets[iJet].px();
+    const double       jetPy    = fastjets[iJet].py();
+    const double       jetPz    = fastjets[iJet].pz();
+    const double       jetP     = sqrt((jetPx * jetPx) + (jetPy * jetPy) + (jetPz * jetPz));
+
+    // clear constituent vectors
+    vecCstZ.clear();
+    vecCstDr.clear();
+    vecCstE.clear();
+    vecCstJt.clear();
+    vecCstEta.clear();
+    vecCstPhi.clear();
+
+    // loop over constituents
+    vector<fastjet::PseudoJet> csts = fastjets[iJet].constituents();
+    for (unsigned int iCst = 0; iCst < csts.size(); ++iCst) {
+
+      // get constituent info
+      const double cstPhi = csts[iCst].phi_std();
+      const double cstEta = csts[iCst].pseudorapidity();
+      const double cstE   = csts[iCst].E();
+      const double cstJt  = csts[iCst].perp();
+      const double cstJx  = csts[iCst].px();
+      const double cstJy  = csts[iCst].py();
+      const double cstJz  = csts[iCst].pz();
+      const double cstJ   = ((cstJx * cstJx) + (cstJy * cstJy) + (cstJz * cstJz));
+      const double cstZ   = cstJ / jetP;
+      const double cstDf  = cstPhi - jetPhi;
+      const double cstDh  = cstEta - jetEta;
+      const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
+
+      // add csts to vectors
+      vecCstZ.push_back(cstZ);
+      vecCstDr.push_back(cstDr);
+      vecCstE.push_back(cstE);
+      vecCstJt.push_back(cstJt);
+      vecCstEta.push_back(cstEta);
+      vecCstPhi.push_back(cstPhi);
+    }  // end constituent loop
+
+    // store jet/cst output
+    m_jetNCst.push_back(jetNCst);
+    m_jetId.push_back(jetID);
+    m_jetTruId.push_back(jetTruID);
+    m_jetE.push_back(jetE);
+    m_jetPt.push_back(jetPt);
+    m_jetEta.push_back(jetEta);
+    m_jetPhi.push_back(jetPhi);
+    m_cstZ.push_back(vecCstZ);
+    m_cstDr.push_back(vecCstDr);
+    m_cstE.push_back(vecCstE);
+    m_cstJt.push_back(vecCstJt);
+    m_cstEta.push_back(vecCstEta);
+    m_cstPhi.push_back(vecCstPhi);
+    ++nJet;
+  }  // end jet loop
+
+  // store evt info
+  m_numJets       = nJet;
+  m_partonID[0]   = -9999;   // FIXME: store actual value
+  m_partonID[1]   = -9999;   // FIXME: store actual value
+  m_partonMomX[0] = -9999.;  // FIXME: store actual value
+  m_partonMomX[1] = -9999.;  // FIXME: store actual value
+  m_partonMomY[0] = -9999.;  // FIXME: store actual value
+  m_partonMomY[1] = -9999.;  // FIXME: store actual value
+  m_partonMomZ[0] = -9999.;  // FIXME: store actual value
+  m_partonMomZ[1] = -9999.;  // FIXME: store actual value
   return;
 
 }  // end 'findJets(PHCompositeNode*)'
@@ -189,7 +318,7 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::findJets(PHCompositeNode *topNode) Finding MC jets..." << endl;
+    cout << "SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) Finding MC jets..." << endl;
   }
   return;
 
@@ -236,37 +365,72 @@ void SCorrelatorJetTree::getTracks(PHCompositeNode *topNode) {
 // constituent methods --------------------------------------------------------
 
 bool SCorrelatorJetTree::isAcceptableParticleFlow(ParticleFlowElement* pfPart) {
+
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::isAcceptableParticleFlow(ParticleFlowElement*) Checking if particle flow element is good" << endl;
   }
-  return true;
+
+  // TODO: explore particle flow cuts
+  const double pfEta         = pfPart -> get_eta();
+  const bool   isInEtaRange  = ((pfEta > m_particleflow_mineta) && (pfEta < m_particleflow_maxeta));
+  const bool   isGoodElement = isInEtaRange;
+  return isGoodElement;
+
 }  // end 'isAcceptableParticleFlow(ParticleFlowElement*)'
 
 
 
 bool SCorrelatorJetTree::isAcceptableTrack(SvtxTrack *track) {
+
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::isAcceptableTrack(SvtxTrack*) Checking if track is good" << endl;
   }
-  return true;
+
+  const double trkPt        = track -> get_pt();
+  const double trkEta       = track -> get_eta();
+  const bool   isInPtRange  = ((trkPt > m_track_minpt)   && (trkPt < m_track_maxpt));
+  const bool   isInEtaRange = ((trkEta > m_track_mineta) && (trkEta < m_track_maxeta));
+  const bool   isGoodTrack  = (isInPtRange && isInEtaRange);
+  return isGoodTrack;
+
 }  // end 'isAcceptableTrack(SvtxTrack*)'
 
 
 
 bool SCorrelatorJetTree::isAcceptableEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster) {
+
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::isAcceptableEMCalCluster(CLHEP::Hep3Vector&) Checking if ECal cluster is good" << endl;
   }
-  return true;
+
+  const double clustPt      = E_vec_cluster.perp();
+  const double clustEta     = E_vec_cluster.pseudoRapidity();
+  const bool   isInPtRange  = ((clustPt > m_EMCal_cluster_minpt)   && (clustPt < m_EMCal_cluster_maxpt));
+  const bool   isInEtaRange = ((clustEta > m_EMCal_cluster_mineta) && (clustEta < m_EMCal_cluster_maxeta));
+  const bool   isGoodClust  = (isInPtRange && isInEtaRange);
+  return isGoodClust;
+
 }  // end 'isAcceptableEMCalCluster(CLHEP::Hep3Vector&)'
 
 
 
 bool SCorrelatorJetTree::isAcceptableHCalCluster(CLHEP::Hep3Vector &E_vec_cluster) {
+
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::isAcceptableHCalCluster(CLHEP::Hep3Vector&) Checking if HCal cluster is good" << endl;
   }
-  return true;
+
+  const double clustPt      = E_vec_cluster.perp();
+  const double clustEta     = E_vec_cluster.pseudoRapidity();
+  const bool   isInPtRange  = ((clustPt > m_HCal_cluster_minpt)   && (clustPt < m_HCal_cluster_maxpt));
+  const bool   isInEtaRange = ((clustEta > m_HCal_cluster_mineta) && (clustEta < m_HCal_cluster_maxeta));
+  const bool   isGoodClust  = (isInPtRange && isInEtaRange);
+  return isGoodClust;
+
 }  // end 'isAcceptableHCalCluster(CLHEP::Hep3Vector&)'
 
 
@@ -275,7 +439,7 @@ bool SCorrelatorJetTree::isAcceptableHCalCluster(CLHEP::Hep3Vector &E_vec_cluste
 
 void SCorrelatorJetTree::initializeVariables() {
 
-  // print debugging statement
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::initializeVariables() Initializing class members..." << endl;
   }
@@ -315,14 +479,16 @@ void SCorrelatorJetTree::initializeVariables() {
   m_partonMomY[1]        = -9999.;
   m_partonMomZ[0]        = -9999.;
   m_partonMomZ[1]        = -9999.;
-  m_numCst.clear();
+  m_jetNCst.clear();
   m_jetId.clear();
   m_jetTruId.clear();
+  m_jetE.clear();
   m_jetPt.clear();
   m_jetEta.clear();
   m_jetPhi.clear();
   m_cstZ.clear();
   m_cstDr.clear();
+  m_cstE.clear();
   m_cstJt.clear();
   m_cstEta.clear();
   m_cstPhi.clear();
@@ -335,7 +501,7 @@ void SCorrelatorJetTree::initializeVariables() {
 
 void SCorrelatorJetTree::initializeTrees() {
 
-  // print debugging statement
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::initializeTrees() Initializing output tree..." << endl;
   }
@@ -351,14 +517,16 @@ void SCorrelatorJetTree::initializeTrees() {
   m_jetTree -> Branch("Parton4_MomX", &m_partonMomX[1], "Parton4_MomX/D");
   m_jetTree -> Branch("Parton4_MomY", &m_partonMomY[1], "Parton4_MomY/D");
   m_jetTree -> Branch("Parton4_MomZ", &m_partonMomZ[1], "Parton4_MomZ/D");
-  m_jetTree -> Branch("JetNumCst",    &m_numCst);
+  m_jetTree -> Branch("JetNumCst",    &m_jetNCst);
   m_jetTree -> Branch("JetID",        &m_jetId);
   m_jetTree -> Branch("JetTruthID",   &m_jetTruId);
+  m_jetTree -> Branch("JetEnergy",    &m_jetE);
   m_jetTree -> Branch("JetPt",        &m_jetPt);
   m_jetTree -> Branch("JetEta",       &m_jetEta);
   m_jetTree -> Branch("JetPhi",       &m_jetPhi);
   m_jetTree -> Branch("CstZ",         &m_cstZ);
   m_jetTree -> Branch("CstDr",        &m_cstDr);
+  m_jetTree -> Branch("CstEnergy",    &m_cstE);
   m_jetTree -> Branch("CstJt",        &m_cstJt);
   m_jetTree -> Branch("CstEta",       &m_cstEta);
   m_jetTree -> Branch("CstPhi",       &m_cstPhi);
@@ -370,7 +538,7 @@ void SCorrelatorJetTree::initializeTrees() {
 
 int SCorrelatorJetTree::createJetNode(PHCompositeNode* topNode) {
 
-  // print debugging statement
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::createJetNode(PHCompositeNode *topNode) Creating jet node..." << endl;
   }
@@ -399,7 +567,7 @@ int SCorrelatorJetTree::createJetNode(PHCompositeNode* topNode) {
   string nothing = "";
 
   // define good strings to replace bad ones
-  map<std::string, std::string> forbiddenStrings;
+  map<string, string> forbiddenStrings;
   forbiddenStrings["/"] = undrscr;
   forbiddenStrings["("] = undrscr;
   forbiddenStrings[")"] = nothing;
@@ -408,7 +576,7 @@ int SCorrelatorJetTree::createJetNode(PHCompositeNode* topNode) {
   forbiddenStrings["*"] = "star";
   for (auto const& [badString, goodString] : forbiddenStrings) {
     size_t pos;
-    while ((pos = baseName.find(badString)) != std::string::npos) {
+    while ((pos = baseName.find(badString)) != string::npos) {
       baseName.replace(pos, 1, goodString);
     }
   }
@@ -442,7 +610,7 @@ int SCorrelatorJetTree::createJetNode(PHCompositeNode* topNode) {
 
 void SCorrelatorJetTree::resetTreeVariables() {
 
-  // print debugging statement
+  // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::resetTreeVariables() Resetting tree variables..." << endl;
   }
@@ -455,14 +623,16 @@ void SCorrelatorJetTree::resetTreeVariables() {
   m_partonMomY[1] = -9999.;
   m_partonMomZ[0] = -9999.;
   m_partonMomZ[1] = -9999.;
-  m_numCst.clear();
+  m_jetNCst.clear();
   m_jetId.clear();
   m_jetTruId.clear();
+  m_jetE.clear();
   m_jetPt.clear();
   m_jetEta.clear();
   m_jetPhi.clear();
   m_cstZ.clear();
   m_cstDr.clear();
+  m_cstE.clear();
   m_cstJt.clear();
   m_cstEta.clear();
   m_cstPhi.clear();

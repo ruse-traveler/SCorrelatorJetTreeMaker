@@ -247,15 +247,17 @@ class SCorrelatorJetTree : public SubsysReco {
     double        m_partonMomY[NPart] = {-9999., -9999.};
     double        m_partonMomZ[NPart] = {-9999., -9999.};
     // output jet variables
-    std::vector<unsigned long> m_numCst;
+    std::vector<unsigned long> m_jetNCst;
     std::vector<unsigned int>  m_jetId;
     std::vector<unsigned int>  m_jetTruId;
+    std::vector<double>        m_jetE;
     std::vector<double>        m_jetPt;
     std::vector<double>        m_jetEta;
     std::vector<double>        m_jetPhi;
     // output constituent variables
     std::vector<std::vector<double>> m_cstZ;
     std::vector<std::vector<double>> m_cstDr;
+    std::vector<std::vector<double>> m_cstE;
     std::vector<std::vector<double>> m_cstJt;
     std::vector<std::vector<double>> m_cstEta;
     std::vector<std::vector<double>> m_cstPhi;
