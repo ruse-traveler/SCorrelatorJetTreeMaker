@@ -69,6 +69,23 @@ void SCorrelatorJetTree::setHCalClusterEtaAcc(double etamin, double etamax) {
 
 
 
+void SCorrelatorJetTree::setParticlePtAcc(double ptmin, double ptmax) {
+  m_MC_particle_minpt = ptmin;
+  m_MC_particle_maxpt = ptmax;
+  return;
+}  // end 'setParticlePtAcc(double, double)'
+
+
+
+void SCorrelatorJetTree::setParticleEtaAcc(double etamin, double etamax) {
+  m_MC_particle_mineta = etamin;
+  m_MC_particle_maxeta = etamax;
+  return;
+}  // end 'setParticleEtaAcc(double, double)'
+
+
+
+
 void SCorrelatorJetTree::setJetAlgo(ALGO jetalgo) {
   switch (jetalgo) {
     case ALGO::ANTIKT:

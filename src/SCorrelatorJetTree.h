@@ -33,6 +33,7 @@
 #include <fastjet/PseudoJet.hh>
 // misc includes
 #include <HepMC/GenEvent.h>
+#include <HepMC/GenParticle.h>
 #include <g4jets/Jetv1.h>
 #include <g4jets/JetMapv1.h>
 // standard c include
@@ -140,6 +141,14 @@ class SCorrelatorJetTree : public SubsysReco {
     double getHCalClusterMinEta() {return m_HCal_cluster_mineta;}
     double getHCalClusterMaxEta() {return m_HCal_cluster_maxeta;}
 
+    // particle setters
+    void setParticleMinPt(double ptmin)   {m_MC_particle_minpt = ptmin;}
+    void setParticleMaxPt(double ptmax)   {m_MC_particle_maxpt = ptmax;}
+    void setParticleMinEta(double etamin) {m_MC_particle_mineta = etamin;}
+    void setParticleMaxEta(double etamax) {m_MC_particle_maxeta = etamax;}
+    void setParticlePtAcc(double ptmin, double ptmax);
+    void setParticleEtaAcc(double etamin, double etamx);
+
     // constituent setters
     void setAddParticleFlow(bool b)  {m_add_particleflow = b;}
     void setAddTracks(bool b)        {m_add_tracks = b;}
@@ -182,12 +191,13 @@ class SCorrelatorJetTree : public SubsysReco {
     void addParticleFlow(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     void addTracks(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     void addClusters(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
-    void getTracks(PHCompositeNode *topNode);
+    void addParticles(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     // constituent methods
-    bool isAcceptableParticleFlow(ParticleFlowElement* pfPart);
+    bool isAcceptableParticleFlow(ParticleFlowElement *pfPart);
     bool isAcceptableTrack(SvtxTrack *track);
     bool isAcceptableEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
     bool isAcceptableHCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
+    bool isAcceptableParticle(HepMC::GenParticle *part);
     // i/o methods
     void initializeVariables();
     void initializeTrees();
@@ -215,6 +225,11 @@ class SCorrelatorJetTree : public SubsysReco {
     double m_HCal_cluster_maxpt;
     double m_HCal_cluster_mineta;
     double m_HCal_cluster_maxeta;
+    // particle variables
+    double m_MC_particle_minpt;
+    double m_MC_particle_maxpt;
+    double m_MC_particle_mineta;
+    double m_MC_particle_maxeta;
 
     // constituent parameters
     bool m_add_particleflow;
@@ -236,31 +251,54 @@ class SCorrelatorJetTree : public SubsysReco {
     bool         m_ismc;
     bool         m_doDebug;
 
-    // output file & tree
+    // output file & trees
     TFile *m_outFile;
-    TTree *m_jetTree;
+    TTree *m_recTree;
+    TTree *m_truTree;
 
-    // output event variables
-    unsigned long m_numJets           = 0;
-    long long     m_partonID[NPart]   = {-9999,  -9999};
-    double        m_partonMomX[NPart] = {-9999., -9999.};
-    double        m_partonMomY[NPart] = {-9999., -9999.};
-    double        m_partonMomZ[NPart] = {-9999., -9999.};
-    // output jet variables
-    std::vector<unsigned long> m_jetNCst;
-    std::vector<unsigned int>  m_jetId;
-    std::vector<unsigned int>  m_jetTruId;
-    std::vector<double>        m_jetE;
-    std::vector<double>        m_jetPt;
-    std::vector<double>        m_jetEta;
-    std::vector<double>        m_jetPhi;
-    // output constituent variables
-    std::vector<std::vector<double>> m_cstZ;
-    std::vector<std::vector<double>> m_cstDr;
-    std::vector<std::vector<double>> m_cstE;
-    std::vector<std::vector<double>> m_cstJt;
-    std::vector<std::vector<double>> m_cstEta;
-    std::vector<std::vector<double>> m_cstPhi;
+    // output reco event variables
+    unsigned long m_recNumJets           = 0;
+    long long     m_recPartonID[NPart]   = {-9999,  -9999};
+    double        m_recPartonMomX[NPart] = {-9999., -9999.};
+    double        m_recPartonMomY[NPart] = {-9999., -9999.};
+    double        m_recPartonMomZ[NPart] = {-9999., -9999.};
+    // output reco jet variables
+    std::vector<unsigned long> m_recJetNCst;
+    std::vector<unsigned int>  m_recJetId;
+    std::vector<unsigned int>  m_recJetTruId;
+    std::vector<double>        m_recJetE;
+    std::vector<double>        m_recJetPt;
+    std::vector<double>        m_recJetEta;
+    std::vector<double>        m_recJetPhi;
+    // output reco constituent variables
+    std::vector<std::vector<double>> m_recCstZ;
+    std::vector<std::vector<double>> m_recCstDr;
+    std::vector<std::vector<double>> m_recCstE;
+    std::vector<std::vector<double>> m_recCstJt;
+    std::vector<std::vector<double>> m_recCstEta;
+    std::vector<std::vector<double>> m_recCstPhi;
+
+    // output truth event variables
+    unsigned long m_truNumJets           = 0;
+    long long     m_truPartonID[NPart]   = {-9999,  -9999};
+    double        m_truPartonMomX[NPart] = {-9999., -9999.};
+    double        m_truPartonMomY[NPart] = {-9999., -9999.};
+    double        m_truPartonMomZ[NPart] = {-9999., -9999.};
+    // output truth jet variables
+    std::vector<unsigned long> m_truJetNCst;
+    std::vector<unsigned int>  m_truJetId;
+    std::vector<unsigned int>  m_truJetTruId;
+    std::vector<double>        m_truJetE;
+    std::vector<double>        m_truJetPt;
+    std::vector<double>        m_truJetEta;
+    std::vector<double>        m_truJetPhi;
+    // output truth constituent variables
+    std::vector<std::vector<double>> m_truCstZ;
+    std::vector<std::vector<double>> m_truCstDr;
+    std::vector<std::vector<double>> m_truCstE;
+    std::vector<std::vector<double>> m_truCstJt;
+    std::vector<std::vector<double>> m_truCstEta;
+    std::vector<std::vector<double>> m_truCstPhi;
 
 };
 
