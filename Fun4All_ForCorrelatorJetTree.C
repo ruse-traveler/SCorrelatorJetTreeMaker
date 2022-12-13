@@ -30,7 +30,7 @@
 #include <caloreco/RawClusterBuilderTopo.h>
 #include <particleflowreco/ParticleFlowReco.h>
 // user includes
-#include </sphenix/u/danderson/install/include/jettagging/JetTagging.h>
+#include </sphenix/u/danderson/install/include/scorrelatorjettree/SCorrelatorJetTree.h>
 
 // load libraries
 R__LOAD_LIBRARY(libfun4all.so)
@@ -84,9 +84,9 @@ void Fun4All_ForCorrelatorJetTree(const string sInput = SInDefault, const string
   const double etaPartFlowAccept[NAccept] = {-1.1, 1.1};
 
   // jet tree jet parameters
-  const double jetRes(0.3);
-  const SCorrelatorJetTree::ALGO   jetAlgo(SCorrelatorJetTree::ALGO::ANTIKT);
-  const SCorrelatorJetTree::RECOMB jetReco(SCorrelatorJetTree::RECOMB::PT_SCHEME);
+  const double jetRes  = 0.3;
+  const auto   jetAlgo = SCorrelatorJetTree::ALGO::ANTIKT;
+  const auto   jetReco = SCorrelatorJetTree::RECOMB::PT_SCHEME;
 
   // load libraries and create f4a server
   gSystem -> Load("libg4dst.so");
@@ -97,7 +97,7 @@ void Fun4All_ForCorrelatorJetTree(const string sInput = SInDefault, const string
   se -> Verbosity(verbosity);
 
   // add input files
-  Fun4AllInputManager = *inManager = new Fun4AllDstInputManager("InputDstManager");
+  Fun4AllInputManager *inManager = new Fun4AllDstInputManager("InputDstManager");
   inManager -> AddFile(sInput);
   se        -> registerInputManager(inManager);
 
