@@ -1,6 +1,6 @@
 // 'SCorrelatorJetTree.cc'
 // Derek Anderson
-// 12.04.202
+// 12.04.2022
 //
 // Class to construct a tree of
 // jets from a specified set of
@@ -145,14 +145,16 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
 
   // print debug statement
   if (m_doDebug || (Verbosity() > 5)) {
-    cout << "SCorrelatorJetTree::process_event(PHCompositeNode *topNode) Processing Event" << endl;
+    cout << "SCorrelatorJetTree::process_event(PHCompositeNode *topNode) Processing Event..." << endl;
   }
 
   // find jets
+  cout << "CHECK: before finding jets..." << endl;
   findJets(topNode);
   if (m_ismc) {
     findMcJets(topNode);
   }
+  cout << "CHECK: after finding jets..." << endl;
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'process_event(PHCompositeNode*)'
@@ -201,6 +203,7 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
   if (doParticleFlow) addParticleFlow(topNode, particles, fjMap);
   if (doTracks)       addTracks(topNode, particles, fjMap);
   if (doCaloClusters) addClusters(topNode, particles, fjMap);
+  cout << "CHECK: [reco] nProtojets = " << particles.size() << endl;
 
   // cluster jets
   fastjet::ClusterSequence   jetFinder(particles, *jetdef);
@@ -339,6 +342,7 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
 
   // add constituents
   addParticles(topNode, particles, fjMapMC);
+  cout << "CHECK: [mc] nProtojets = " << particles.size() << endl;
 
   // cluster jets
   fastjet::ClusterSequence   jetFinder(particles, *jetdef);
