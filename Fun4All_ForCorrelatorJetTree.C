@@ -43,16 +43,17 @@ using namespace std;
 // global constants
 static const string       SInTrkrDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/g4hits/G4Hits_pythia8_pp_mb-0000000050-03954.root";
 static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/calocluster/DST_CALO_CLUSTER_pythia8_pp_mb_3MHz-0000000050-03954.root";
+static const string       SInTrueDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trkrhit/DST_TRUTH_pythia8_pp_mb_3MHz-0000000050-03954.root";
 static const string       SOutDefault    = "oops.root";
 static const int          NEvtDefault    = 10;
-static const int          VerbDefault    = 7;
+static const int          VerbDefault    = 0;
 static const unsigned int NTopoClusts    = 2;
 static const unsigned int NTopoPar       = 3;
 static const unsigned int NAccept        = 2;
 
 
 
-void Fun4All_ForCorrelatorJetTree(const string sInTrkr = SInTrkrDefault, const string sInCalo = SInCaloDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
+void Fun4All_ForCorrelatorJetTree(const string sInTrkr = SInTrkrDefault, const string sInCalo = SInCaloDefault, const string sInTrue = SInTrueDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
 
   // track & particle flow parameters
   const bool   runTracking(true);
@@ -69,8 +70,8 @@ void Fun4All_ForCorrelatorJetTree(const string sInTrkr = SInTrkrDefault, const s
   const bool   allowCorners(true);
 
   // jet tree parameters
-  const bool   isMC(true);
-  const bool   doDebug(true);
+  const bool   isMC(false);
+  const bool   doDebug(false);
   const bool   saveDst(true);
   const bool   addTracks(false);
   const bool   addEMClusters(false);
@@ -100,10 +101,13 @@ void Fun4All_ForCorrelatorJetTree(const string sInTrkr = SInTrkrDefault, const s
   // add input files
   Fun4AllInputManager *inTrkrMan = new Fun4AllDstInputManager("InputDstManager_Tracks");
   Fun4AllInputManager *inCaloMan = new Fun4AllDstInputManager("InputDstManager_CaloClusts");
+  //Fun4AllInputManager *inTrueMan = new Fun4AllDstInputManager("InputDstManager_TruthRecord");  // FIXME: the TruthJetTree needs the (correct) event record
   inTrkrMan -> AddFile(sInTrkr);
   inCaloMan -> AddFile(sInCalo);
+  //inTrueMan -> AddFile(sInTrue);
   se        -> registerInputManager(inTrkrMan);
   se        -> registerInputManager(inCaloMan);
+  //se        -> registerInputManager(inTrueMan);
 
   // run the tracking if not already done
   if (runTracking) {
