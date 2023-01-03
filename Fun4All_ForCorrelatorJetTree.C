@@ -9,7 +9,7 @@
 // Antonio Silva (thanks!!)
 
 /****************************/
-/*     MDC2 Reco for MDC2     */
+/*     MDC2 Reco for MDC2   */
 /* Cameron Dean, LANL, 2021 */
 /*      cdean@bnl.gov       */
 /****************************/
@@ -40,19 +40,19 @@ R__LOAD_LIBRARY(libparticleflow.so)
 R__LOAD_LIBRARY(/sphenix/u/danderson/install/lib/libscorrelatorjettree.so)
 
 using namespace std;
-
 // global constants
-static const string       SInDefault  = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/G4Hits_pythia8_pp_mb-0000000040-00300.root";
-static const string       SOutDefault = "oops.root";
-static const int          NEvtDefault = 10;
-static const int          VerbDefault = 1;
-static const unsigned int NTopoClusts = 2;
-static const unsigned int NTopoPar    = 3;
-static const unsigned int NAccept     = 2;
+static const string       SInTrkrDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/g4hits/G4Hits_pythia8_pp_mb-0000000050-03954.root";
+static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/calocluster/DST_CALO_CLUSTER_pythia8_pp_mb_3MHz-0000000050-03954.root";
+static const string       SOutDefault    = "oops.root";
+static const int          NEvtDefault    = 10;
+static const int          VerbDefault    = 7;
+static const unsigned int NTopoClusts    = 2;
+static const unsigned int NTopoPar       = 3;
+static const unsigned int NAccept        = 2;
 
 
 
-void Fun4All_ForCorrelatorJetTree(const string sInput = SInDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
+void Fun4All_ForCorrelatorJetTree(const string sInTrkr = SInTrkrDefault, const string sInCalo = SInCaloDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
 
   // track & particle flow parameters
   const bool   runTracking(true);
@@ -63,17 +63,18 @@ void Fun4All_ForCorrelatorJetTree(const string sInput = SInDefault, const string
   const double noiseLevels[NTopoPar]   = {0.0025, 0.006, 0.03};
   const double significance[NTopoPar]  = {4.0,    2.0,   0.0};
   const double localMinE[NTopoPar]     = {1.0,    2.0,   0.5};
-  const bool   enableHCal[NTopoClusts] = {true, true};
+  const bool   enableHCal[NTopoClusts] = {false, true};
   const bool   enableECal[NTopoClusts] = {true, false};
   const bool   doSplit(true);
   const bool   allowCorners(true);
 
   // jet tree parameters
+  const bool   isMC(true);
   const bool   doDebug(true);
   const bool   saveDst(true);
-  const bool   addTracks(true);
-  const bool   addEMClusters(true);
-  const bool   addHClusters(true);
+  const bool   addTracks(false);
+  const bool   addEMClusters(false);
+  const bool   addHClusters(false);
   const bool   addParticleFlow(true);
   const double ptTrackAccept[NAccept]     = {0.2,  9999.};
   const double ptEMClustAccept[NAccept]   = {0.3,  9999.};
@@ -97,9 +98,12 @@ void Fun4All_ForCorrelatorJetTree(const string sInput = SInDefault, const string
   se -> Verbosity(verbosity);
 
   // add input files
-  Fun4AllInputManager *inManager = new Fun4AllDstInputManager("InputDstManager");
-  inManager -> AddFile(sInput);
-  se        -> registerInputManager(inManager);
+  Fun4AllInputManager *inTrkrMan = new Fun4AllDstInputManager("InputDstManager_Tracks");
+  Fun4AllInputManager *inCaloMan = new Fun4AllDstInputManager("InputDstManager_CaloClusts");
+  inTrkrMan -> AddFile(sInTrkr);
+  inCaloMan -> AddFile(sInCalo);
+  se        -> registerInputManager(inTrkrMan);
+  se        -> registerInputManager(inCaloMan);
 
   // run the tracking if not already done
   if (runTracking) {
@@ -135,7 +139,7 @@ void Fun4All_ForCorrelatorJetTree(const string sInput = SInDefault, const string
   se     -> registerSubsystem(tables);
 
   // build topo clusters
-  RawClusterBuilderTopo* ClusterBuilder1 = new RawClusterBuilderTopo("HcalRawClusterBuilderTopo1");
+  RawClusterBuilderTopo* ClusterBuilder1 = new RawClusterBuilderTopo("EcalRawClusterBuilderTopo");
   ClusterBuilder1 -> Verbosity(verbosity);
   ClusterBuilder1 -> set_nodename("TOPOCLUSTER_EMCAL");
   ClusterBuilder1 -> set_enable_HCal(enableHCal[0]);
@@ -148,7 +152,7 @@ void Fun4All_ForCorrelatorJetTree(const string sInput = SInDefault, const string
   ClusterBuilder1 -> set_R_shower(showerR);
   se              -> registerSubsystem(ClusterBuilder1);
 
-  RawClusterBuilderTopo* ClusterBuilder2 = new RawClusterBuilderTopo("HcalRawClusterBuilderTopo2");
+  RawClusterBuilderTopo* ClusterBuilder2 = new RawClusterBuilderTopo("HcalRawClusterBuilderTopo");
   ClusterBuilder2 -> Verbosity(verbosity);
   ClusterBuilder2 -> set_nodename("TOPOCLUSTER_HCAL");
   ClusterBuilder2 -> set_enable_HCal(enableHCal[1]);
@@ -168,7 +172,7 @@ void Fun4All_ForCorrelatorJetTree(const string sInput = SInDefault, const string
   se  -> registerSubsystem(pfr);
 
   // create correlator jet tree
-  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, doDebug);
+  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, doDebug);
   correlatorJetTree -> Verbosity(verbosity);
   correlatorJetTree -> setAddTracks(addTracks);
   correlatorJetTree -> setAddEMCalClusters(addEMClusters);
