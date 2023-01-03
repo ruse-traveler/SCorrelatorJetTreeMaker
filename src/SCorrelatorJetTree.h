@@ -86,13 +86,13 @@ class SCorrelatorJetTree : public SubsysReco {
     };
 
     // ctor/dtor
-    SCorrelatorJetTree(const std::string &name = "SCorrelatorJetTree", const std::string &outfile = "inclusive_jet_tree.root", const bool debug = true);
+    SCorrelatorJetTree(const std::string &name = "SCorrelatorJetTree", const std::string &outfile = "correlator_jet_tree.root", const bool isMC = false, const bool debug = false);
     ~SCorrelatorJetTree() override;
 
     // F4A methods
-    int Init(PHCompositeNode *topNode)          override;
-    int process_event(PHCompositeNode *topNode) override;
-    int End(PHCompositeNode *topNode)           override;
+    int Init(PHCompositeNode *)          override;
+    int process_event(PHCompositeNode *) override;
+    int End(PHCompositeNode *)           override;
 
     // particle flow setters
     void setParticleFlowMinEta(double etamin) {m_particleflow_mineta = etamin;}

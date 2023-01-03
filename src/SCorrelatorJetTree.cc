@@ -83,9 +83,10 @@ static const unsigned long NRange(2);
 
 // ctor/dtor ------------------------------------------------------------------
 
-SCorrelatorJetTree::SCorrelatorJetTree(const string &name, const string &outfile, const bool debug) : SubsysReco(name) {
+SCorrelatorJetTree::SCorrelatorJetTree(const string &name, const string &outfile, const bool isMC, const bool debug) : SubsysReco(name) {
 
   // print debug statement
+  m_ismc    = isMC;
   m_doDebug = debug;
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::SCorrelatorJetTree(const string &name) Calling ctor" << endl;
@@ -118,7 +119,7 @@ SCorrelatorJetTree::~SCorrelatorJetTree() {
 int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
 
   // print debug statement
-  if (m_doDebug || (Verbosity() > 5)) {
+  if (m_doDebug || (Verbosity() > 1)) {
     cout << "SCorrelatorJetTree::Init(PHCompositeNode *topNode) Initializing..." << endl;
   }
 
@@ -144,17 +145,15 @@ int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
 int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
 
   // print debug statement
-  if (m_doDebug || (Verbosity() > 5)) {
+  if (m_doDebug || (Verbosity() > 1)) {
     cout << "SCorrelatorJetTree::process_event(PHCompositeNode *topNode) Processing Event..." << endl;
   }
 
   // find jets
-  cout << "CHECK: before finding jets..." << endl;
   findJets(topNode);
   if (m_ismc) {
     findMcJets(topNode);
   }
-  cout << "CHECK: after finding jets..." << endl;
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'process_event(PHCompositeNode*)'
@@ -203,7 +202,6 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
   if (doParticleFlow) addParticleFlow(topNode, particles, fjMap);
   if (doTracks)       addTracks(topNode, particles, fjMap);
   if (doCaloClusters) addClusters(topNode, particles, fjMap);
-  cout << "CHECK: [reco] nProtojets = " << particles.size() << endl;
 
   // cluster jets
   fastjet::ClusterSequence   jetFinder(particles, *jetdef);
@@ -240,7 +238,7 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
   vecRecCstPhi.clear();
 
   // fill jet/constituent variables
-  unsigned int nJet(0);
+  unsigned long nJet(0);
   for (unsigned int iJet = 0; iJet < fastjets.size(); ++iJet) {
 
     // get jet info
@@ -331,7 +329,7 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
 void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
 
   // print debug statement
-  if (m_doDebug) {
+  if (m_doDebug || (Verbosity() > 6)) {
     cout << "SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) Finding MC jets..." << endl;
   }
 
@@ -342,7 +340,6 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
 
   // add constituents
   addParticles(topNode, particles, fjMapMC);
-  cout << "CHECK: [mc] nProtojets = " << particles.size() << endl;
 
   // cluster jets
   fastjet::ClusterSequence   jetFinder(particles, *jetdef);
@@ -1003,7 +1000,7 @@ void SCorrelatorJetTree::initializeTrees() {
 
   // initialize output trees
   m_recTree = new TTree("RecoJetTree", "A tree of reconstructed jets");
-  m_recTree -> Branch("EvtNumJets",   &m_recNumJets,       "NumJets/D");
+  m_recTree -> Branch("EvtNumJets",   &m_recNumJets,       "NumJets/I");
   m_recTree -> Branch("Parton3_ID",   &m_recPartonID[0],   "Parton3_ID/I");
   m_recTree -> Branch("Parton4_ID",   &m_recPartonID[1],   "Parton4_ID/I");
   m_recTree -> Branch("Parton3_MomX", &m_recPartonMomX[0], "Parton3_MomX/D");
@@ -1027,7 +1024,7 @@ void SCorrelatorJetTree::initializeTrees() {
   m_recTree -> Branch("CstPhi",       &m_recCstPhi);
 
   m_truTree = new TTree("TruthJetTree", "A tree of truth jets");
-  m_truTree -> Branch("EvtNumJets",   &m_truNumJets,       "NumJets/D");
+  m_truTree -> Branch("EvtNumJets",   &m_truNumJets,       "NumJets/I");
   m_truTree -> Branch("Parton3_ID",   &m_truPartonID[0],   "Parton3_ID/I");
   m_truTree -> Branch("Parton4_ID",   &m_truPartonID[1],   "Parton4_ID/I");
   m_truTree -> Branch("Parton3_MomX", &m_truPartonMomX[0], "Parton3_MomX/D");
