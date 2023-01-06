@@ -42,9 +42,9 @@ using namespace std;
 
 // global constants
 static const string       SInHitsDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/g4hits/G4Hits_pythia8_pp_mb-0000000050-03954.root";
-static const string       SInTrksDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/tracks/DST_TRACKS_pythia8_pp_mb_3MHz-0000000050-03954.root";
-static const string       SInSeedDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trackseeds/DST_TRACKSEEDS_pythia8_pp_mb_3MHz-0000000050-03954.root";
 static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/calocluster/DST_CALO_CLUSTER_pythia8_pp_mb_3MHz-0000000050-03954.root";
+static const string       SInSeedDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trackseeds/DST_TRACKSEEDS_pythia8_pp_mb_3MHz-0000000050-03954.root";
+static const string       SInTrksDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/tracks/DST_TRACKS_pythia8_pp_mb_3MHz-0000000050-03954.root";
 static const string       SInTrueDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trkrhit/DST_TRUTH_pythia8_pp_mb_3MHz-0000000050-03954.root";
 static const string       SOutDefault    = "oops.root";
 static const int          NEvtDefault    = 10;
@@ -55,7 +55,7 @@ static const unsigned int NAccept        = 2;
 
 
 
-void Fun4All_ForCorrelatorJetTree(const string sInHits = SInHitsDefault, const string sInTrks = SInTrksDefault, const string sInSeed = SInSeedDefault, const string sInCalo = SInCaloDefault, const string sInTrue = SInTrueDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
+void Fun4All_ForCorrelatorJetTree(const string sInHits = SInHitsDefault, const string sInCalo = SInCaloDefault, const string sInSeed = SInSeedDefault, const string sInTrks = SInTrksDefault, const string sInTrue = SInTrueDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
 
   // track & particle flow parameters
   const bool   runTracking(false);
@@ -102,20 +102,20 @@ void Fun4All_ForCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
 
   // add input files
   Fun4AllInputManager *inHitsMan = new Fun4AllDstInputManager("InputDstManager_G4Hits");
-  Fun4AllInputManager *inTrksMan = new Fun4AllDstInputManager("InputDstManager_Tracks");
-  Fun4AllInputManager *inSeedMan = new Fun4AllDstInputManager("InputDstManager_TrackSeeds");
   Fun4AllInputManager *inCaloMan = new Fun4AllDstInputManager("InputDstManager_CaloClusts");
-  Fun4AllInputManager *inTrueMan = new Fun4AllDstInputManager("InputDstManager_TruthRecord");
+  Fun4AllInputManager *inSeedMan = new Fun4AllDstInputManager("InputDstManager_TrackSeeds");
+  Fun4AllInputManager *inTrksMan = new Fun4AllDstInputManager("InputDstManager_Tracks");
+  Fun4AllInputManager *inTrueMan = new Fun4AllDstInputManager("InputDstManager_Truth");
   inHitsMan -> AddFile(sInHits);
-  inTrksMan -> AddFile(sInTrks);
-  inSeedMan -> AddFile(sInSeed);
   inCaloMan -> AddFile(sInCalo);
+  inSeedMan -> AddFile(sInSeed);
+  inTrksMan -> AddFile(sInTrks);
   inTrueMan -> AddFile(sInTrue);
   se        -> registerInputManager(inHitsMan);
   se        -> registerInputManager(inCaloMan);
   if (isMC) {
-    se -> registerInputManager(inTrksMan);
     se -> registerInputManager(inSeedMan);
+    se -> registerInputManager(inTrksMan);
     se -> registerInputManager(inTrueMan);
   }
 
