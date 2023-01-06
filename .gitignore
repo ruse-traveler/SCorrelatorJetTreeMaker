@@ -2,6 +2,7 @@ test/
 input/
 output/
 backup/
+submit/
 reference/
 EnergyEnergyCorrelators/
 src/*
