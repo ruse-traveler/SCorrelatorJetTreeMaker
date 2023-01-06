@@ -48,7 +48,7 @@ static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/pyth
 static const string       SInTrueDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trkrhit/DST_TRUTH_pythia8_pp_mb_3MHz-0000000050-03954.root";
 static const string       SOutDefault    = "oops.root";
 static const int          NEvtDefault    = 10;
-static const int          VerbDefault    = 2;
+static const int          VerbDefault    = 0;
 static const unsigned int NTopoClusts    = 2;
 static const unsigned int NTopoPar       = 3;
 static const unsigned int NAccept        = 2;
@@ -58,7 +58,7 @@ static const unsigned int NAccept        = 2;
 void Fun4All_ForCorrelatorJetTree(const string sInHits = SInHitsDefault, const string sInTrks = SInTrksDefault, const string sInSeed = SInSeedDefault, const string sInCalo = SInCaloDefault, const string sInTrue = SInTrueDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
 
   // track & particle flow parameters
-  const bool   runTracking(true);
+  const bool   runTracking(false);
   const double nSigma(1.5);
 
   // topo cluster parameters
@@ -72,8 +72,8 @@ void Fun4All_ForCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   const bool   allowCorners(true);
 
   // jet tree parameters
-  const bool   isMC(false);
-  const bool   doDebug(false);
+  const bool   isMC(true);
+  const bool   doDebug(true);
   const bool   saveDst(true);
   const bool   addTracks(false);
   const bool   addEMClusters(false);
@@ -112,10 +112,12 @@ void Fun4All_ForCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   inCaloMan -> AddFile(sInCalo);
   inTrueMan -> AddFile(sInTrue);
   se        -> registerInputManager(inHitsMan);
-  se        -> registerInputManager(inTrksMan);
-  se        -> registerInputManager(inSeedMan);
   se        -> registerInputManager(inCaloMan);
-  se        -> registerInputManager(inTrueMan);
+  if (isMC) {
+    se -> registerInputManager(inTrksMan);
+    se -> registerInputManager(inSeedMan);
+    se -> registerInputManager(inTrueMan);
+  }
 
   // run the tracking if not already done
   if (runTracking) {
@@ -148,7 +150,9 @@ void Fun4All_ForCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   // construct track/truth table
   SvtxTruthRecoTableEval *tables = new SvtxTruthRecoTableEval();
   tables -> Verbosity(verbosity);
-  se     -> registerSubsystem(tables);
+  if (runTracking) {
+    se -> registerSubsystem(tables);
+  }
 
   // build topo clusters
   RawClusterBuilderTopo* ClusterBuilder1 = new RawClusterBuilderTopo("EcalRawClusterBuilderTopo");
