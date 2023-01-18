@@ -94,7 +94,7 @@ verb=0
 # loop over files
 (( nFile=0 ))
 for input in ${inHitsFiles[@]}; do
-  root -b -q "Fun4All_ForCorrelatorJetTree.C($input, ${inCaloFiles[$nFile]}, ${inSeedFiles[$nFile]}, ${inTrksFiles[$nFile]}, ${inTrueFiles[$nFile]}, ${outputFiles[$nFile]}, $nEvt, $verb)"
+  root -b -q "Fun4All_RunCorrelatorJetTree.C($input, ${inCaloFiles[$nFile]}, ${inSeedFiles[$nFile]}, ${inTrksFiles[$nFile]}, ${inTrueFiles[$nFile]}, ${outputFiles[$nFile]}, $nEvt, $verb)"
   (( nFile++ ))
 done
 

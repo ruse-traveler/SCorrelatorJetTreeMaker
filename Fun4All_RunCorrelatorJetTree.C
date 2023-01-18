@@ -1,4 +1,4 @@
-// 'Fun4All_ForCorrelatorJetTree.C'
+// 'Fun4All_RunCorrelatorJetTree.C'
 // Derek Anderson
 // 12.11.2022
 //
@@ -16,6 +16,7 @@
 
 // standard c includes
 #include <string>
+#include <cstdlib>
 // f4a/sphenix includes
 #include <QA.C>
 #include <FROG.h>
@@ -55,7 +56,7 @@ static const unsigned int NAccept        = 2;
 
 
 
-void Fun4All_ForCorrelatorJetTree(const string sInHits = SInHitsDefault, const string sInCalo = SInCaloDefault, const string sInSeed = SInSeedDefault, const string sInTrks = SInTrksDefault, const string sInTrue = SInTrueDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
+void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const string sInCalo = SInCaloDefault, const string sInSeed = SInSeedDefault, const string sInTrks = SInTrksDefault, const string sInTrue = SInTrueDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
 
   // track & particle flow parameters
   const bool   runTracking(false);
