@@ -4,6 +4,7 @@ output/
 backup/
 submit/
 reference/
+condorJob/
 EnergyEnergyCorrelators/
 src/*
 !src/SCorrelatorJetTree.h
