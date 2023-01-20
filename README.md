@@ -6,6 +6,6 @@ Derived from code by Antonio Silva (thanks!!)
 
 ---
 
-## TODO Items:
+### TODO Items:
   - [Major] Implement QA histograms
   - [Minor] Clean-up and make stylisticallly consistent
