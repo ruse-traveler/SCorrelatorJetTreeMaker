@@ -102,9 +102,12 @@ class SvtxTrack;
 class ParticleFlowElement;
 
 // global constants
-static const unsigned long NPart(2);
-static const unsigned long NComp(3);
-static const unsigned long NRange(2);
+static const size_t NPart(2);
+static const size_t NComp(3);
+static const size_t NRange(2);
+static const size_t NInfoQA(4);
+static const size_t NCstType(3);
+static const size_t NObjType(6);
 
 
 
@@ -124,6 +127,25 @@ class SCorrelatorJetTree : public SubsysReco {
       PT2_SCHEME = 2,
       ET_SCHEME  = 3,
       ET2_SCHEME = 4
+    };
+    enum OBJECT {
+      TRACK  = 0,
+      ECLUST = 1,
+      HCLUST = 2,
+      FLOW   = 3,
+      JET    = 4,
+      CST    = 5
+    };
+    enum CST_TYPE {
+      TRACK_CST = 0,
+      CALO_CST  = 1,
+      FLOW_CST  = 2
+    };
+    enum INFO {
+      PT  = 0,
+      ETA = 1,
+      PHI = 2,
+      ENE = 3
     };
 
     // ctor/dtor
