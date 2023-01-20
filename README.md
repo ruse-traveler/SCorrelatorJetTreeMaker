@@ -1,6 +1,11 @@
-Class to construct a tree of jets from a specified set of events.  This tree will serve as input for N-Point Energy Correlations.
+# SCorrelatorJetTree
+
+A class to construct a tree of jets from a specified set of events within the sPHENIX software stack. The produced trees will serve as input for the calculation of N-Point Energy Correlations.
 
 Derived from code by Antonio Silva (thanks!!)
 
-TODO Items:
+---
+
+## TODO Items:
+  - [Major] Implement QA histograms
   - [Minor] Clean-up and make stylisticallly consistent
