@@ -7,6 +7,7 @@ Derived from code by Antonio Silva (thanks!!)
 ---
 
 ### TODO Items:
-  - [Major] Implement QA histograms
   - [Major] Implement jet-matching
-  - [Minor] Clean-up and make stylisticallly consistent
+  - [Minor] Implement jet area calculation
+  - [Minor] Move constituent collection + QA calculations to dedicated methods
+  - [Minor] Clean-up and make stylistically consistent
