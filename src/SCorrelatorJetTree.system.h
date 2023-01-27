@@ -277,7 +277,7 @@ int SCorrelatorJetTree::createJetNode(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::createJetNode(PHCompositeNode *topNode) Creating jet node..." << endl;
+    cout << "SCorrelatorJetTree::createJetNode(PHCompositeNode*) Creating jet node..." << endl;
   }
 
   // create iterator & DST node

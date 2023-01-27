@@ -24,7 +24,7 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::findJets(PHCompositeNode *topNode) Finding jets..." << endl;
+    cout << "SCorrelatorJetTree::findJets(PHCompositeNode*) Finding jets..." << endl;
   }
 
   // declare fastjet objects
@@ -192,7 +192,7 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
 
   // print debug statement
   if (m_doDebug || (Verbosity() > 6)) {
-    cout << "SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) Finding MC jets..." << endl;
+    cout << "SCorrelatorJetTree::findMcJets(PHCompositeNode*) Finding MC jets..." << endl;
   }
 
   // declare fastjet objects & mc fastjet map
@@ -353,7 +353,7 @@ void SCorrelatorJetTree::addParticleFlow(PHCompositeNode *topNode, vector<Pseudo
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addParticleFlow(PHCompositeNode *topNode, vector<PseudoJet>&, map<int, parir<Jet::SRC, int>>&) Adding particle flow elements..." << endl;
+    cout << "SCorrelatorJetTree::addParticleFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, parir<Jet::SRC, int>>&) Adding particle flow elements..." << endl;
   }
 
   // declare pf  objects
@@ -423,7 +423,7 @@ void SCorrelatorJetTree::addTracks(PHCompositeNode *topNode, vector<PseudoJet> &
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addTracks(PHCompositeNode *topNode, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding tracks..." << endl;
+    cout << "SCorrelatorJetTree::addTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding tracks..." << endl;
   }
 
   // get track map
@@ -498,7 +498,7 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding clusters..." << endl;
+    cout << "SCorrelatorJetTree::addClusters(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding clusters..." << endl;
   }
 
   // get vertex map
