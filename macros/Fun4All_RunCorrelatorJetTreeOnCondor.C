@@ -71,12 +71,13 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
 
   // jet tree parameters
   const bool   isMC(true);
-  const bool   doDebug(true);
+  const bool   doDebug(false);
   const bool   saveDst(true);
-  const bool   addTracks(false);
+  const bool   doQuality(true);
+  const bool   addTracks(true);
   const bool   addEMClusters(false);
   const bool   addHClusters(false);
-  const bool   addParticleFlow(true);
+  const bool   addParticleFlow(false);
   const double ptTrackAccept[NAccept]     = {0.2,  9999.};
   const double ptEMClustAccept[NAccept]   = {0.3,  9999.};
   const double ptHClustAccept[NAccept]    = {0.3,  9999.};
@@ -86,7 +87,7 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   const double etaPartFlowAccept[NAccept] = {-1.1, 1.1};
 
   // jet tree jet parameters
-  const double jetRes  = 0.3;
+  const double jetRes  = 0.4;
   const auto   jetAlgo = SCorrelatorJetTree::ALGO::ANTIKT;
   const auto   jetReco = SCorrelatorJetTree::RECOMB::PT_SCHEME;
 
@@ -203,6 +204,7 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   // create correlator jet tree
   SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", outputRecoFile, isMC, doDebug);
   correlatorJetTree -> Verbosity(verbosity);
+  correlatorJetTree -> setDoQualityPlots(doQuality);
   correlatorJetTree -> setAddTracks(addTracks);
   correlatorJetTree -> setAddEMCalClusters(addEMClusters);
   correlatorJetTree -> setAddHCalClusters(addHClusters);
