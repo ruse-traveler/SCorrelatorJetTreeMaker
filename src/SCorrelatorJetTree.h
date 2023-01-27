@@ -116,6 +116,8 @@ static const double MassPion(0.140);
 
 
 
+// SCorrelatorJetTree definition ----------------------------------------------
+
 class SCorrelatorJetTree : public SubsysReco {
 
   public:
