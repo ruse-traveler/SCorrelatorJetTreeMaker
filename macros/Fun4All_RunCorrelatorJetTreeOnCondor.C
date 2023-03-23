@@ -38,13 +38,13 @@
 #include <caloreco/RawClusterBuilderTopo.h>
 #include <particleflowreco/ParticleFlowReco.h>
 // user includes
-#include </sphenix/u/danderson/install/include/scorrelatorjettree/SCorrelatorJetTree.h>
+#include </sphenix/user/danderson/install/include/scorrelatorjettree/SCorrelatorJetTree.h>
 
 // load libraries
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libparticleflow.so)
-R__LOAD_LIBRARY(/sphenix/u/danderson/install/lib/libscorrelatorjettree.so)
+R__LOAD_LIBRARY(/sphenix/user/danderson/install/lib/libscorrelatorjettree.so)
 
 using namespace std;
 
