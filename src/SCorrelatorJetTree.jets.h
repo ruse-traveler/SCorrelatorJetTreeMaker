@@ -540,7 +540,7 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
     }
 
     // loop over em clusters
-    RawClusterContainer::ConstRange    begin_end_EMC = clustersEMC->getClusters();
+    RawClusterContainer::ConstRange    begin_end_EMC = clustersEMC -> getClusters();
     RawClusterContainer::ConstIterator clusIter_EMC;
     for (clusIter_EMC = begin_end_EMC.first; clusIter_EMC != begin_end_EMC.second; ++clusIter_EMC) {
 
@@ -609,7 +609,7 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
     }
 
     // Loop over ih clusters
-    RawClusterContainer::ConstRange    begin_end_HCALIN = clustersHCALIN->getClusters();
+    RawClusterContainer::ConstRange    begin_end_HCALIN = clustersHCALIN -> getClusters();
     RawClusterContainer::ConstIterator clusIter_HCALIN;
     for (clusIter_HCALIN = begin_end_HCALIN.first; clusIter_HCALIN != begin_end_HCALIN.second; ++clusIter_HCALIN) {
 
@@ -674,7 +674,7 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
     }
 
     // loop over oh clusters
-    RawClusterContainer::ConstRange    begin_end_HCALOUT = clustersHCALOUT->getClusters();
+    RawClusterContainer::ConstRange    begin_end_HCALOUT = clustersHCALOUT -> getClusters();
     RawClusterContainer::ConstIterator clusIter_HCALOUT;
     for (clusIter_HCALOUT = begin_end_HCALOUT.first; clusIter_HCALOUT != begin_end_HCALOUT.second; ++clusIter_HCALOUT) {
 
@@ -783,7 +783,7 @@ void SCorrelatorJetTree::addParticles(PHCompositeNode *topNode, vector<PseudoJet
   for (HepMC::GenEvent::particle_const_iterator p = hepMCevent -> particles_begin(); p != hepMCevent -> particles_end(); ++p) {
 
     // check if particle is final state
-    const bool isFinalState = ((*p) -> status() > 1);
+    const bool isFinalState = ((*p) -> status() == 1);
     if (!isFinalState) {
       continue;
     } else {

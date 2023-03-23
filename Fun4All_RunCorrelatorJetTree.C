@@ -31,22 +31,22 @@
 #include <caloreco/RawClusterBuilderTopo.h>
 #include <particleflowreco/ParticleFlowReco.h>
 // user includes
-#include </sphenix/u/danderson/install/include/scorrelatorjettree/SCorrelatorJetTree.h>
+#include "/sphenix/user/danderson/install/include/scorrelatorjettree/SCorrelatorJetTree.h"
 
 // load libraries
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libparticleflow.so)
-R__LOAD_LIBRARY(/sphenix/u/danderson/install/lib/libscorrelatorjettree.so)
+R__LOAD_LIBRARY(/sphenix/user/danderson/install/lib/libscorrelatorjettree.so)
 
 using namespace std;
 
 // global constants
-static const string       SInHitsDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/g4hits/G4Hits_pythia8_pp_mb-0000000050-03954.root";
-static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/calocluster/DST_CALO_CLUSTER_pythia8_pp_mb_3MHz-0000000050-03954.root";
-static const string       SInSeedDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trackseeds/DST_TRACKSEEDS_pythia8_pp_mb_3MHz-0000000050-03954.root";
-static const string       SInTrksDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/tracks/DST_TRACKS_pythia8_pp_mb_3MHz-0000000050-03954.root";
-static const string       SInTrueDefault = "/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trkrhit/DST_TRUTH_pythia8_pp_mb_3MHz-0000000050-03954.root";
+static const string       SInHitsDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/g4hits/run0006/jet30/G4Hits_pythia8_Jet30-0000000006-06666.root";
+static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/calocluster/run0006/jet30/DST_CALO_CLUSTER_pythia8_Jet30-0000000006-06666.root";
+static const string       SInSeedDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/trackseeds/nopileup/run0006/jet30/DST_TRACKSEEDS_pythia8_Jet30-0000000006-06666.root";
+static const string       SInTrksDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/tracks/nopileup/run0006/jet30/DST_TRACKS_pythia8_Jet30-0000000006-06666.root";
+static const string       SInTrueDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/trkrhit/run0006/jet30/DST_TRUTH_pythia8_Jet30-0000000006-06666.root";
 static const string       SOutDefault    = "oops.root";
 static const int          NEvtDefault    = 10;
 static const int          VerbDefault    = 0;
@@ -74,13 +74,13 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
 
   // jet tree parameters
   const bool   isMC(true);
-  const bool   doDebug(true);
+  const bool   doDebug(false);
   const bool   saveDst(true);
   const bool   doQuality(true);
-  const bool   addTracks(true);
-  const bool   addEMClusters(true);
-  const bool   addHClusters(true);
-  const bool   addParticleFlow(true);
+  const bool   addTracks(false);
+  const bool   addEMClusters(false);
+  const bool   addHClusters(false);
+  const bool   addParticleFlow(false);
   const double ptTrackAccept[NAccept]     = {0.2,  9999.};
   const double ptEMClustAccept[NAccept]   = {0.3,  9999.};
   const double ptHClustAccept[NAccept]    = {0.3,  9999.};
@@ -168,7 +168,7 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   ClusterBuilder1 -> set_do_split(doSplit);
   ClusterBuilder1 -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
   ClusterBuilder1 -> set_R_shower(showerR);
-  se              -> registerSubsystem(ClusterBuilder1);
+  //se              -> registerSubsystem(ClusterBuilder1);
 
   RawClusterBuilderTopo* ClusterBuilder2 = new RawClusterBuilderTopo("HcalRawClusterBuilderTopo");
   ClusterBuilder2 -> Verbosity(verbosity);
@@ -181,13 +181,13 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   ClusterBuilder2 -> set_do_split(doSplit);
   ClusterBuilder2 -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
   ClusterBuilder2 -> set_R_shower(showerR);
-  se              -> registerSubsystem(ClusterBuilder2);
+  //se              -> registerSubsystem(ClusterBuilder2);
 
   // do particle flow
   ParticleFlowReco *pfr = new ParticleFlowReco();
   pfr -> set_energy_match_Nsigma(nSigma);
   pfr -> Verbosity(verbosity);
-  se  -> registerSubsystem(pfr);
+  //se  -> registerSubsystem(pfr);
 
   // create correlator jet tree
   SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, doDebug);
