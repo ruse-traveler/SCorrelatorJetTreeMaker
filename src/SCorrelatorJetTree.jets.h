@@ -1,3 +1,4 @@
+// ----------------------------------------------------------------------------
 // 'SCorrelatorJetTree.jets.h'
 // Derek Anderson
 // 01.18.2023
@@ -11,6 +12,7 @@
 //
 // Derived from code by Antonio
 // Silva (thanks!!)
+// ----------------------------------------------------------------------------
 
 #pragma once
 
@@ -19,6 +21,8 @@ using namespace fastjet;
 using namespace findNode;
 
 
+
+// jet methods ----------------------------------------------------------------
 
 void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
 
@@ -353,7 +357,12 @@ void SCorrelatorJetTree::addParticleFlow(PHCompositeNode *topNode, vector<Pseudo
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addParticleFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, parir<Jet::SRC, int>>&) Adding particle flow elements..." << endl;
+    cout << "SCorrelatorJetTree::addParticleFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding particle flow elements..." << endl;
+  }
+
+  // warn if jets should be charged
+  if (m_doDebug && (m_jetType != 1)) {
+    cerr << "SCorrelatorJetTree::addParticleFlow - Warning - trying to add particle flow elements to charged jets!" << endl;
   }
 
   // declare pf  objects
@@ -499,6 +508,11 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
   // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::addClusters(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding clusters..." << endl;
+  }
+
+  // warn if jets should be charged
+  if (m_doDebug && (m_jetType != 1)) {
+    cerr << "SCorrelatorJetTree::addClusters - Warning - trying to add calorimeter clusters to charged jets!" << endl;
   }
 
   // get vertex map

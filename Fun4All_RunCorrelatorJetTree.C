@@ -1,3 +1,4 @@
+// ----------------------------------------------------------------------------
 // 'Fun4All_RunCorrelatorJetTree.C'
 // Derek Anderson
 // 12.11.2022
@@ -7,6 +8,12 @@
 //
 // Derived from code by Cameron Dean and
 // Antonio Silva (thanks!!)
+//
+// NOTE: jetType sets whether or not jets
+// are full (charge + neutral) or charged
+//   jetType = 0: charged jets
+//   jetType = 1: full jets
+// ----------------------------------------------------------------------------
 
 /****************************/
 /*     MDC2 Reco for MDC2   */
@@ -77,7 +84,7 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   const bool   doDebug(false);
   const bool   saveDst(true);
   const bool   doQuality(true);
-  const bool   addTracks(false);
+  const bool   addTracks(true);
   const bool   addEMClusters(false);
   const bool   addHClusters(false);
   const bool   addParticleFlow(false);
@@ -90,9 +97,10 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   const double etaPartFlowAccept[NAccept] = {-1.1, 1.1};
 
   // jet tree jet parameters
-  const double jetRes  = 0.3;
-  const auto   jetAlgo = SCorrelatorJetTree::ALGO::ANTIKT;
-  const auto   jetReco = SCorrelatorJetTree::RECOMB::PT_SCHEME;
+  const double       jetRes  = 0.4;
+  const unsigned int jetType = 0;
+  const auto         jetAlgo = SCorrelatorJetTree::ALGO::ANTIKT;
+  const auto         jetReco = SCorrelatorJetTree::RECOMB::PT_SCHEME;
 
   // load libraries and create f4a server
   gSystem -> Load("libg4dst.so");
@@ -168,7 +176,7 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   ClusterBuilder1 -> set_do_split(doSplit);
   ClusterBuilder1 -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
   ClusterBuilder1 -> set_R_shower(showerR);
-  //se              -> registerSubsystem(ClusterBuilder1);
+  se              -> registerSubsystem(ClusterBuilder1);
 
   RawClusterBuilderTopo* ClusterBuilder2 = new RawClusterBuilderTopo("HcalRawClusterBuilderTopo");
   ClusterBuilder2 -> Verbosity(verbosity);
@@ -181,13 +189,13 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   ClusterBuilder2 -> set_do_split(doSplit);
   ClusterBuilder2 -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
   ClusterBuilder2 -> set_R_shower(showerR);
-  //se              -> registerSubsystem(ClusterBuilder2);
+  se              -> registerSubsystem(ClusterBuilder2);
 
   // do particle flow
   ParticleFlowReco *pfr = new ParticleFlowReco();
   pfr -> set_energy_match_Nsigma(nSigma);
   pfr -> Verbosity(verbosity);
-  //se  -> registerSubsystem(pfr);
+  se  -> registerSubsystem(pfr);
 
   // create correlator jet tree
   SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, doDebug);
@@ -204,7 +212,7 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   correlatorJetTree -> setEMCalClusterEtaAcc(etaEMClustAccept[0], etaEMClustAccept[1]);
   correlatorJetTree -> setHCalClusterEtaAcc(etaHClustAccept[0], etaHClustAccept[1]);
   correlatorJetTree -> setParticleFlowEtaAcc(etaPartFlowAccept[0], etaPartFlowAccept[1]);
-  correlatorJetTree -> setJetParameters(jetRes, jetAlgo, jetReco);
+  correlatorJetTree -> setJetParameters(jetRes, jetType, jetAlgo, jetReco);
   correlatorJetTree -> setSaveDST(saveDst);
   se                -> registerSubsystem(correlatorJetTree);
 

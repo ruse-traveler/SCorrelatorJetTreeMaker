@@ -1,3 +1,4 @@
+// ----------------------------------------------------------------------------
 // 'Fun4All_RunCorrelatorJetTreeOnCondor.C'
 // Derek Anderson
 // 01.06.2023
@@ -7,6 +8,12 @@
 //
 // Derived from code by Cameron Dean and
 // Antonio Silva (thanks!!)
+//
+// NOTE: jetType sets whether or not jets
+// are full (charge + neutral) or charged
+//   jetType = 0: charged jets
+//   jetType = 1: full jets
+// ----------------------------------------------------------------------------
 
 /****************************/
 /*     MDC2 Reco for MDC2   */
@@ -87,9 +94,10 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   const double etaPartFlowAccept[NAccept] = {-1.1, 1.1};
 
   // jet tree jet parameters
-  const double jetRes  = 0.4;
-  const auto   jetAlgo = SCorrelatorJetTree::ALGO::ANTIKT;
-  const auto   jetReco = SCorrelatorJetTree::RECOMB::PT_SCHEME;
+  const double       jetRes  = 0.4;
+  const unsigned int jetType = 0;
+  const auto         jetAlgo = SCorrelatorJetTree::ALGO::ANTIKT;
+  const auto         jetReco = SCorrelatorJetTree::RECOMB::PT_SCHEME;
 
   // load libraries and create f4a server
   gSystem -> Load("libg4dst.so");
@@ -216,7 +224,7 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   correlatorJetTree -> setEMCalClusterEtaAcc(etaEMClustAccept[0], etaEMClustAccept[1]);
   correlatorJetTree -> setHCalClusterEtaAcc(etaHClustAccept[0], etaHClustAccept[1]);
   correlatorJetTree -> setParticleFlowEtaAcc(etaPartFlowAccept[0], etaPartFlowAccept[1]);
-  correlatorJetTree -> setJetParameters(jetRes, jetAlgo, jetReco);
+  correlatorJetTree -> setJetParameters(jetRes, jetType, jetAlgo, jetReco);
   correlatorJetTree -> setSaveDST(saveDst);
   se                -> registerSubsystem(correlatorJetTree);
 

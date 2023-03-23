@@ -1,3 +1,4 @@
+// ----------------------------------------------------------------------------
 // 'SCorrelatorJetTree.cc'
 // Derek Anderson
 // 12.04.2022
@@ -11,6 +12,7 @@
 //
 // Derived from code by Antonio
 // Silva (thanks!!)
+// ----------------------------------------------------------------------------
 
 #define SCORRELATORJETTREE_CC
 

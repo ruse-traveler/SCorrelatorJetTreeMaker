@@ -1,3 +1,4 @@
+// ----------------------------------------------------------------------------
 // 'SCorrelatorJetTree.h'
 // Derek Anderson
 // 12.04.2022
@@ -8,6 +9,7 @@
 //
 // Derived from code by Antonio
 // Silva (thanks!!)
+// ----------------------------------------------------------------------------
 
 #ifndef SCORRELATORJETTREE_H
 #define SCORRELATORJETTREE_H
@@ -235,12 +237,14 @@ class SCorrelatorJetTree : public SubsysReco {
     bool getAddHCalClusters()  {return m_add_HCal_clusters;}
 
     // jet setters
-    void setR(double r) {m_jetr = r;}
+    void setR(double r)             {m_jetr    = r;}
+    void setType(unsigned int type) {m_jetType = type;}
     void setJetAlgo(ALGO jetalgo);
     void setRecombScheme(RECOMB recomb_scheme);
-    void setJetParameters(double r, ALGO jetalgo, RECOMB recomb_scheme);
+    void setJetParameters(double r, unsigned int type, ALGO jetalgo, RECOMB recomb_scheme);
     // jet getters
     double                       getR()            {return m_jetr;}
+    unsigned int                 getType()         {return m_jetType;}
     fastjet::JetAlgorithm        getJetAlgo()      {return m_jetalgo;}
     fastjet::RecombinationScheme getRecombScheme() {return m_recomb_scheme;}
 
@@ -267,11 +271,12 @@ class SCorrelatorJetTree : public SubsysReco {
     void addClusters(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     void addParticles(PHCompositeNode *topNode, std::vector<fastjet::PseudoJet> &particles, std::map<int, std::pair<Jet::SRC, int>> &fjMap);
     // constituent methods
-    bool isAcceptableParticleFlow(ParticleFlowElement *pfPart);
-    bool isAcceptableTrack(SvtxTrack *track);
-    bool isAcceptableEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
-    bool isAcceptableHCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
-    bool isAcceptableParticle(HepMC::GenParticle *part);
+    bool  isAcceptableParticleFlow(ParticleFlowElement *pfPart);
+    bool  isAcceptableTrack(SvtxTrack *track);
+    bool  isAcceptableEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
+    bool  isAcceptableHCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
+    bool  isAcceptableParticle(HepMC::GenParticle *part);
+    float getParticleCharge(const int pid);
     // i/o methods
     void initializeVariables();
     void initializeHists();
@@ -314,6 +319,7 @@ class SCorrelatorJetTree : public SubsysReco {
     bool m_add_HCal_clusters;
     // jet parameters
     double                        m_jetr;
+    unsigned int                  m_jetType;
     fastjet::JetAlgorithm         m_jetalgo;
     fastjet::RecombinationScheme  m_recomb_scheme;
     JetMapv1                     *m_jetMap;
