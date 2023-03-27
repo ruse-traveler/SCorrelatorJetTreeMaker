@@ -24,6 +24,7 @@
 // standard c includes
 #include <string>
 #include <cstdlib>
+#include <utility>
 // f4a/sphenix includes
 #include <QA.C>
 #include <FROG.h>
@@ -54,12 +55,11 @@ static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_p
 static const string       SInSeedDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/trackseeds/nopileup/run0006/jet30/DST_TRACKSEEDS_pythia8_Jet30-0000000006-06666.root";
 static const string       SInTrksDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/tracks/nopileup/run0006/jet30/DST_TRACKS_pythia8_Jet30-0000000006-06666.root";
 static const string       SInTrueDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/trkrhit/run0006/jet30/DST_TRUTH_pythia8_Jet30-0000000006-06666.root";
-static const string       SOutDefault    = "baseline.root";
+static const string       SOutDefault    = "update0.consolidateTreeFilling.root";
 static const int          NEvtDefault    = 10;
 static const int          VerbDefault    = 0;
 static const unsigned int NTopoClusts    = 2;
 static const unsigned int NTopoPar       = 3;
-static const unsigned int NAccept        = 2;
 
 
 
@@ -79,22 +79,27 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   const bool   doSplit(true);
   const bool   allowCorners(true);
 
-  // jet tree parameters
-  const bool   isMC(true);
-  const bool   doDebug(true);
-  const bool   saveDst(true);
-  const bool   doQuality(true);
-  const bool   addTracks(true);
-  const bool   addEMClusters(false);
-  const bool   addHClusters(false);
-  const bool   addParticleFlow(false);
-  const double ptTrackAccept[NAccept]     = {0.2,  9999.};
-  const double ptEMClustAccept[NAccept]   = {0.3,  9999.};
-  const double ptHClustAccept[NAccept]    = {0.3,  9999.};
-  const double etaTrackAccept[NAccept]    = {-1.1, 1.1};
-  const double etaEMClustAccept[NAccept]  = {-1.1, 1.1};
-  const double etaHClustAccept[NAccept]   = {-1.1, 1.1};
-  const double etaPartFlowAccept[NAccept] = {-1.1, 1.1};
+  // jet tree general parameters
+  const bool isMC(true);
+  const bool doDebug(true);
+  const bool saveDst(true);
+  const bool doQuality(true);
+  const bool addTracks(true);
+  const bool addECal(false);
+  const bool addHCal(false);
+  const bool addParticleFlow(false);
+
+  // constituent acceptance
+  const pair<double, double> ptParRange    = {0.,   9999.};
+  const pair<double, double> etaParRange   = {-1.1, 1.1};
+  const pair<double, double> ptTrackRange  = {0.2,  9999.};
+  const pair<double, double> etaTrackRange = {-1.1, 1.1};
+  const pair<double, double> ptFlowRange   = {0.2,  9999.};
+  const pair<double, double> etaFlowRange  = {-1.1, 1.1};
+  const pair<double, double> ptECalRange   = {0.3,  9999.};
+  const pair<double, double> etaECalRange  = {-1.1, 1.1};
+  const pair<double, double> ptHCalRange   = {0.3,  9999.};
+  const pair<double, double> etaHCalRange  = {-1.1, 1.1};
 
   // jet tree jet parameters
   const double       jetRes  = 0.4;
@@ -202,16 +207,19 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   correlatorJetTree -> Verbosity(verbosity);
   correlatorJetTree -> SetDoQualityPlots(doQuality);
   correlatorJetTree -> SetAddTracks(addTracks);
-  correlatorJetTree -> SetAddEMCalClusters(addEMClusters);
-  correlatorJetTree -> SetAddHCalClusters(addHClusters);
-  correlatorJetTree -> SetAddParticleFlow(addParticleFlow);
-  correlatorJetTree -> SetTrackPtAcc(ptTrackAccept[0], ptTrackAccept[1]);
-  correlatorJetTree -> SetEMCalClusterPtAcc(ptEMClustAccept[0], ptEMClustAccept[1]);
-  correlatorJetTree -> SetHCalClusterPtAcc(ptHClustAccept[0], ptHClustAccept[1]);
-  correlatorJetTree -> SetTrackEtaAcc(etaTrackAccept[0], etaTrackAccept[1]);
-  correlatorJetTree -> SetEMCalClusterEtaAcc(etaEMClustAccept[0], etaEMClustAccept[1]);
-  correlatorJetTree -> SetHCalClusterEtaAcc(etaHClustAccept[0], etaHClustAccept[1]);
-  correlatorJetTree -> SetParticleFlowEtaAcc(etaPartFlowAccept[0], etaPartFlowAccept[1]);
+  correlatorJetTree -> SetAddFlow(addParticleFlow);
+  correlatorJetTree -> SetAddECal(addECal);
+  correlatorJetTree -> SetAddHCal(addHCal);
+  correlatorJetTree -> SetParPtRange(ptParRange);
+  correlatorJetTree -> SetParEtaRange(etaParRange);
+  correlatorJetTree -> SetTrackPtRange(ptTrackRange);
+  correlatorJetTree -> SetTrackEtaRange(etaTrackRange);
+  correlatorJetTree -> SetFlowPtRange(ptFlowRange);
+  correlatorJetTree -> SetFlowEtaRange(etaFlowRange);
+  correlatorJetTree -> SetECalPtRange(ptECalRange);
+  correlatorJetTree -> SetECalEtaRange(etaECalRange);
+  correlatorJetTree -> SetHCalPtRange(ptHCalRange);
+  correlatorJetTree -> SetHCalEtaRange(etaHCalRange);
   correlatorJetTree -> SetJetParameters(jetRes, jetType, jetAlgo, jetReco);
   correlatorJetTree -> SetSaveDST(saveDst);
   se                -> registerSubsystem(correlatorJetTree);

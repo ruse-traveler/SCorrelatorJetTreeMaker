@@ -31,15 +31,15 @@ using namespace findNode;
 
 // ctor/dtor ------------------------------------------------------------------
 
-SCorrelatorJetTree::SCorrelatorJetTree(const string &name, const string &outfile, const bool isMC, const bool debug) : SubsysReco(name) {
+SCorrelatorJetTree::SCorrelatorJetTree(const string &name, const string &outFile, const bool isMC, const bool debug) : SubsysReco(name) {
 
   // print debug statement
-  m_ismc    = isMC;
+  m_isMC    = isMC;
   m_doDebug = debug;
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::SCorrelatorJetTree(string, string, bool, bool) Calling ctor" << endl;
   }
-  m_outfilename = outfile;
+  m_outFileName = outFile;
   InitVariables();
 
 }  // end ctor(string, string, bool, bool)
@@ -52,10 +52,15 @@ SCorrelatorJetTree::~SCorrelatorJetTree() {
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::~SCorrelatorJetTree() Calling dtor" << endl;
   }
-  delete m_hm;
+  delete m_histMan;
   delete m_outFile;
   delete m_recoTree;
   delete m_trueTree;
+  delete m_matchTree;
+  delete m_trueJetDef;
+  delete m_recoJetDef;
+  delete m_trueClust;
+  delete m_recoClust;
 
 }  // end dtor
 
@@ -71,13 +76,13 @@ int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
   }
 
   // intitialize output file
-  m_outFile = new TFile(m_outfilename.c_str(), "RECREATE");
+  m_outFile = new TFile(m_outFileName.c_str(), "RECREATE");
   if (!m_outFile) {
     cerr << "PANIC: couldn't open SCorrelatorJetTree output file!" << endl;
   }
 
   // create node for jet-tree
-  if (m_save_dst) {
+  if (m_saveDST) {
     CreateJetNode(topNode);
   }
 
@@ -97,15 +102,24 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
     cout << "SCorrelatorJetTree::process_event(PHCompositeNode*) Processing Event..." << endl;
   }
 
-  /* reset event variables goes here */
+  // reset variables for event
+  ResetVariables();
+
+  /* grab event-wise variables here */
 
   // find jets
-  if (m_ismc) {
-    FindMcJets(topNode);
+  if (m_isMC) {
+    FindTrueJets(topNode);
   }
-  FindJets(topNode);
+  FindRecoJets(topNode);
 
-  /* jet matching & filling trees go here */
+  /* jet matching goes here */
+
+  // fill output trees
+  if (m_isMC) {
+    FillTrueTree();
+  }
+  FillRecoTree();
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'process_event(PHCompositeNode*)'

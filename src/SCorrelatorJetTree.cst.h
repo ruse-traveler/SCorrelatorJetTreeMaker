@@ -24,78 +24,6 @@ using namespace findNode;
 
 // constituent methods --------------------------------------------------------
 
-bool SCorrelatorJetTree::IsGoodParticleFlow(ParticleFlowElement *pfPart) {
-
-  // print debug statement
-  if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::IsGoodParticleFlow(ParticleFlowElement*) Checking if particle flow element is good..." << endl;
-  }
-
-  // TODO: explore particle flow cuts
-  const double pfEta         = pfPart -> get_eta();
-  const bool   isInEtaRange  = ((pfEta > m_particleflow_mineta) && (pfEta < m_particleflow_maxeta));
-  const bool   isGoodElement = isInEtaRange;
-  return isGoodElement;
-
-}  // end 'IsGoodParticleFlow(ParticleFlowElement*)'
-
-
-
-bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack *track) {
-
-  // print debug statement
-  if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::IsGoodTrack(SvtxTrack*) Checking if track is good..." << endl;
-  }
-
-  const double trkPt        = track -> get_pt();
-  const double trkEta       = track -> get_eta();
-  const bool   isInPtRange  = ((trkPt > m_track_minpt)   && (trkPt < m_track_maxpt));
-  const bool   isInEtaRange = ((trkEta > m_track_mineta) && (trkEta < m_track_maxeta));
-  const bool   isGoodTrack  = (isInPtRange && isInEtaRange);
-  return isGoodTrack;
-
-}  // end 'IsGoodTrack(SvtxTrack*)'
-
-
-
-bool SCorrelatorJetTree::IsGoodEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster) {
-
-  // print debug statement
-  if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::IsGoodEMCalCluster(CLHEP::Hep3Vector&) Checking if ECal cluster is good..." << endl;
-  }
-
-  const double clustPt      = E_vec_cluster.perp();
-  const double clustEta     = E_vec_cluster.pseudoRapidity();
-  const bool   isInPtRange  = ((clustPt > m_EMCal_cluster_minpt)   && (clustPt < m_EMCal_cluster_maxpt));
-  const bool   isInEtaRange = ((clustEta > m_EMCal_cluster_mineta) && (clustEta < m_EMCal_cluster_maxeta));
-  const bool   isGoodClust  = (isInPtRange && isInEtaRange);
-  return isGoodClust;
-
-}  // end 'IsGoodEMCalCluster(CLHEP::Hep3Vector&)'
-
-
-
-bool SCorrelatorJetTree::IsGoodHCalCluster(CLHEP::Hep3Vector &E_vec_cluster) {
-
-  // print debug statement
-  if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::IsGoodHCalCluster(CLHEP::Hep3Vector&) Checking if HCal cluster is good..." << endl;
-  }
-
-  // TODO: explore particle cuts. These should vary with particle charge/species.
-  const double clustPt      = E_vec_cluster.perp();
-  const double clustEta     = E_vec_cluster.pseudoRapidity();
-  const bool   isInPtRange  = ((clustPt > m_HCal_cluster_minpt)   && (clustPt < m_HCal_cluster_maxpt));
-  const bool   isInEtaRange = ((clustEta > m_HCal_cluster_mineta) && (clustEta < m_HCal_cluster_maxeta));
-  const bool   isGoodClust  = (isInPtRange && isInEtaRange);
-  return isGoodClust;
-
-}  // end 'IsGoodHCalCluster(CLHEP::Hep3Vector&)'
-
-
-
 bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *part) {
 
   // print debug statement
@@ -119,12 +47,84 @@ bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *part) {
   const double parPx        = part -> momentum().px();
   const double parPy        = part -> momentum().py();
   const double parPt        = sqrt((parPx * parPx) + (parPy * parPy));
-  const bool   isInPtRange  = ((parPt > m_MC_particle_minpt)   && (parPt < m_MC_particle_maxpt));
-  const bool   isInEtaRange = ((parEta > m_MC_particle_mineta) && (parEta < m_MC_particle_maxeta));
+  const bool   isInPtRange  = ((parPt  > m_parPtRange[0])  && (parPt  < m_parPtRange[1]));
+  const bool   isInEtaRange = ((parEta > m_parEtaRange[0]) && (parEta < m_parEtaRange[1]));
   const bool   isGoodPar    = (isGoodCharge && isInPtRange && isInEtaRange);
   return isGoodPar;
 
 }  // end 'IsGoodParticle(HepMC::GenParticle*)'
+
+
+
+bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack *track) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 1)) {
+    cout << "SCorrelatorJetTree::IsGoodTrack(SvtxTrack*) Checking if track is good..." << endl;
+  }
+
+  const double trkPt        = track -> get_pt();
+  const double trkEta       = track -> get_eta();
+  const bool   isInPtRange  = ((trkPt  > m_trkPtRange[0])  && (trkPt  < m_trkPtRange[1]));
+  const bool   isInEtaRange = ((trkEta > m_trkEtaRange[0]) && (trkEta < m_trkEtaRange[1]));
+  const bool   isGoodTrack  = (isInPtRange && isInEtaRange);
+  return isGoodTrack;
+
+}  // end 'IsGoodTrack(SvtxTrack*)'
+
+
+
+bool SCorrelatorJetTree::IsGoodFlow(ParticleFlowElement *pfPart) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 1)) {
+    cout << "SCorrelatorJetTree::IsGoodFlow(ParticleFlowElement*) Checking if particle flow element is good..." << endl;
+  }
+
+  // TODO: explore particle flow cuts
+  const double pfEta        = pfPart -> get_eta();
+  const bool   isInEtaRange = ((pfEta > m_flowEtaRange[0]) && (pfEta < m_flowEtaRange[1]));
+  const bool   isGoodFlow   = isInEtaRange;
+  return isGoodFlow;
+
+}  // end 'IsGoodFlow(ParticleFlowElement*)'
+
+
+
+bool SCorrelatorJetTree::IsGoodECal(CLHEP::Hep3Vector &E_vec_cluster) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 1)) {
+    cout << "SCorrelatorJetTree::IsGoodECal(CLHEP::Hep3Vector&) Checking if ECal cluster is good..." << endl;
+  }
+
+  const double clustPt      = E_vec_cluster.perp();
+  const double clustEta     = E_vec_cluster.pseudoRapidity();
+  const bool   isInPtRange  = ((clustPt  > m_ecalPtRange[0])  && (clustPt  < m_ecalPtRange[1]));
+  const bool   isInEtaRange = ((clustEta > m_ecalEtaRange[0]) && (clustEta < m_ecalEtaRange[1]));
+  const bool   isGoodClust  = (isInPtRange && isInEtaRange);
+  return isGoodClust;
+
+}  // end 'IsGoodECal(CLHEP::Hep3Vector&)'
+
+
+
+bool SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector &E_vec_cluster) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 1)) {
+    cout << "SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector&) Checking if HCal cluster is good..." << endl;
+  }
+
+  // TODO: explore particle cuts. These should vary with particle charge/species.
+  const double clustPt      = E_vec_cluster.perp();
+  const double clustEta     = E_vec_cluster.pseudoRapidity();
+  const bool   isInPtRange  = ((clustPt  > m_hcalPtRange[0])  && (clustPt  < m_hcalPtRange[1]));
+  const bool   isInEtaRange = ((clustEta > m_hcalEtaRange[0]) && (clustEta < m_hcalEtaRange[1]));
+  const bool   isGoodClust  = (isInPtRange && isInEtaRange);
+  return isGoodClust;
+
+}  // end 'IsGoodHCal(CLHEP::Hep3Vector&)'
 
 
 
@@ -251,6 +251,7 @@ float SCorrelatorJetTree::GetParticleCharge(const int pid) {
     case 700301:
       charge = 0.;
       break;
+    // he3
     case 700302:
       charge = 3.;
       break;

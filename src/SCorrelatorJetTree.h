@@ -22,6 +22,8 @@
 #include <vector>
 #include <cassert>
 #include <sstream>
+#include <cstdlib>
+#include <utility>
 // f4a include
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllReturnCodes.h>
@@ -112,7 +114,7 @@ static const size_t NRange(2);
 static const size_t NMoment(2);
 static const size_t NInfoQA(4);
 static const size_t NJetType(2);
-static const size_t NCstType(4);
+static const size_t NCstType(5);
 static const size_t NObjType(9);
 static const size_t NDirectory(NObjType - 3);
 static const double MassPion(0.140);
@@ -150,10 +152,11 @@ class SCorrelatorJetTree : public SubsysReco {
       RCST   = 8
     };
     enum CST_TYPE {
-      TRACK_CST = 0,
-      CALO_CST  = 1,
+      PART_CST  = 0,
+      TRACK_CST = 1,
       FLOW_CST  = 2,
-      PART_CST  = 3
+      ECAL_CST  = 3,
+      HCAL_CST  = 4
     };
     enum INFO {
       PT  = 0,
@@ -163,7 +166,7 @@ class SCorrelatorJetTree : public SubsysReco {
     };
 
     // ctor/dtor
-    SCorrelatorJetTree(const string &name = "SCorrelatorJetTree", const string &outfile = "correlator_jet_tree.root", const bool isMC = false, const bool debug = false);
+    SCorrelatorJetTree(const string &name = "SCorrelatorJetTree", const string &outFile = "correlator_jet_tree.root", const bool isMC = false, const bool debug = false);
     ~SCorrelatorJetTree() override;
 
     // F4A methods
@@ -171,96 +174,70 @@ class SCorrelatorJetTree : public SubsysReco {
     int process_event(PHCompositeNode *) override;
     int End(PHCompositeNode *)           override;
 
-    // particle flow setters (*.io.h)
-    void SetParticleFlowMinEta(double etamin) {m_particleflow_mineta = etamin;}
-    void SetParticleFlowMaxEta(double etamax) {m_particleflow_maxeta = etamax;}
-    void SetParticleFlowEtaAcc(double etamin, double etamax);
-    // particle flow getters
-    double GetParticleFlowMinEta() {return m_particleflow_mineta;}
-    double GetParticleFlowMaxEta() {return m_particleflow_maxeta;}
+    // setters (inline)
+    void SetAddTracks(const bool addTracks) {m_addTracks      = addTracks;}
+    void SetAddFlow(const bool addFlow)     {m_addFlow        = addFlow;}
+    void SetAddECal(const bool addECal)     {m_addECal        = addECal;}
+    void SetAddHCal(const bool addHCal)     {m_addHCal        = addHCal;}
+    void SetDoQualityPlots(const bool doQA) {m_doQualityPlots = doQA;}
+    void SetSaveDST(const bool doSave)      {m_saveDST        = doSave;}
+    void SetIsMC(const bool isMC)           {m_isMC           = isMC;}
+    void SetJetR(const double jetR)         {m_jetR           = jetR;}
+    void SetJetType(const uint32_t type)    {m_jetType        = type;}
+    void SetJetTreeName(const string name)  {m_jetTreeName    = name;}
 
-    // track setters (*.io.h)
-    void SetTrackMinPt(double ptmin)   {m_track_minpt = ptmin;}
-    void SetTrackMaxPt(double ptmax)   {m_track_maxpt = ptmax;}
-    void SetTrackMinEta(double etamin) {m_track_mineta = etamin;}
-    void SetTrackMaxEta(double etamax) {m_track_maxeta = etamax;}
-    void SetTrackPtAcc(double ptmin, double ptmax);
-    void SetTrackEtaAcc(double etamin, double etamax);
-    // track getters
-    double GetTrackMinPt()  {return m_track_minpt;}
-    double GetTrackMaxPt()  {return m_track_maxpt;}
-    double GetTrackMinEta() {return m_track_mineta;}
-    double GetTrackMaxEta() {return m_track_maxeta;}
+    // setters (*.io.h)
+    void SetParPtRange(const pair<double, double> ptRange);
+    void SetParEtaRange(const pair<double, double> etaRange);
+    void SetTrackPtRange(const pair<double, double> ptRange);
+    void SetTrackEtaRange(const pair<double, double> etaRange);
+    void SetFlowPtRange(const pair<double, double> ptRange);
+    void SetFlowEtaRange(const pair<double, double> etaRange);
+    void SetECalPtRange(const pair<double, double> ptRange);
+    void SetECalEtaRange(const pair<double, double> etaRange);
+    void SetHCalPtRange(const pair<double, double> ptRange);
+    void SetHCalEtaRange(const pair<double, double> etaRange);
+    void SetJetAlgo(const ALGO jetAlgo);
+    void SetRecombScheme(const RECOMB recombScheme);
+    void SetJetParameters(const double rJet, const uint32_t jetType, const ALGO jetAlgo, const RECOMB recombScheme);
 
-    // emcal setters (*.io.h)
-    void SetEMCalClusterMinPt(double ptmin)   {m_EMCal_cluster_minpt = ptmin;}
-    void SetEMCalClusterMaxPt(double ptmax)   {m_EMCal_cluster_maxpt = ptmax;}
-    void SetEMCalClusterMinEta(double etamin) {m_EMCal_cluster_mineta = etamin;}
-    void SetEMCalClusterMaxEta(double etamax) {m_EMCal_cluster_maxeta = etamax;}
-    void SetEMCalClusterPtAcc(double ptmin, double ptmax);
-    void SetEMCalClusterEtaAcc(double etamin, double etamax);
-    // emcal getters
-    double GetEMCalClusterMinPt()  {return m_EMCal_cluster_minpt;}
-    double GetEMCalClusterMaxPt()  {return m_EMCal_cluster_maxpt;}
-    double GetEMCalClusterMinEta() {return m_EMCal_cluster_mineta;}
-    double GetEMCalClusterMaxEta() {return m_EMCal_cluster_maxeta;}
+    // system getters
+    bool   GetAddFlow()        {return m_addFlow;}
+    bool   GetAddTracks()      {return m_addTracks;}
+    bool   GetAddECal()        {return m_addECal;}
+    bool   GetAddHCal()        {return m_addHCal;}
+    bool   GetDoQualityPlots() {return m_doQualityPlots;}
+    bool   GetSaveDST()        {return m_saveDST;}
+    bool   GetIsMC()           {return m_isMC;}
+    string GetJetTreeName()    {return m_jetTreeName;}
 
-    // hcal setters (*.io.h)
-    void SetHCalClusterMinPt(double ptmin)   {m_HCal_cluster_minpt = ptmin;}
-    void SetHCalClusterMaxPt(double ptmax)   {m_HCal_cluster_maxpt = ptmax;}
-    void SetHCalClusterMinEta(double etamin) {m_HCal_cluster_mineta = etamin;}
-    void SetHCalClusterMaxEta(double etamax) {m_HCal_cluster_maxeta = etamax;}
-    void SetHCalClusterPtAcc(double ptmin, double ptmax);
-    void SetHCalClusterEtaAcc(double etamin, double etamax);
-    // hcal getters
-    double GetHCalClusterMinPt()  {return m_HCal_cluster_minpt;}
-    double GetHCalClusterMaxPt()  {return m_HCal_cluster_maxpt;}
-    double GetHCalClusterMinEta() {return m_HCal_cluster_mineta;}
-    double GetHCalClusterMaxEta() {return m_HCal_cluster_maxeta;}
+    // acceptance getters
+    double GetParMinPt()    {return m_parPtRange[0];}
+    double GetParMaxPt()    {return m_parPtRange[1];}
+    double GetParMinEta()   {return m_parEtaRange[0];}
+    double GetParMaxEta()   {return m_parEtaRange[1];}
+    double GetTrackMinPt()  {return m_trkPtRange[0];}
+    double GetTrackMaxPt()  {return m_trkPtRange[1];}
+    double GetTrackMinEta() {return m_trkEtaRange[0];}
+    double GetTrackMaxEta() {return m_trkEtaRange[1];}
+    double GetFlowMinPt()   {return m_flowPtRange[0];}
+    double GetFlowMaxPt()   {return m_flowPtRange[1];}
+    double GetFlowMinEta()  {return m_flowEtaRange[0];}
+    double GetFlowMaxEta()  {return m_flowEtaRange[1];}
+    double GetECalMinPt()   {return m_ecalPtRange[0];}
+    double GetECalMaxPt()   {return m_ecalPtRange[1];}
+    double GetECalMinEta()  {return m_ecalEtaRange[0];}
+    double GetECalMaxEta()  {return m_ecalEtaRange[1];}
+    double GetHCalMinPt()   {return m_hcalPtRange[0];}
+    double GetHCalMaxPt()   {return m_hcalPtRange[1];}
+    double GetHCalMinEta()  {return m_hcalEtaRange[0];}
+    double GetHCalMaxEta()  {return m_hcalEtaRange[1];}
 
-    // particle setters
-    void SetParticleMinPt(double ptmin)   {m_MC_particle_minpt = ptmin;}
-    void SetParticleMaxPt(double ptmax)   {m_MC_particle_maxpt = ptmax;}
-    void SetParticleMinEta(double etamin) {m_MC_particle_mineta = etamin;}
-    void SetParticleMaxEta(double etamax) {m_MC_particle_maxeta = etamax;}
-    void SetParticlePtAcc(double ptmin, double ptmax);
-    void SetParticleEtaAcc(double etamin, double etamx);
-
-    // constituent setters (*.io.h)
-    void SetAddParticleFlow(bool b)  {m_add_particleflow = b;}
-    void SetAddTracks(bool b)        {m_add_tracks = b;}
-    void SetAddEMCalClusters(bool b) {m_add_EMCal_clusters = b;}
-    void SetAddHCalClusters(bool b)  {m_add_HCal_clusters = b;}
-    // constituent getters
-    bool GetAddParticleFlow()  {return m_add_particleflow;}
-    bool GetAddTracks()        {return m_add_tracks;}
-    bool GetAddEMCalClusters() {return m_add_EMCal_clusters;}
-    bool GetAddHCalClusters()  {return m_add_HCal_clusters;}
-
-    // jet setters (*.io.h)
-    void SetR(double r)             {m_jetr    = r;}
-    void SetType(unsigned int type) {m_jetType = type;}
-    void SetJetAlgo(ALGO jetalgo);
-    void SetRecombScheme(RECOMB recomb_scheme);
-    void SetJetParameters(double r, unsigned int type, ALGO jetalgo, RECOMB recomb_scheme);
     // jet getters
-    double                       GetR()            {return m_jetr;}
-    unsigned int                 GetType()         {return m_jetType;}
-    JetAlgorithm        GetJetAlgo()      {return m_jetalgo;}
-    RecombinationScheme GetRecombScheme() {return m_recomb_scheme;}
-
-    // i/o setters
-    void SetDoQualityPlots(bool q)     {m_doQualityPlots = q;}
-    void SetJetContainerName(string n) {m_jetcontainer_name = n;}
-    void SetSaveDST(bool s)            {m_save_dst = s;}
-    void SetIsMC(bool b)               {m_ismc = b;}
-    void SetSaveDSTMC(bool s)          {m_save_truth_dst = s;}
-    // i/o getters
-    bool   GetDoQualityPlots()   {return m_doQualityPlots;}
-    string GetJetContainerName() {return m_jetcontainer_name;}
-    bool   GetSaveDST()          {return m_save_dst;}
-    bool   GetIsMC()             {return m_ismc;}
-    bool   GetSaveDSTMC()        {return m_save_truth_dst;}
+    double              GetJetR()         {return m_jetR;}
+    uint32_t            GetJetType()      {return m_jetType;}
+    JetAlgorithm        GetJetAlgo()      {return m_jetAlgo;}
+    RecombinationScheme GetRecombScheme() {return m_recombScheme;}
 
   private:
 
@@ -270,88 +247,53 @@ class SCorrelatorJetTree : public SubsysReco {
     long   GetNumChrgPars(PHCompositeNode *topNode);
     double GetSumECalEne(PHCompositeNode *topNode);
     double GetSumHCalEne(PHCompositeNode *topNode);
-    double GetSumNeutralEne(PHCompositeNode *topNode);
+    double GetSumParEne(PHCompositeNode *topNode);
+
     // jet methods (*.jet.h)
-    void FindJets(PHCompositeNode *topNode);
-    void FindMcJets(PHCompositeNode *topNode);
+    void FindTrueJets(PHCompositeNode *topNode);
+    void FindRecoJets(PHCompositeNode *topNode);
     void MatchJets();
-    void AddParticleFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
-    void AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
-    void AddClusters(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddParticles(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
+    void AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
+    void AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
+    void AddECal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
+    void AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     bool IsJetGoodMatch();
+
     // constituent methods (*.cst.h)
-    bool  IsGoodParticleFlow(ParticleFlowElement *pfPart);
-    bool  IsGoodTrack(SvtxTrack *track);
-    bool  IsGoodEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
-    bool  IsGoodHCalCluster(CLHEP::Hep3Vector &E_vec_cluster);
     bool  IsGoodParticle(HepMC::GenParticle *part);
+    bool  IsGoodTrack(SvtxTrack *track);
+    bool  IsGoodFlow(ParticleFlowElement *pfPart);
+    bool  IsGoodECal(CLHEP::Hep3Vector &E_vec_cluster);
+    bool  IsGoodHCal(CLHEP::Hep3Vector &E_vec_cluster);
     bool  IsCstGoodMatch();
     float GetParticleCharge(const int pid);
+
     // system methods (*.sys.h)
     void InitVariables();
     void InitHists();
     void InitTrees();
-    void FillTrees();
+    void FillTrueTree();
+    void FillRecoTree();
+    void FillMatchTree();
     void SaveOutput();
-    void ResetTreeVariables();
+    void ResetVariables();
     int  CreateJetNode(PHCompositeNode* topNode);
 
-    // F4A histogram manager
-    Fun4AllHistoManager *m_hm;
+    // F4A members
+    Fun4AllHistoManager *m_histMan;
 
-    // particle flow variables
-    double m_particleflow_mineta;
-    double m_particleflow_maxeta;
-    // track variables
-    double m_track_minpt;
-    double m_track_maxpt;
-    double m_track_mineta;
-    double m_track_maxeta;
-    // emcal variables
-    double m_EMCal_cluster_minpt;
-    double m_EMCal_cluster_maxpt;
-    double m_EMCal_cluster_mineta;
-    double m_EMCal_cluster_maxeta;
-    // hcal variables
-    double m_HCal_cluster_minpt;
-    double m_HCal_cluster_maxpt;
-    double m_HCal_cluster_mineta;
-    double m_HCal_cluster_maxeta;
-    // particle variables
-    double m_MC_particle_minpt;
-    double m_MC_particle_maxpt;
-    double m_MC_particle_mineta;
-    double m_MC_particle_maxeta;
+    // io members
+    TFile    *m_outFile;
+    TTree    *m_trueTree;
+    TTree    *m_recoTree;
+    TTree    *m_matchTree;
+    string    m_outFileName;
+    string    m_jetTreeName;
+    JetMapv1 *m_recoJetMap;
+    JetMapv1 *m_trueJetMap;
 
-    // constituent parameters
-    bool m_add_particleflow;
-    bool m_add_tracks;
-    bool m_add_EMCal_clusters;
-    bool m_add_HCal_clusters;
-    // jet parameters
-    double                m_jetr;
-    unsigned int          m_jetType;
-    JetAlgorithm          m_jetalgo;
-    RecombinationScheme   m_recomb_scheme;
-    JetMapv1             *m_jetMap;
-    JetMapv1             *m_truth_jetMap;
-    // i/o parameters
-    string m_outfilename;
-    string m_jetcontainer_name;
-    bool   m_doQualityPlots;
-    bool   m_save_dst;
-    bool   m_save_truth_dst;
-    bool   m_ismc;
-    bool   m_doDebug;
-
-    // output file & trees
-    TFile *m_outFile;
-    TTree *m_recoTree;
-    TTree *m_trueTree;
-    TTree *m_matchTree;
-
-    // QA histograms
+    // QA members
     TH1D *m_hJetArea[NJetType];
     TH1D *m_hJetNumCst[NJetType];
     TH1D *m_hNumObject[NObjType];
@@ -359,27 +301,64 @@ class SCorrelatorJetTree : public SubsysReco {
     TH1D *m_hObjectQA[NObjType][NInfoQA];
     TH1D *m_hNumCstAccept[NCstType][NMoment];
 
-    // for output
-    vector<PseudoJet>         m_recoJets;
-    vector<PseudoJet>         m_trueJets;
-    vector<vector<PseudoJet>> m_recoCsts;
-    vector<vector<PseudoJet>> m_trueCsts;
+    // system members
+    bool m_doQualityPlots;
+    bool m_saveDST;
+    bool m_isMC;
+    bool m_doDebug;
+    bool m_addTracks;
+    bool m_addFlow;
+    bool m_addECal;
+    bool m_addHCal;
+
+    // acceptance parameters
+    double m_parPtRange[NRange];
+    double m_parEtaRange[NRange];
+    double m_trkPtRange[NRange];
+    double m_trkEtaRange[NRange];
+    double m_flowPtRange[NRange];
+    double m_flowEtaRange[NRange];
+    double m_ecalPtRange[NRange];
+    double m_ecalEtaRange[NRange];
+    double m_hcalPtRange[NRange];
+    double m_hcalEtaRange[NRange];
+
+    // jet parameters
+    double               m_jetR;
+    uint32_t             m_jetType;
+    JetAlgorithm         m_jetAlgo;
+    JetDefinition       *m_trueJetDef;
+    JetDefinition       *m_recoJetDef;
+    ClusterSequence     *m_trueClust;
+    ClusterSequence     *m_recoClust;
+    RecombinationScheme  m_recombScheme;
+
+    // event, jet members
+    long              m_numTrks;
+    long              m_numChrgPars;
+    double            m_sumECalEne;
+    double            m_sumHCalEne;
+    double            m_sumParEne;
+    long long         m_partonID[NPart];
+    CLHEP::Hep3Vector m_partonMom[NPart];
+    vector<PseudoJet> m_recoJets;
+    vector<PseudoJet> m_trueJets;
 
     // output reco event variables
-    unsigned long m_recoNumJets           = 0;
-    long long     m_recoPartonID[NPart]   = {-9999,  -9999};
-    double        m_recoPartonMomX[NPart] = {-9999., -9999.};
-    double        m_recoPartonMomY[NPart] = {-9999., -9999.};
-    double        m_recoPartonMomZ[NPart] = {-9999., -9999.};
+    unsigned long          m_recoNumJets           = 0;
+    long long              m_recoPartonID[NPart]   = {-9999,  -9999};
+    double                 m_recoPartonMomX[NPart] = {-9999., -9999.};
+    double                 m_recoPartonMomY[NPart] = {-9999., -9999.};
+    double                 m_recoPartonMomZ[NPart] = {-9999., -9999.};
     // output reco jet variables
-    vector<unsigned long> m_recoJetNCst;
-    vector<unsigned int>  m_recoJetId;
-    vector<unsigned int>  m_recoJetTruId;
-    vector<double>        m_recoJetE;
-    vector<double>        m_recoJetPt;
-    vector<double>        m_recoJetEta;
-    vector<double>        m_recoJetPhi;
-    vector<double>        m_recoJetArea;
+    vector<unsigned long>  m_recoJetNCst;
+    vector<unsigned int>   m_recoJetId;
+    vector<unsigned int>   m_recoJetTruId;
+    vector<double>         m_recoJetE;
+    vector<double>         m_recoJetPt;
+    vector<double>         m_recoJetEta;
+    vector<double>         m_recoJetPhi;
+    vector<double>         m_recoJetArea;
     // output reco constituent variables
     vector<vector<double>> m_recoCstZ;
     vector<vector<double>> m_recoCstDr;
@@ -389,11 +368,11 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<vector<double>> m_recoCstPhi;
 
     // output truth event variables
-    unsigned long m_trueNumJets           = 0;
-    long long     m_truePartonID[NPart]   = {-9999,  -9999};
-    double        m_truePartonMomX[NPart] = {-9999., -9999.};
-    double        m_truePartonMomY[NPart] = {-9999., -9999.};
-    double        m_truePartonMomZ[NPart] = {-9999., -9999.};
+    unsigned long         m_trueNumJets           = 0;
+    long long             m_truePartonID[NPart]   = {-9999,  -9999};
+    double                m_truePartonMomX[NPart] = {-9999., -9999.};
+    double                m_truePartonMomY[NPart] = {-9999., -9999.};
+    double                m_truePartonMomZ[NPart] = {-9999., -9999.};
     // output truth jet variables
     vector<unsigned long> m_trueJetNCst;
     vector<unsigned int>  m_trueJetId;

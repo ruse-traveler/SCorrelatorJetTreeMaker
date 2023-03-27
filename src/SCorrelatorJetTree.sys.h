@@ -32,44 +32,41 @@ void SCorrelatorJetTree::InitVariables() {
   }
 
   // initialize class members as needed
-  m_hm                   = nullptr;
-  m_particleflow_mineta  = -1.1;
-  m_particleflow_maxeta  = 1.1;
-  m_track_minpt          = 0.;
-  m_track_maxpt          = 9999.;
-  m_track_mineta         = -1.1;
-  m_track_maxeta         = 1.1;
-  m_EMCal_cluster_minpt  = 0.;
-  m_EMCal_cluster_maxpt  = 9999.;
-  m_EMCal_cluster_mineta = -1.1;
-  m_EMCal_cluster_maxeta = 1.1;
-  m_HCal_cluster_minpt   = 0.;
-  m_HCal_cluster_maxpt   = 9999.;
-  m_HCal_cluster_mineta  = -1.1;
-  m_HCal_cluster_maxeta  = 1.1;
-  m_MC_particle_minpt    = 0.;
-  m_MC_particle_maxpt    = 9999.;
-  m_MC_particle_mineta   = -1.1;
-  m_MC_particle_maxeta   = 1.1;
-  m_add_particleflow     = true;
-  m_add_tracks           = false;
-  m_add_EMCal_clusters   = false;
-  m_add_HCal_clusters    = false;
-  m_jetr                 = 0.4;
-  m_jetType              = 0;
-  m_jetalgo              = antikt_algorithm;
-  m_recomb_scheme        = pt_scheme;
+  m_histMan              = 0x0;
+  m_outFile              = 0x0;
+  m_trueTree             = 0x0;
+  m_recoTree             = 0x0;
+  m_matchTree            = 0x0;
   m_doQualityPlots       = true;
-  m_save_dst             = false;
-  m_recoNumJets           = 0;
-  m_recoPartonID[0]       = -9999;
-  m_recoPartonID[1]       = -9999;
-  m_recoPartonMomX[0]     = -9999.;
-  m_recoPartonMomX[1]     = -9999.;
-  m_recoPartonMomY[0]     = -9999.;
-  m_recoPartonMomY[1]     = -9999.;
-  m_recoPartonMomZ[0]     = -9999.;
-  m_recoPartonMomZ[1]     = -9999.;
+  m_saveDST              = false;
+  m_addTracks            = true;
+  m_addFlow              = false;
+  m_addECal              = false;
+  m_addHCal              = false;
+  m_parPtRange[0]        = 0.;
+  m_parPtRange[1]        = 9999.;
+  m_parEtaRange[0]       = -1.1;
+  m_parEtaRange[1]       = 1.1;
+  m_trkPtRange[0]        = 0.;
+  m_trkPtRange[1]        = 9999.;
+  m_trkEtaRange[0]       = -1.1;
+  m_trkEtaRange[1]       = 1.1;
+  m_flowPtRange[0]       = 0.;
+  m_flowPtRange[1]       = 9999.;
+  m_flowEtaRange[0]      = -1.1;
+  m_flowEtaRange[1]      = 1.1;
+  m_ecalPtRange[0]       = 0.;
+  m_ecalPtRange[1]       = 9999;
+  m_ecalEtaRange[0]      = -1.1;
+  m_ecalEtaRange[1]      = 1.1;
+  m_hcalPtRange[0]       = 0.;
+  m_hcalPtRange[1]       = 9999.;
+  m_hcalEtaRange[0]      = -1.1;
+  m_hcalEtaRange[1]      = 1.1;
+  m_jetR                 = 0.4;
+  m_jetType              = 0;
+  m_jetAlgo              = antikt_algorithm;
+  m_recombScheme         = pt_scheme;
   m_trueNumJets           = 0;
   m_truePartonID[0]       = -9999;
   m_truePartonID[1]       = -9999;
@@ -79,14 +76,26 @@ void SCorrelatorJetTree::InitVariables() {
   m_truePartonMomY[1]     = -9999.;
   m_truePartonMomZ[0]     = -9999.;
   m_truePartonMomZ[1]     = -9999.;
-  m_recoJetNCst.clear();
-  m_recoJetId.clear();
-  m_recoJetTruId.clear();
-  m_recoJetE.clear();
-  m_recoJetPt.clear();
-  m_recoJetEta.clear();
-  m_recoJetPhi.clear();
-  m_recoJetArea.clear();
+  m_recoNumJets           = 0;
+  m_recoPartonID[0]       = -9999;
+  m_recoPartonID[1]       = -9999;
+  m_recoPartonMomX[0]     = -9999.;
+  m_recoPartonMomX[1]     = -9999.;
+  m_recoPartonMomY[0]     = -9999.;
+  m_recoPartonMomY[1]     = -9999.;
+  m_recoPartonMomZ[0]     = -9999.;
+  m_recoPartonMomZ[1]     = -9999.;
+  m_numTrks               = -9999;
+  m_numChrgPars           = -9999;
+  m_sumECalEne            = -9999.;
+  m_sumHCalEne            = -9999.;
+  m_sumParEne             = -9999.;
+  m_partonID[0]           = -9999;
+  m_partonID[1]           = -9999;
+  m_partonMom[0]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_partonMom[1]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_trueJets.clear();
+  m_recoJets.clear();
   m_trueJetNCst.clear();
   m_trueJetId.clear();
   m_trueJetTruId.clear();
@@ -95,19 +104,26 @@ void SCorrelatorJetTree::InitVariables() {
   m_trueJetEta.clear();
   m_trueJetPhi.clear();
   m_trueJetArea.clear();
-  m_recoCstZ.clear();
-  m_recoCstDr.clear();
-  m_recoCstE.clear();
-  m_recoCstJt.clear();
-  m_recoCstEta.clear();
-  m_recoCstPhi.clear();
   m_trueCstZ.clear();
   m_trueCstDr.clear();
   m_trueCstE.clear();
   m_trueCstJt.clear();
   m_trueCstEta.clear();
   m_trueCstPhi.clear();
-  m_outFile = new TFile();
+  m_recoJetNCst.clear();
+  m_recoJetId.clear();
+  m_recoJetTruId.clear();
+  m_recoJetE.clear();
+  m_recoJetPt.clear();
+  m_recoJetEta.clear();
+  m_recoJetPhi.clear();
+  m_recoJetArea.clear();
+  m_recoCstZ.clear();
+  m_recoCstDr.clear();
+  m_recoCstE.clear();
+  m_recoCstJt.clear();
+  m_recoCstEta.clear();
+  m_recoCstPhi.clear();
   return;
 
 }  // end 'InitVariables()'
@@ -147,15 +163,26 @@ void SCorrelatorJetTree::InitHists() {
   m_hNumObject[OBJECT::TCST]              = new TH1D("hNumTruthCst",   "N_{cst} (truth)",           nNumBins,  rNumBins[0],  rNumBins[1]);
   m_hNumObject[OBJECT::RCST]              = new TH1D("hNumRecoCst",    "N_{cst} (reco.)",           nNumBins,  rNumBins[0],  rNumBins[1]);
   // sum of cst. energies
-  m_hSumCstEne[CST_TYPE::TRACK_CST]       = new TH1D("hSumTrackEne",   "#SigmaE (cst. track)",      nEneBins,  rEneBins[0],  rEneBins[1]);
-  m_hSumCstEne[CST_TYPE::CALO_CST]        = new TH1D("hSumCaloEne",    "#SigmaE (cst. calo.)",      nEneBins,  rEneBins[0],  rEneBins[1]);
-  m_hSumCstEne[CST_TYPE::FLOW_CST]        = new TH1D("hSumFlowEne",    "#SigmaE (cst. flow)",       nEneBins,  rEneBins[0],  rEneBins[1]);
   m_hSumCstEne[CST_TYPE::PART_CST]        = new TH1D("hSumPartEne",    "#SigmaE (cst. par.s)",      nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::FLOW_CST]        = new TH1D("hSumFlowEne",    "#SigmaE (cst. flow)",       nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::TRACK_CST]       = new TH1D("hSumTrackEne",   "#SigmaE (cst. track)",      nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::ECAL_CST]        = new TH1D("hSumECalEne",    "#SigmaE (cst. ecal)",       nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::HCAL_CST]        = new TH1D("hSumHCalEne",    "#SigmaE (cst. hcal)",       nEneBins,  rEneBins[0],  rEneBins[1]);
+  // particle QA
+  m_hObjectQA[OBJECT::PART][INFO::PT]     = new TH1D("hPartPt",        "p_{T} (par.s)",             nPtBins,   rPtBins[0],   rPtBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::ETA]    = new TH1D("hPartEta",       "#eta (par.s)",              nEtaBins,  rEtaBins[0],  rEtaBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::PHI]    = new TH1D("hPartPhi",       "#phi (par.s)",              nPhiBins,  rPhiBins[0],  rPhiBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::ENE]    = new TH1D("hPartEne",       "E (par.s)",                 nEneBins,  rEneBins[0],  rEneBins[1]);
   // track QA
   m_hObjectQA[OBJECT::TRACK][INFO::PT]    = new TH1D("hTrackPt",       "p_{T} (tracks)",            nPtBins,   rPtBins[0],   rPtBins[1]);
   m_hObjectQA[OBJECT::TRACK][INFO::ETA]   = new TH1D("hTrackEta",      "#eta (tracks)",             nEtaBins,  rEtaBins[0],  rEtaBins[1]);
   m_hObjectQA[OBJECT::TRACK][INFO::PHI]   = new TH1D("hTrackPhi",      "#phi (tracks)",             nPhiBins,  rPhiBins[0],  rPhiBins[1]);
   m_hObjectQA[OBJECT::TRACK][INFO::ENE]   = new TH1D("hTrackEne",      "E (tracks)",                nEneBins,  rEneBins[0],  rEneBins[1]);
+  // particle flow QA
+  m_hObjectQA[OBJECT::FLOW][INFO::PT]     = new TH1D("hFlowPt",        "p_{T} (flow)",              nPtBins,   rPtBins[0],   rPtBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::ETA]    = new TH1D("hFlowEta",       "#eta (flow)",               nEtaBins,  rEtaBins[0],  rEtaBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::PHI]    = new TH1D("hFlowPhi",       "#phi (flow)",               nPhiBins,  rPhiBins[0],  rPhiBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::ENE]    = new TH1D("hFlowEne",       "E (flow)",                  nEneBins,  rEneBins[0],  rEneBins[1]);
   // emcal cluster QA
   m_hObjectQA[OBJECT::ECLUST][INFO::PT]   = new TH1D("hEClustPt",      "p_{T} (EMCal clust.)",      nPtBins,   rPtBins[0],   rPtBins[1]);
   m_hObjectQA[OBJECT::ECLUST][INFO::ETA]  = new TH1D("hEClustEta",     "#eta (EMCal clust.)",       nEtaBins,  rEtaBins[0],  rEtaBins[1]);
@@ -166,16 +193,6 @@ void SCorrelatorJetTree::InitHists() {
   m_hObjectQA[OBJECT::HCLUST][INFO::ETA]  = new TH1D("hHClustEta",     "#eta (HCal clust.)",        nEtaBins,  rEtaBins[0],  rEtaBins[1]);
   m_hObjectQA[OBJECT::HCLUST][INFO::PHI]  = new TH1D("hHClustPhi",     "#phi (HCal clust.)",        nPhiBins,  rPhiBins[0],  rPhiBins[1]);
   m_hObjectQA[OBJECT::HCLUST][INFO::ENE]  = new TH1D("hHClustEne",     "E (HCal clust.)",           nEneBins,  rEneBins[0],  rEneBins[1]);
-  // particle flow QA
-  m_hObjectQA[OBJECT::FLOW][INFO::PT]     = new TH1D("hFlowPt",        "p_{T} (flow)",              nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::FLOW][INFO::ETA]    = new TH1D("hFlowEta",       "#eta (flow)",               nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::FLOW][INFO::PHI]    = new TH1D("hFlowPhi",       "#phi (flow)",               nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::FLOW][INFO::ENE]    = new TH1D("hFlowEne",       "E (flow)",                  nEneBins,  rEneBins[0],  rEneBins[1]);
-  // particle QA
-  m_hObjectQA[OBJECT::PART][INFO::PT]     = new TH1D("hPartPt",        "p_{T} (par.s)",             nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::PART][INFO::ETA]    = new TH1D("hPartEta",       "#eta (par.s)",              nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::PART][INFO::PHI]    = new TH1D("hPartPhi",       "#phi (par.s)",              nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::PART][INFO::ENE]    = new TH1D("hPartEne",       "E (par.s)",                 nEneBins,  rEneBins[0],  rEneBins[1]);
   // truth jet QA
   m_hObjectQA[OBJECT::TJET][INFO::PT]     = new TH1D("hTruthJetPt",    "p_{T} (truth jet)",         nPtBins,   rPtBins[0],   rPtBins[1]);
   m_hObjectQA[OBJECT::TJET][INFO::ETA]    = new TH1D("hTruthJetEta",   "#eta (truth jet)",          nEtaBins,  rEtaBins[0],  rEtaBins[1]);
@@ -201,14 +218,16 @@ void SCorrelatorJetTree::InitHists() {
   m_hObjectQA[OBJECT::RCST][INFO::PHI]    = new TH1D("hRecoCstPhi",    "#phi (reco. cst.)",         nPhiBins,  rPhiBins[0],  rPhiBins[1]);
   m_hObjectQA[OBJECT::RCST][INFO::ENE]    = new TH1D("hRecoCstEne",    "E (reco. cst.)",            nEneBins,  rEneBins[0],  rEneBins[1]);
   // no. of cst.s
-  m_hNumCstAccept[CST_TYPE::TRACK_CST][0] = new TH1D("hNumTrkCstTot",  "N_{cst}^{trk} total",       nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::TRACK_CST][1] = new TH1D("hNumTrkCstAcc",  "N_{cst}^{trk} accepted",    nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::CALO_CST][0]  = new TH1D("hNumCaloCstTot", "N_{cst}^{clust} total",     nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::CALO_CST][1]  = new TH1D("hNumCaloCstAcc", "N_{cst}^{clust} accepted",  nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::FLOW_CST][0]  = new TH1D("hNumFlowCstTot", "N_{cst}^{flow} total",      nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::FLOW_CST][1]  = new TH1D("hNumFlowCstAcc", "N_{cst}^{flow} accepted",   nNumBins,  rNumBins[0],  rNumBins[1]);
   m_hNumCstAccept[CST_TYPE::PART_CST][0]  = new TH1D("hNumPartCstTot", "N_{cst}^{par} total",       nNumBins,  rNumBins[0],  rNumBins[1]);
   m_hNumCstAccept[CST_TYPE::PART_CST][1]  = new TH1D("hNumPartCstAcc", "N_{cst}^{par} accepted",    nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::TRACK_CST][0] = new TH1D("hNumTrkCstTot",  "N_{cst}^{trk} total",       nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::TRACK_CST][1] = new TH1D("hNumTrkCstAcc",  "N_{cst}^{trk} accepted",    nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::FLOW_CST][0]  = new TH1D("hNumFlowCstTot", "N_{cst}^{flow} total",      nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::FLOW_CST][1]  = new TH1D("hNumFlowCstAcc", "N_{cst}^{flow} accepted",   nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::ECAL_CST][0]  = new TH1D("hNumECalCstTot", "N_{cst}^{clust} total",     nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::ECAL_CST][1]  = new TH1D("hNumECalCstAcc", "N_{cst}^{clust} accepted",  nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::HCAL_CST][0]  = new TH1D("hNumHCalCstTot", "N_{cst}^{clust} total",     nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::HCAL_CST][1]  = new TH1D("hNumHCalCstAcc", "N_{cst}^{clust} accepted",  nNumBins,  rNumBins[0],  rNumBins[1]);
 
 }  // end 'InitHists()'
 
@@ -221,32 +240,7 @@ void SCorrelatorJetTree::InitTrees() {
     cout << "SCorrelatorJetTree::InitTrees() Initializing output trees..." << endl;
   }
 
-  // initialize output trees
-  m_recoTree = new TTree("RecoJetTree", "A tree of reconstructed jets");
-  m_recoTree -> Branch("EvtNumJets",   &m_recoNumJets,       "NumJets/I");
-  m_recoTree -> Branch("Parton3_ID",   &m_recoPartonID[0],   "Parton3_ID/I");
-  m_recoTree -> Branch("Parton4_ID",   &m_recoPartonID[1],   "Parton4_ID/I");
-  m_recoTree -> Branch("Parton3_MomX", &m_recoPartonMomX[0], "Parton3_MomX/D");
-  m_recoTree -> Branch("Parton3_MomY", &m_recoPartonMomY[0], "Parton3_MomY/D");
-  m_recoTree -> Branch("Parton3_MomZ", &m_recoPartonMomZ[0], "Parton3_MomZ/D");
-  m_recoTree -> Branch("Parton4_MomX", &m_recoPartonMomX[1], "Parton4_MomX/D");
-  m_recoTree -> Branch("Parton4_MomY", &m_recoPartonMomY[1], "Parton4_MomY/D");
-  m_recoTree -> Branch("Parton4_MomZ", &m_recoPartonMomZ[1], "Parton4_MomZ/D");
-  m_recoTree -> Branch("JetNumCst",    &m_recoJetNCst);
-  m_recoTree -> Branch("JetID",        &m_recoJetId);
-  m_recoTree -> Branch("JetTruthID",   &m_recoJetTruId);
-  m_recoTree -> Branch("JetEnergy",    &m_recoJetE);
-  m_recoTree -> Branch("JetPt",        &m_recoJetPt);
-  m_recoTree -> Branch("JetEta",       &m_recoJetEta);
-  m_recoTree -> Branch("JetPhi",       &m_recoJetPhi);
-  m_recoTree -> Branch("JetArea",      &m_recoJetArea);
-  m_recoTree -> Branch("CstZ",         &m_recoCstZ);
-  m_recoTree -> Branch("CstDr",        &m_recoCstDr);
-  m_recoTree -> Branch("CstEnergy",    &m_recoCstE);
-  m_recoTree -> Branch("CstJt",        &m_recoCstJt);
-  m_recoTree -> Branch("CstEta",       &m_recoCstEta);
-  m_recoTree -> Branch("CstPhi",       &m_recoCstPhi);
-
+  // initialize true jet tree
   m_trueTree = new TTree("TruthJetTree", "A tree of truth jets");
   m_trueTree -> Branch("EvtNumJets",   &m_trueNumJets,       "NumJets/I");
   m_trueTree -> Branch("Parton3_ID",   &m_truePartonID[0],   "Parton3_ID/I");
@@ -271,18 +265,331 @@ void SCorrelatorJetTree::InitTrees() {
   m_trueTree -> Branch("CstJt",        &m_trueCstJt);
   m_trueTree -> Branch("CstEta",       &m_trueCstEta);
   m_trueTree -> Branch("CstPhi",       &m_trueCstPhi);
+
+  // initialize reco jet tree
+  m_recoTree = new TTree("RecoJetTree", "A tree of reconstructed jets");
+  m_recoTree -> Branch("EvtNumJets",   &m_recoNumJets,       "NumJets/I");
+  m_recoTree -> Branch("Parton3_ID",   &m_recoPartonID[0],   "Parton3_ID/I");
+  m_recoTree -> Branch("Parton4_ID",   &m_recoPartonID[1],   "Parton4_ID/I");
+  m_recoTree -> Branch("Parton3_MomX", &m_recoPartonMomX[0], "Parton3_MomX/D");
+  m_recoTree -> Branch("Parton3_MomY", &m_recoPartonMomY[0], "Parton3_MomY/D");
+  m_recoTree -> Branch("Parton3_MomZ", &m_recoPartonMomZ[0], "Parton3_MomZ/D");
+  m_recoTree -> Branch("Parton4_MomX", &m_recoPartonMomX[1], "Parton4_MomX/D");
+  m_recoTree -> Branch("Parton4_MomY", &m_recoPartonMomY[1], "Parton4_MomY/D");
+  m_recoTree -> Branch("Parton4_MomZ", &m_recoPartonMomZ[1], "Parton4_MomZ/D");
+  m_recoTree -> Branch("JetNumCst",    &m_recoJetNCst);
+  m_recoTree -> Branch("JetID",        &m_recoJetId);
+  m_recoTree -> Branch("JetTruthID",   &m_recoJetTruId);
+  m_recoTree -> Branch("JetEnergy",    &m_recoJetE);
+  m_recoTree -> Branch("JetPt",        &m_recoJetPt);
+  m_recoTree -> Branch("JetEta",       &m_recoJetEta);
+  m_recoTree -> Branch("JetPhi",       &m_recoJetPhi);
+  m_recoTree -> Branch("JetArea",      &m_recoJetArea);
+  m_recoTree -> Branch("CstZ",         &m_recoCstZ);
+  m_recoTree -> Branch("CstDr",        &m_recoCstDr);
+  m_recoTree -> Branch("CstEnergy",    &m_recoCstE);
+  m_recoTree -> Branch("CstJt",        &m_recoCstJt);
+  m_recoTree -> Branch("CstEta",       &m_recoCstEta);
+  m_recoTree -> Branch("CstPhi",       &m_recoCstPhi);
   return;
 
 }  // end 'InitTrees()'
 
 
 
-void SCorrelatorJetTree::FillTrees() {
+void SCorrelatorJetTree::FillTrueTree() {
 
-  /* filling trees will go here */
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::FillTrueTree(PHCompositeNode*) Filling truth jet tree..." << endl;
+  }
+
+  // prepare vectors for filling
+  m_trueJetNCst.clear();
+  m_trueJetId.clear();
+  m_trueJetTruId.clear();
+  m_trueJetE.clear();
+  m_trueJetPt.clear();
+  m_trueJetEta.clear();
+  m_trueJetPhi.clear();
+  m_trueJetArea.clear();
+  m_trueCstZ.clear();
+  m_trueCstDr.clear();
+  m_trueCstE.clear();
+  m_trueCstJt.clear();
+  m_trueCstEta.clear();
+  m_trueCstPhi.clear();
+
+  // declare vectors to storing constituents
+  vector<double> vecTruCstZ;
+  vector<double> vecTruCstDr;
+  vector<double> vecTruCstE;
+  vector<double> vecTruCstJt;
+  vector<double> vecTruCstEta;
+  vector<double> vecTruCstPhi;
+  vecTruCstZ.clear();
+  vecTruCstDr.clear();
+  vecTruCstE.clear();
+  vecTruCstJt.clear();
+  vecTruCstEta.clear();
+  vecTruCstPhi.clear();
+
+  // fill jets/constituent variables
+  unsigned int nTruJet(0);
+  unsigned int nTruCst(0);
+  for (unsigned int iTruJet = 0; iTruJet < m_trueJets.size(); ++iTruJet) {
+
+    // get jet info
+    const unsigned int jetNCst  = m_trueJets[iTruJet].constituents().size();
+    const unsigned int jetID    = 9999.;  // FIXME: this will need to be changed to the matched reco jet
+    const unsigned int jetTruID = iTruJet;
+    const double       jetPhi   = m_trueJets[iTruJet].phi_std();
+    const double       jetEta   = m_trueJets[iTruJet].pseudorapidity();
+    const double       jetArea  = 0.;  // FIXME: jet area needs to be defined
+    const double       jetE     = m_trueJets[iTruJet].E();
+    const double       jetPt    = m_trueJets[iTruJet].perp();
+    const double       jetPx    = m_trueJets[iTruJet].px();
+    const double       jetPy    = m_trueJets[iTruJet].py();
+    const double       jetPz    = m_trueJets[iTruJet].pz();
+    const double       jetP     = sqrt((jetPx * jetPx) + (jetPy * jetPy) + (jetPz * jetPz));
+
+    // clear constituent vectors
+    vecTruCstZ.clear();
+    vecTruCstDr.clear();
+    vecTruCstE.clear();
+    vecTruCstJt.clear();
+    vecTruCstEta.clear();
+    vecTruCstPhi.clear();
+
+    // loop over constituents
+    vector<fastjet::PseudoJet> trueCsts = m_trueJets[iTruJet].constituents();
+    for (unsigned int iTruCst = 0; iTruCst < trueCsts.size(); ++iTruCst) {
+
+      // get constituent info
+      const double cstPhi = trueCsts[iTruCst].phi_std();
+      const double cstEta = trueCsts[iTruCst].pseudorapidity();
+      const double cstE   = trueCsts[iTruCst].E();
+      const double cstJt  = trueCsts[iTruCst].perp();
+      const double cstJx  = trueCsts[iTruCst].px();
+      const double cstJy  = trueCsts[iTruCst].py();
+      const double cstJz  = trueCsts[iTruCst].pz();
+      const double cstJ   = ((cstJx * cstJx) + (cstJy * cstJy) + (cstJz * cstJz));
+      const double cstZ   = cstJ / jetP;
+      const double cstDf  = cstPhi - jetPhi;
+      const double cstDh  = cstEta - jetEta;
+      const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
+
+      // add csts to vectors
+      vecTruCstZ.push_back(cstZ);
+      vecTruCstDr.push_back(cstDr);
+      vecTruCstE.push_back(cstE);
+      vecTruCstJt.push_back(cstJt);
+      vecTruCstEta.push_back(cstEta);
+      vecTruCstPhi.push_back(cstPhi);
+
+      // fill QA histograms and increment counters
+      m_hObjectQA[OBJECT::TCST][INFO::PT]  -> Fill(cstJt);
+      m_hObjectQA[OBJECT::TCST][INFO::ETA] -> Fill(cstEta);
+      m_hObjectQA[OBJECT::TCST][INFO::PHI] -> Fill(cstPhi);
+      m_hObjectQA[OBJECT::TCST][INFO::ENE] -> Fill(cstE);
+      ++nTruCst;
+    }  // end constituent loop
+
+    // store jet/cst output
+    m_trueJetNCst.push_back(jetNCst);
+    m_trueJetId.push_back(jetID);
+    m_trueJetTruId.push_back(jetTruID);
+    m_trueJetE.push_back(jetE);
+    m_trueJetPt.push_back(jetPt);
+    m_trueJetEta.push_back(jetEta);
+    m_trueJetPhi.push_back(jetPhi);
+    m_trueJetArea.push_back(jetArea);
+    m_trueCstZ.push_back(vecTruCstZ);
+    m_trueCstDr.push_back(vecTruCstDr);
+    m_trueCstE.push_back(vecTruCstE);
+    m_trueCstJt.push_back(vecTruCstJt);
+    m_trueCstEta.push_back(vecTruCstEta);
+    m_trueCstPhi.push_back(vecTruCstPhi);
+
+    // fill QA histograms and increment counters
+    m_hJetArea[0]                        -> Fill(jetArea);
+    m_hJetNumCst[0]                      -> Fill(jetNCst);
+    m_hObjectQA[OBJECT::TJET][INFO::PT]  -> Fill(jetPt);
+    m_hObjectQA[OBJECT::TJET][INFO::ETA] -> Fill(jetEta);
+    m_hObjectQA[OBJECT::TJET][INFO::PHI] -> Fill(jetPhi);
+    m_hObjectQA[OBJECT::TJET][INFO::ENE] -> Fill(jetE);
+    ++nTruJet;
+  }  // end jet loop
+
+  // fill QA histograms
+  m_hNumObject[OBJECT::TJET] -> Fill(nTruJet);
+  m_hNumObject[OBJECT::TCST] -> Fill(nTruCst);
+
+  // store evt info
+  // FIXME: grab actual parton values
+  m_trueNumJets       = nTruJet;
+  m_truePartonID[0]   = -9999;
+  m_truePartonID[1]   = -9999;
+  m_truePartonMomX[0] = -9999.;
+  m_truePartonMomX[1] = -9999.;
+  m_truePartonMomY[0] = -9999.;
+  m_truePartonMomY[1] = -9999.;
+  m_truePartonMomZ[0] = -9999.;
+  m_truePartonMomZ[1] = -9999.; 
+
+  // fill output tree
+  m_trueTree -> Fill();
   return;
 
-}  // end 'FillTrees()'
+}  // end 'FillTrueTree()'
+
+
+
+void SCorrelatorJetTree::FillRecoTree() {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::FillRecoTree(PHCompositeNode*) Filling reco jet tree..." << endl;
+  }
+
+  // prepare vectors for filling
+  m_recoJetNCst.clear();
+  m_recoJetId.clear();
+  m_recoJetTruId.clear();
+  m_recoJetE.clear();
+  m_recoJetPt.clear();
+  m_recoJetEta.clear();
+  m_recoJetPhi.clear();
+  m_recoJetArea.clear();
+  m_recoCstZ.clear();
+  m_recoCstDr.clear();
+  m_recoCstE.clear();
+  m_recoCstJt.clear();
+  m_recoCstEta.clear();
+  m_recoCstPhi.clear();
+
+  // declare vectors for storing constituents
+  vector<double> vecRecCstZ;
+  vector<double> vecRecCstDr;
+  vector<double> vecRecCstE;
+  vector<double> vecRecCstJt;
+  vector<double> vecRecCstEta;
+  vector<double> vecRecCstPhi;
+  vecRecCstZ.clear();
+  vecRecCstDr.clear();
+  vecRecCstE.clear();
+  vecRecCstJt.clear();
+  vecRecCstEta.clear();
+  vecRecCstPhi.clear();
+
+  // fill jet/constituent variables
+  unsigned long nRecJet(0);
+  unsigned long nRecCst(0);
+  for (unsigned int iJet = 0; iJet < m_recoJets.size(); ++iJet) {
+
+    // get jet info
+    const unsigned int jetNCst  = m_recoJets[iJet].constituents().size();
+    const unsigned int jetID    = iJet;
+    const unsigned int jetTruID = 99999;  // FIXME: this will need to be changed to the matched truth jet
+    const double       jetPhi   = m_recoJets[iJet].phi_std();
+    const double       jetEta   = m_recoJets[iJet].pseudorapidity();
+    const double       jetArea  = 0.;  // FIXME: jet area needs to be defined
+    const double       jetE     = m_recoJets[iJet].E();
+    const double       jetPt    = m_recoJets[iJet].perp();
+    const double       jetPx    = m_recoJets[iJet].px();
+    const double       jetPy    = m_recoJets[iJet].py();
+    const double       jetPz    = m_recoJets[iJet].pz();
+    const double       jetP     = sqrt((jetPx * jetPx) + (jetPy * jetPy) + (jetPz * jetPz));
+
+    // clear constituent vectors
+    vecRecCstZ.clear();
+    vecRecCstDr.clear();
+    vecRecCstE.clear();
+    vecRecCstJt.clear();
+    vecRecCstEta.clear();
+    vecRecCstPhi.clear();
+
+    // loop over constituents
+    vector<fastjet::PseudoJet> recoCsts = m_recoJets[iJet].constituents();
+    for (unsigned int iCst = 0; iCst < recoCsts.size(); ++iCst) {
+
+      // get constituent info
+      const double cstPhi = recoCsts[iCst].phi_std();
+      const double cstEta = recoCsts[iCst].pseudorapidity();
+      const double cstE   = recoCsts[iCst].E();
+      const double cstJt  = recoCsts[iCst].perp();
+      const double cstJx  = recoCsts[iCst].px();
+      const double cstJy  = recoCsts[iCst].py();
+      const double cstJz  = recoCsts[iCst].pz();
+      const double cstJ   = ((cstJx * cstJx) + (cstJy * cstJy) + (cstJz * cstJz));
+      const double cstZ   = cstJ / jetP;
+      const double cstDf  = cstPhi - jetPhi;
+      const double cstDh  = cstEta - jetEta;
+      const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
+
+      // add csts to vectors
+      vecRecCstZ.push_back(cstZ);
+      vecRecCstDr.push_back(cstDr);
+      vecRecCstE.push_back(cstE);
+      vecRecCstJt.push_back(cstJt);
+      vecRecCstEta.push_back(cstEta);
+      vecRecCstPhi.push_back(cstPhi);
+
+      // fill QA histograms and increment counters
+      m_hObjectQA[OBJECT::RCST][INFO::PT]  -> Fill(cstJt);
+      m_hObjectQA[OBJECT::RCST][INFO::ETA] -> Fill(cstEta);
+      m_hObjectQA[OBJECT::RCST][INFO::PHI] -> Fill(cstPhi);
+      m_hObjectQA[OBJECT::RCST][INFO::ENE] -> Fill(cstE);
+      ++nRecCst;
+    }  // end constituent loop
+
+    // store jet/cst output
+    m_recoJetNCst.push_back(jetNCst);
+    m_recoJetId.push_back(jetID);
+    m_recoJetTruId.push_back(jetTruID);
+    m_recoJetE.push_back(jetE);
+    m_recoJetPt.push_back(jetPt);
+    m_recoJetEta.push_back(jetEta);
+    m_recoJetPhi.push_back(jetPhi);
+    m_recoJetArea.push_back(jetArea);
+    m_recoCstZ.push_back(vecRecCstZ);
+    m_recoCstDr.push_back(vecRecCstDr);
+    m_recoCstE.push_back(vecRecCstE);
+    m_recoCstJt.push_back(vecRecCstJt);
+    m_recoCstEta.push_back(vecRecCstEta);
+    m_recoCstPhi.push_back(vecRecCstPhi);
+
+    // fill QA histograms and increment counters
+    m_hJetArea[1]                        -> Fill(jetArea);
+    m_hJetNumCst[1]                      -> Fill(jetNCst);
+    m_hObjectQA[OBJECT::RJET][INFO::PT]  -> Fill(jetPt);
+    m_hObjectQA[OBJECT::RJET][INFO::ETA] -> Fill(jetEta);
+    m_hObjectQA[OBJECT::RJET][INFO::PHI] -> Fill(jetPhi);
+    m_hObjectQA[OBJECT::RJET][INFO::ENE] -> Fill(jetE);
+    ++nRecJet;
+  }  // end jet loop
+
+  // fill QA histograms
+  m_hNumObject[OBJECT::RJET] -> Fill(nRecJet);
+  m_hNumObject[OBJECT::RCST] -> Fill(nRecCst);
+
+  // store evt info
+  // FIXME: replace parton branches w/ relevant info
+  m_recoNumJets       = nRecJet;
+  m_recoPartonID[0]   = -9999;
+  m_recoPartonID[1]   = -9999;
+  m_recoPartonMomX[0] = -9999.;
+  m_recoPartonMomX[1] = -9999.;
+  m_recoPartonMomY[0] = -9999.;
+  m_recoPartonMomY[1] = -9999.;
+  m_recoPartonMomZ[0] = -9999.;
+  m_recoPartonMomZ[1] = -9999.;
+
+  // fill object tree
+  m_recoTree -> Fill();
+  return;
+
+}  // end 'FillRecoTree()'
 
 
 
@@ -347,7 +654,10 @@ void SCorrelatorJetTree::SaveOutput() {
         case CST_TYPE::TRACK_CST:
           dQuality[0] -> cd();
           break;
-        case CST_TYPE::CALO_CST:
+        case CST_TYPE::ECAL_CST:
+          dQuality[1] -> cd();
+          break;
+        case CST_TYPE::HCAL_CST:
           dQuality[1] -> cd();
           break;
         case CST_TYPE::FLOW_CST:
@@ -373,45 +683,57 @@ void SCorrelatorJetTree::SaveOutput() {
 
   // save output trees
   m_outFile -> cd();
-  m_recoTree -> Write();
   m_trueTree -> Write();
+  m_recoTree -> Write();
   return;
 
 }  // end 'SaveOutput()'
 
 
 
-void SCorrelatorJetTree::ResetTreeVariables() {
+void SCorrelatorJetTree::ResetVariables() {
 
   // print debug statement
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::ResetTreeVariables() Resetting tree variables..." << endl;
   }
-  m_recoNumJets       = 0;
-  m_recoPartonID[0]   = -9999;
-  m_recoPartonID[1]   = -9999;
-  m_recoPartonMomX[0] = -9999.;
-  m_recoPartonMomX[1] = -9999.;
-  m_recoPartonMomY[0] = -9999.;
-  m_recoPartonMomY[1] = -9999.;
-  m_recoPartonMomZ[0] = -9999.;
-  m_recoPartonMomZ[1] = -9999.;
-  m_trueNumJets       = 0;
-  m_truePartonID[0]   = -9999;
-  m_truePartonID[1]   = -9999;
-  m_truePartonMomX[0] = -9999.;
-  m_truePartonMomX[1] = -9999.;
-  m_truePartonMomY[0] = -9999.;
-  m_truePartonMomY[1] = -9999.;
-  m_truePartonMomZ[0] = -9999.;
-  m_truePartonMomZ[1] = -9999.;
-  m_recoJetNCst.clear();
-  m_recoJetId.clear();
-  m_recoJetTruId.clear();
-  m_recoJetE.clear();
-  m_recoJetPt.clear();
-  m_recoJetEta.clear();
-  m_recoJetPhi.clear();
+
+  // reset fastjet members
+  m_trueJetDef = 0x0;
+  m_recoJetDef = 0x0;
+  m_trueClust  = 0x0;
+  m_recoClust  = 0x0;
+
+  // reset output variables
+  m_trueNumJets           = 0;
+  m_truePartonID[0]       = -9999;
+  m_truePartonID[1]       = -9999;
+  m_truePartonMomX[0]     = -9999.;
+  m_truePartonMomX[1]     = -9999.;
+  m_truePartonMomY[0]     = -9999.;
+  m_truePartonMomY[1]     = -9999.;
+  m_truePartonMomZ[0]     = -9999.;
+  m_truePartonMomZ[1]     = -9999.;
+  m_recoNumJets           = 0;
+  m_recoPartonID[0]       = -9999;
+  m_recoPartonID[1]       = -9999;
+  m_recoPartonMomX[0]     = -9999.;
+  m_recoPartonMomX[1]     = -9999.;
+  m_recoPartonMomY[0]     = -9999.;
+  m_recoPartonMomY[1]     = -9999.;
+  m_recoPartonMomZ[0]     = -9999.;
+  m_recoPartonMomZ[1]     = -9999.;
+  m_numTrks               = -9999;
+  m_numChrgPars           = -9999;
+  m_sumECalEne            = -9999.;
+  m_sumHCalEne            = -9999.;
+  m_sumParEne             = -9999.;
+  m_partonID[0]           = -9999;
+  m_partonID[1]           = -9999;
+  m_partonMom[0]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_partonMom[1]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_trueJets.clear();
+  m_recoJets.clear();
   m_trueJetNCst.clear();
   m_trueJetId.clear();
   m_trueJetTruId.clear();
@@ -419,18 +741,27 @@ void SCorrelatorJetTree::ResetTreeVariables() {
   m_trueJetPt.clear();
   m_trueJetEta.clear();
   m_trueJetPhi.clear();
-  m_recoCstZ.clear();
-  m_recoCstDr.clear();
-  m_recoCstE.clear();
-  m_recoCstJt.clear();
-  m_recoCstEta.clear();
-  m_recoCstPhi.clear();
+  m_trueJetArea.clear();
   m_trueCstZ.clear();
   m_trueCstDr.clear();
   m_trueCstE.clear();
   m_trueCstJt.clear();
   m_trueCstEta.clear();
   m_trueCstPhi.clear();
+  m_recoJetNCst.clear();
+  m_recoJetId.clear();
+  m_recoJetTruId.clear();
+  m_recoJetE.clear();
+  m_recoJetPt.clear();
+  m_recoJetEta.clear();
+  m_recoJetPhi.clear();
+  m_recoJetArea.clear();
+  m_recoCstZ.clear();
+  m_recoCstDr.clear();
+  m_recoCstE.clear();
+  m_recoCstJt.clear();
+  m_recoCstEta.clear();
+  m_recoCstPhi.clear();
   return;
 
 }  // end 'ResetTreeVariables()
@@ -455,12 +786,12 @@ int SCorrelatorJetTree::CreateJetNode(PHCompositeNode* topNode) {
 
   // construct jet tree name
   string baseName;
-  string jetNodeName;
-  string jetNodeNameMC;
-  if (m_jetcontainer_name.empty()) {
+  string recoNodeName;
+  string trueNodeName;
+  if (m_jetTreeName.empty()) {
     baseName = "JetTree";
   } else {
-    baseName = m_jetcontainer_name;
+    baseName = m_jetTreeName;
   }
 
   // can't have forward slashes in DST or else you make a subdirectory on save!!!
@@ -483,25 +814,27 @@ int SCorrelatorJetTree::CreateJetNode(PHCompositeNode* topNode) {
   }
 
   // construct jet node name
-  jetNodeName   = baseName + "_Jet_Container";
-  jetNodeNameMC = baseName + "_MC_Jet_Container";
+  recoNodeName = baseName + "_RecoJets";
+  trueNodeName = baseName + "_TruthJets";
 
   // construct jet maps
-  m_jetMap = new JetMapv1();
-  if (m_ismc && m_save_truth_dst) {
-    m_truth_jetMap = new JetMapv1();
+  m_recoJetMap = new JetMapv1();
+  if (m_isMC && m_saveDST) {
+    m_trueJetMap = new JetMapv1();
   }
 
   // add jet node
-  PHIODataNode<PHObject>* jetNode = new PHIODataNode<PHObject>(m_jetMap, jetNodeName.c_str(), "PHObject");
-  lowerNode -> addNode(jetNode);
-  cout << jetNodeName << " node added" << endl;
+  if (m_saveDST) {
+    PHIODataNode<PHObject>* recoJetNode = new PHIODataNode<PHObject>(m_recoJetMap, recoNodeName.c_str(), "PHObject");
+    lowerNode -> addNode(recoJetNode);
+    cout << recoNodeName << " node added" << endl;
+  }
 
   // save truth DST if needed
-  if(m_ismc && m_save_truth_dst) {
-    PHIODataNode<PHObject> *jetNodeMC = new PHIODataNode<PHObject>(m_truth_jetMap, jetNodeNameMC.c_str(), "PHObject");
-    lowerNode -> addNode(jetNodeMC);
-    cout << jetNodeNameMC << " node added" << endl;
+  if(m_isMC && m_saveDST) {
+    PHIODataNode<PHObject> *trueJetNode = new PHIODataNode<PHObject>(m_trueJetMap, trueNodeName.c_str(), "PHObject");
+    lowerNode -> addNode(trueJetNode);
+    cout << trueNodeName << " node added" << endl;
   }
   return Fun4AllReturnCodes::EVENT_OK;
 
