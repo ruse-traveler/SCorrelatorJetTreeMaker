@@ -24,11 +24,11 @@ using namespace findNode;
 
 // jet methods ----------------------------------------------------------------
 
-void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
+void SCorrelatorJetTree::FindJets(PHCompositeNode *topNode) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::findJets(PHCompositeNode*) Finding jets..." << endl;
+    cout << "SCorrelatorJetTree::FindJets(PHCompositeNode*) Finding jets..." << endl;
   }
 
   // declare fastjet objects
@@ -42,9 +42,9 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
   const bool doParticleFlow = m_add_particleflow;
   const bool doTracks       = m_add_tracks;
   const bool doCaloClusters = (m_add_EMCal_clusters || m_add_HCal_clusters);
-  if (doParticleFlow) addParticleFlow(topNode, particles, fjMap);
-  if (doTracks)       addTracks(topNode, particles, fjMap);
-  if (doCaloClusters) addClusters(topNode, particles, fjMap);
+  if (doParticleFlow) AddParticleFlow(topNode, particles, fjMap);
+  if (doTracks)       AddTracks(topNode, particles, fjMap);
+  if (doCaloClusters) AddClusters(topNode, particles, fjMap);
 
   // cluster jets
   fastjet::ClusterSequence   jetFinder(particles, *jetdef);
@@ -52,20 +52,20 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
   delete jetdef;
 
   // prepare vectors for filling
-  m_recJetNCst.clear();
-  m_recJetId.clear();
-  m_recJetTruId.clear();
-  m_recJetE.clear();
-  m_recJetPt.clear();
-  m_recJetEta.clear();
-  m_recJetPhi.clear();
-  m_recJetArea.clear();
-  m_recCstZ.clear();
-  m_recCstDr.clear();
-  m_recCstE.clear();
-  m_recCstJt.clear();
-  m_recCstEta.clear();
-  m_recCstPhi.clear();
+  m_recoJetNCst.clear();
+  m_recoJetId.clear();
+  m_recoJetTruId.clear();
+  m_recoJetE.clear();
+  m_recoJetPt.clear();
+  m_recoJetEta.clear();
+  m_recoJetPhi.clear();
+  m_recoJetArea.clear();
+  m_recoCstZ.clear();
+  m_recoCstDr.clear();
+  m_recoCstE.clear();
+  m_recoCstJt.clear();
+  m_recoCstEta.clear();
+  m_recoCstPhi.clear();
 
   // declare vectors for storing constituents
   vector<double> vecRecCstZ;
@@ -143,20 +143,20 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
     }  // end constituent loop
 
     // store jet/cst output
-    m_recJetNCst.push_back(jetNCst);
-    m_recJetId.push_back(jetID);
-    m_recJetTruId.push_back(jetTruID);
-    m_recJetE.push_back(jetE);
-    m_recJetPt.push_back(jetPt);
-    m_recJetEta.push_back(jetEta);
-    m_recJetPhi.push_back(jetPhi);
-    m_recJetArea.push_back(jetArea);
-    m_recCstZ.push_back(vecRecCstZ);
-    m_recCstDr.push_back(vecRecCstDr);
-    m_recCstE.push_back(vecRecCstE);
-    m_recCstJt.push_back(vecRecCstJt);
-    m_recCstEta.push_back(vecRecCstEta);
-    m_recCstPhi.push_back(vecRecCstPhi);
+    m_recoJetNCst.push_back(jetNCst);
+    m_recoJetId.push_back(jetID);
+    m_recoJetTruId.push_back(jetTruID);
+    m_recoJetE.push_back(jetE);
+    m_recoJetPt.push_back(jetPt);
+    m_recoJetEta.push_back(jetEta);
+    m_recoJetPhi.push_back(jetPhi);
+    m_recoJetArea.push_back(jetArea);
+    m_recoCstZ.push_back(vecRecCstZ);
+    m_recoCstDr.push_back(vecRecCstDr);
+    m_recoCstE.push_back(vecRecCstE);
+    m_recoCstJt.push_back(vecRecCstJt);
+    m_recoCstEta.push_back(vecRecCstEta);
+    m_recoCstPhi.push_back(vecRecCstPhi);
 
     // fill QA histograms and increment counters
     m_hJetArea[1]                        -> Fill(jetArea);
@@ -174,29 +174,29 @@ void SCorrelatorJetTree::findJets(PHCompositeNode *topNode) {
 
   // store evt info
   // FIXME: replace parton branches w/ relevant info
-  m_recNumJets       = nRecJet;
-  m_recPartonID[0]   = -9999;
-  m_recPartonID[1]   = -9999;
-  m_recPartonMomX[0] = -9999.;
-  m_recPartonMomX[1] = -9999.;
-  m_recPartonMomY[0] = -9999.;
-  m_recPartonMomY[1] = -9999.;
-  m_recPartonMomZ[0] = -9999.;
-  m_recPartonMomZ[1] = -9999.;
+  m_recoNumJets       = nRecJet;
+  m_recoPartonID[0]   = -9999;
+  m_recoPartonID[1]   = -9999;
+  m_recoPartonMomX[0] = -9999.;
+  m_recoPartonMomX[1] = -9999.;
+  m_recoPartonMomY[0] = -9999.;
+  m_recoPartonMomY[1] = -9999.;
+  m_recoPartonMomZ[0] = -9999.;
+  m_recoPartonMomZ[1] = -9999.;
 
   // fill object tree
-  m_recTree -> Fill();
+  m_recoTree -> Fill();
   return;
 
-}  // end 'findJets(PHCompositeNode*)'
+}  // end 'FindJets(PHCompositeNode*)'
 
 
 
-void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
+void SCorrelatorJetTree::FindMcJets(PHCompositeNode *topNode) {
 
   // print debug statement
   if (m_doDebug || (Verbosity() > 6)) {
-    cout << "SCorrelatorJetTree::findMcJets(PHCompositeNode*) Finding MC jets..." << endl;
+    cout << "SCorrelatorJetTree::FindMcJets(PHCompositeNode*) Finding MC jets..." << endl;
   }
 
   // declare fastjet objects & mc fastjet map
@@ -205,7 +205,7 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
   map<int, pair<Jet::SRC, int>>  fjMapMC;
 
   // add constituents
-  addParticles(topNode, particles, fjMapMC);
+  AddParticles(topNode, particles, fjMapMC);
 
   // cluster jets
   fastjet::ClusterSequence   jetFinder(particles, *jetdef);
@@ -213,20 +213,20 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
   delete jetdef;
 
   // prepare vectors for filling
-  m_truJetNCst.clear();
-  m_truJetId.clear();
-  m_truJetTruId.clear();
-  m_truJetE.clear();
-  m_truJetPt.clear();
-  m_truJetEta.clear();
-  m_truJetPhi.clear();
-  m_truJetArea.clear();
-  m_truCstZ.clear();
-  m_truCstDr.clear();
-  m_truCstE.clear();
-  m_truCstJt.clear();
-  m_truCstEta.clear();
-  m_truCstPhi.clear();
+  m_trueJetNCst.clear();
+  m_trueJetId.clear();
+  m_trueJetTruId.clear();
+  m_trueJetE.clear();
+  m_trueJetPt.clear();
+  m_trueJetEta.clear();
+  m_trueJetPhi.clear();
+  m_trueJetArea.clear();
+  m_trueCstZ.clear();
+  m_trueCstDr.clear();
+  m_trueCstE.clear();
+  m_trueCstJt.clear();
+  m_trueCstEta.clear();
+  m_trueCstPhi.clear();
 
   // declare vectors to storing constituents
   vector<double> vecTruCstZ;
@@ -270,17 +270,17 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
     vecTruCstPhi.clear();
 
     // loop over constituents
-    vector<fastjet::PseudoJet> truCsts = mcfastjets[iTruJet].constituents();
-    for (unsigned int iTruCst = 0; iTruCst < truCsts.size(); ++iTruCst) {
+    vector<fastjet::PseudoJet> trueCsts = mcfastjets[iTruJet].constituents();
+    for (unsigned int iTruCst = 0; iTruCst < trueCsts.size(); ++iTruCst) {
 
       // get constituent info
-      const double cstPhi = truCsts[iTruCst].phi_std();
-      const double cstEta = truCsts[iTruCst].pseudorapidity();
-      const double cstE   = truCsts[iTruCst].E();
-      const double cstJt  = truCsts[iTruCst].perp();
-      const double cstJx  = truCsts[iTruCst].px();
-      const double cstJy  = truCsts[iTruCst].py();
-      const double cstJz  = truCsts[iTruCst].pz();
+      const double cstPhi = trueCsts[iTruCst].phi_std();
+      const double cstEta = trueCsts[iTruCst].pseudorapidity();
+      const double cstE   = trueCsts[iTruCst].E();
+      const double cstJt  = trueCsts[iTruCst].perp();
+      const double cstJx  = trueCsts[iTruCst].px();
+      const double cstJy  = trueCsts[iTruCst].py();
+      const double cstJz  = trueCsts[iTruCst].pz();
       const double cstJ   = ((cstJx * cstJx) + (cstJy * cstJy) + (cstJz * cstJz));
       const double cstZ   = cstJ / jetP;
       const double cstDf  = cstPhi - jetPhi;
@@ -304,20 +304,20 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
     }  // end constituent loop
 
     // store jet/cst output
-    m_truJetNCst.push_back(jetNCst);
-    m_truJetId.push_back(jetID);
-    m_truJetTruId.push_back(jetTruID);
-    m_truJetE.push_back(jetE);
-    m_truJetPt.push_back(jetPt);
-    m_truJetEta.push_back(jetEta);
-    m_truJetPhi.push_back(jetPhi);
-    m_truJetArea.push_back(jetArea);
-    m_truCstZ.push_back(vecTruCstZ);
-    m_truCstDr.push_back(vecTruCstDr);
-    m_truCstE.push_back(vecTruCstE);
-    m_truCstJt.push_back(vecTruCstJt);
-    m_truCstEta.push_back(vecTruCstEta);
-    m_truCstPhi.push_back(vecTruCstPhi);
+    m_trueJetNCst.push_back(jetNCst);
+    m_trueJetId.push_back(jetID);
+    m_trueJetTruId.push_back(jetTruID);
+    m_trueJetE.push_back(jetE);
+    m_trueJetPt.push_back(jetPt);
+    m_trueJetEta.push_back(jetEta);
+    m_trueJetPhi.push_back(jetPhi);
+    m_trueJetArea.push_back(jetArea);
+    m_trueCstZ.push_back(vecTruCstZ);
+    m_trueCstDr.push_back(vecTruCstDr);
+    m_trueCstE.push_back(vecTruCstE);
+    m_trueCstJt.push_back(vecTruCstJt);
+    m_trueCstEta.push_back(vecTruCstEta);
+    m_trueCstPhi.push_back(vecTruCstPhi);
 
     // fill QA histograms and increment counters
     m_hJetArea[0]                        -> Fill(jetArea);
@@ -335,34 +335,34 @@ void SCorrelatorJetTree::findMcJets(PHCompositeNode *topNode) {
 
   // store evt info
   // FIXME: grab actual parton values
-  m_truNumJets       = nTruJet;
-  m_truPartonID[0]   = -9999;
-  m_truPartonID[1]   = -9999;
-  m_truPartonMomX[0] = -9999.;
-  m_truPartonMomX[1] = -9999.;
-  m_truPartonMomY[0] = -9999.;
-  m_truPartonMomY[1] = -9999.;
-  m_truPartonMomZ[0] = -9999.;
-  m_truPartonMomZ[1] = -9999.; 
+  m_trueNumJets       = nTruJet;
+  m_truePartonID[0]   = -9999;
+  m_truePartonID[1]   = -9999;
+  m_truePartonMomX[0] = -9999.;
+  m_truePartonMomX[1] = -9999.;
+  m_truePartonMomY[0] = -9999.;
+  m_truePartonMomY[1] = -9999.;
+  m_truePartonMomZ[0] = -9999.;
+  m_truePartonMomZ[1] = -9999.; 
 
   // fill output tree
-  m_truTree -> Fill();
+  m_trueTree -> Fill();
   return;
 
-}  // end 'findMcJets(PHCompositeNode*)'
+}  // end 'FindMcJets(PHCompositeNode*)'
 
 
 
-void SCorrelatorJetTree::addParticleFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddParticleFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addParticleFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding particle flow elements..." << endl;
+    cout << "SCorrelatorJetTree::AddParticleFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding particle flow elements..." << endl;
   }
 
   // warn if jets should be charged
   if (m_doDebug && (m_jetType != 1)) {
-    cerr << "SCorrelatorJetTree::addParticleFlow - Warning - trying to add particle flow elements to charged jets!" << endl;
+    cerr << "SCorrelatorJetTree::AddParticleFlow - Warning - trying to add particle flow elements to charged jets!" << endl;
   }
 
   // declare pf  objects
@@ -386,7 +386,7 @@ void SCorrelatorJetTree::addParticleFlow(PHCompositeNode *topNode, vector<Pseudo
     }
 
     // check if good
-    const bool isGoodElement = isAcceptableParticleFlow(pflow);
+    const bool isGoodElement = IsGoodParticleFlow(pflow);
     if (!isGoodElement) {
       continue;
     } else {
@@ -424,15 +424,15 @@ void SCorrelatorJetTree::addParticleFlow(PHCompositeNode *topNode, vector<Pseudo
   m_hSumCstEne[CST_TYPE::FLOW_CST]       -> Fill(eFlowSum);
   return;
 
-}  // end 'addParticleFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
+}  // end 'AddParticleFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
 
 
-void SCorrelatorJetTree::addTracks(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding tracks..." << endl;
+    cout << "SCorrelatorJetTree::AddTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding tracks..." << endl;
   }
 
   // get track map
@@ -461,7 +461,7 @@ void SCorrelatorJetTree::addTracks(PHCompositeNode *topNode, vector<PseudoJet> &
     }
 
     // check if good
-    const bool isGoodTrack = isAcceptableTrack(track);
+    const bool isGoodTrack = IsGoodTrack(track);
     if(!isGoodTrack) {
       continue;
     } else {
@@ -499,20 +499,20 @@ void SCorrelatorJetTree::addTracks(PHCompositeNode *topNode, vector<PseudoJet> &
   m_hSumCstEne[CST_TYPE::TRACK_CST]       -> Fill(eTrkSum);
   return;
 
-}  // end 'addTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
+}  // end 'AddTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
 
 
-void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddClusters(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addClusters(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding clusters..." << endl;
+    cout << "SCorrelatorJetTree::AddClusters(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding clusters..." << endl;
   }
 
   // warn if jets should be charged
   if (m_doDebug && (m_jetType != 1)) {
-    cerr << "SCorrelatorJetTree::addClusters - Warning - trying to add calorimeter clusters to charged jets!" << endl;
+    cerr << "SCorrelatorJetTree::AddClusters - Warning - trying to add calorimeter clusters to charged jets!" << endl;
   }
 
   // get vertex map
@@ -575,7 +575,7 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
       CLHEP::Hep3Vector E_vec_cluster = RawClusterUtility::GetECoreVec(*cluster, vertex);
 
       // check if good
-      const bool isGoodClust = isAcceptableEMCalCluster(E_vec_cluster);
+      const bool isGoodClust = IsGoodEMCalCluster(E_vec_cluster);
       if (!isGoodClust) {
         continue;
       } else {
@@ -644,7 +644,7 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
       CLHEP::Hep3Vector E_vec_cluster = RawClusterUtility::GetECoreVec(*cluster, vertex);
 
       // check if good
-      const bool isGoodClust = isAcceptableHCalCluster(E_vec_cluster);
+      const bool isGoodClust = IsGoodHCalCluster(E_vec_cluster);
       if (!isGoodClust) {
         continue;
       } else {
@@ -709,7 +709,7 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
       CLHEP::Hep3Vector E_vec_cluster = RawClusterUtility::GetECoreVec(*cluster, vertex);
 
       // check if good
-      const bool isGoodClust = isAcceptableHCalCluster(E_vec_cluster);
+      const bool isGoodClust = IsGoodHCalCluster(E_vec_cluster);
       if (!isGoodClust) {
         continue;
       } else {
@@ -752,15 +752,15 @@ void SCorrelatorJetTree::addClusters(PHCompositeNode *topNode, vector<PseudoJet>
   m_hSumCstEne[CST_TYPE::CALO_CST]       -> Fill(eClustSum);
   return;
 
-}  // end 'addClusters(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
+}  // end 'AddClusters(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
 
 
-void SCorrelatorJetTree::addParticles(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::addParticles(PHComposite*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding MC particles..." << endl;
+    cout << "SCorrelatorJetTree::AddParticles(PHComposite*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding MC particles..." << endl;
   }
 
   // grab mc event map
@@ -805,7 +805,7 @@ void SCorrelatorJetTree::addParticles(PHCompositeNode *topNode, vector<PseudoJet
     }
 
     // check if particle is good
-    const bool isGoodPar = isAcceptableParticle(*p);
+    const bool isGoodPar = IsGoodParticle(*p);
     if (!isGoodPar) {
       continue;
     } else {
@@ -843,6 +843,6 @@ void SCorrelatorJetTree::addParticles(PHCompositeNode *topNode, vector<PseudoJet
   m_hSumCstEne[CST_TYPE::PART_CST]       -> Fill(eParSum);
   return;
 
-}  // end 'addParticles(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
+}  // end 'AddParticles(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
 // end ------------------------------------------------------------------------

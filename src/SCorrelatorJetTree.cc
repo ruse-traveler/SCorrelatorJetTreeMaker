@@ -19,9 +19,9 @@
 // user includes
 #include "SCorrelatorJetTree.h"
 #include "SCorrelatorJetTree.io.h"
-#include "SCorrelatorJetTree.jets.h"
-#include "SCorrelatorJetTree.system.h"
-#include "SCorrelatorJetTree.constituents.h"
+#include "SCorrelatorJetTree.jet.h"
+#include "SCorrelatorJetTree.cst.h"
+#include "SCorrelatorJetTree.sys.h"
 
 using namespace std;
 using namespace fastjet;
@@ -40,7 +40,7 @@ SCorrelatorJetTree::SCorrelatorJetTree(const string &name, const string &outfile
     cout << "SCorrelatorJetTree::SCorrelatorJetTree(string, string, bool, bool) Calling ctor" << endl;
   }
   m_outfilename = outfile;
-  initializeVariables();
+  InitVariables();
 
 }  // end ctor(string, string, bool, bool)
 
@@ -54,8 +54,8 @@ SCorrelatorJetTree::~SCorrelatorJetTree() {
   }
   delete m_hm;
   delete m_outFile;
-  delete m_recTree;
-  delete m_truTree;
+  delete m_recoTree;
+  delete m_trueTree;
 
 }  // end dtor
 
@@ -78,12 +78,12 @@ int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
 
   // create node for jet-tree
   if (m_save_dst) {
-    createJetNode(topNode);
+    CreateJetNode(topNode);
   }
 
   // initialize QA histograms and output trees
-  initializeHists();
-  initializeTrees();
+  InitHists();
+  InitTrees();
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'Init(PHcompositeNode*)'
@@ -97,11 +97,15 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
     cout << "SCorrelatorJetTree::process_event(PHCompositeNode*) Processing Event..." << endl;
   }
 
+  /* reset event variables goes here */
+
   // find jets
   if (m_ismc) {
-    findMcJets(topNode);
+    FindMcJets(topNode);
   }
-  findJets(topNode);
+  FindJets(topNode);
+
+  /* jet matching & filling trees go here */
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'process_event(PHCompositeNode*)'
@@ -116,7 +120,7 @@ int SCorrelatorJetTree::End(PHCompositeNode *topNode) {
   }
 
   // save output and close
-  saveOutput();
+  SaveOutput();
   m_outFile -> cd();
   m_outFile -> Close();
   return Fun4AllReturnCodes::EVENT_OK;

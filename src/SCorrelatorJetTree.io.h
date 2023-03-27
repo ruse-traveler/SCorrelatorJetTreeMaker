@@ -24,7 +24,7 @@ using namespace findNode;
 
 // i/o methods ---------------------------------------------------------------- 
 
-void SCorrelatorJetTree::setParticleFlowEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::SetParticleFlowEtaAcc(double etamin, double etamax) {
 
   m_particleflow_mineta = etamin;
   m_particleflow_maxeta = etamax;
@@ -34,7 +34,7 @@ void SCorrelatorJetTree::setParticleFlowEtaAcc(double etamin, double etamax) {
 
 
 
-void SCorrelatorJetTree::setTrackPtAcc(double ptmin, double ptmax) {
+void SCorrelatorJetTree::SetTrackPtAcc(double ptmin, double ptmax) {
 
   m_track_minpt = ptmin;
   m_track_maxpt = ptmax;
@@ -44,7 +44,7 @@ void SCorrelatorJetTree::setTrackPtAcc(double ptmin, double ptmax) {
 
 
 
-void SCorrelatorJetTree::setTrackEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::SetTrackEtaAcc(double etamin, double etamax) {
 
   m_track_mineta = etamin;
   m_track_maxeta = etamax;
@@ -54,7 +54,7 @@ void SCorrelatorJetTree::setTrackEtaAcc(double etamin, double etamax) {
 
 
 
-void SCorrelatorJetTree::setEMCalClusterPtAcc(double ptmin, double ptmax) {
+void SCorrelatorJetTree::SetEMCalClusterPtAcc(double ptmin, double ptmax) {
 
   m_EMCal_cluster_minpt = ptmin;
   m_EMCal_cluster_maxpt = ptmax;
@@ -64,7 +64,7 @@ void SCorrelatorJetTree::setEMCalClusterPtAcc(double ptmin, double ptmax) {
 
 
 
-void SCorrelatorJetTree::setEMCalClusterEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::SetEMCalClusterEtaAcc(double etamin, double etamax) {
 
   m_EMCal_cluster_mineta = etamin;
   m_EMCal_cluster_maxeta = etamax;
@@ -74,7 +74,7 @@ void SCorrelatorJetTree::setEMCalClusterEtaAcc(double etamin, double etamax) {
 
 
 
-void SCorrelatorJetTree::setHCalClusterPtAcc(double ptmin, double ptmax) {
+void SCorrelatorJetTree::SetHCalClusterPtAcc(double ptmin, double ptmax) {
 
   m_HCal_cluster_minpt = ptmin;
   m_HCal_cluster_maxpt = ptmax;
@@ -84,7 +84,7 @@ void SCorrelatorJetTree::setHCalClusterPtAcc(double ptmin, double ptmax) {
 
 
 
-void SCorrelatorJetTree::setHCalClusterEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::SetHCalClusterEtaAcc(double etamin, double etamax) {
 
   m_HCal_cluster_mineta = etamin;
   m_HCal_cluster_maxeta = etamax;
@@ -94,7 +94,7 @@ void SCorrelatorJetTree::setHCalClusterEtaAcc(double etamin, double etamax) {
 
 
 
-void SCorrelatorJetTree::setParticlePtAcc(double ptmin, double ptmax) {
+void SCorrelatorJetTree::SetParticlePtAcc(double ptmin, double ptmax) {
 
   m_MC_particle_minpt = ptmin;
   m_MC_particle_maxpt = ptmax;
@@ -104,7 +104,7 @@ void SCorrelatorJetTree::setParticlePtAcc(double ptmin, double ptmax) {
 
 
 
-void SCorrelatorJetTree::setParticleEtaAcc(double etamin, double etamax) {
+void SCorrelatorJetTree::SetParticleEtaAcc(double etamin, double etamax) {
 
   m_MC_particle_mineta = etamin;
   m_MC_particle_maxeta = etamax;
@@ -115,7 +115,7 @@ void SCorrelatorJetTree::setParticleEtaAcc(double etamin, double etamax) {
 
 
 
-void SCorrelatorJetTree::setJetAlgo(ALGO jetalgo) {
+void SCorrelatorJetTree::SetJetAlgo(ALGO jetalgo) {
 
   switch (jetalgo) {
     case ALGO::ANTIKT:
@@ -137,7 +137,7 @@ void SCorrelatorJetTree::setJetAlgo(ALGO jetalgo) {
 
 
 
-void SCorrelatorJetTree::setRecombScheme(RECOMB recomb_scheme) {
+void SCorrelatorJetTree::SetRecombScheme(RECOMB recomb_scheme) {
 
   switch(recomb_scheme) {
     case RECOMB::E_SCHEME:
@@ -165,12 +165,12 @@ void SCorrelatorJetTree::setRecombScheme(RECOMB recomb_scheme) {
 
 
 
-void SCorrelatorJetTree::setJetParameters(double r, unsigned int type, ALGO jetalgo, RECOMB recomb_scheme) {
+void SCorrelatorJetTree::SetJetParameters(double r, unsigned int type, ALGO jetalgo, RECOMB recomb_scheme) {
 
-  setR(r);
-  setType(type);
-  setJetAlgo(jetalgo);
-  setRecombScheme(recomb_scheme);
+  SetR(r);
+  SetType(type);
+  SetJetAlgo(jetalgo);
+  SetRecombScheme(recomb_scheme);
   return;
 
 }  // end 'setJetParameters(double, ALGO, RECOMB)'

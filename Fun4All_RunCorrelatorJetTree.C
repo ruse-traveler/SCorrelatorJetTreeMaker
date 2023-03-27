@@ -54,7 +54,7 @@ static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_p
 static const string       SInSeedDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/trackseeds/nopileup/run0006/jet30/DST_TRACKSEEDS_pythia8_Jet30-0000000006-06666.root";
 static const string       SInTrksDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/tracks/nopileup/run0006/jet30/DST_TRACKS_pythia8_Jet30-0000000006-06666.root";
 static const string       SInTrueDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/trkrhit/run0006/jet30/DST_TRUTH_pythia8_Jet30-0000000006-06666.root";
-static const string       SOutDefault    = "oops.root";
+static const string       SOutDefault    = "baseline.root";
 static const int          NEvtDefault    = 10;
 static const int          VerbDefault    = 0;
 static const unsigned int NTopoClusts    = 2;
@@ -81,7 +81,7 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
 
   // jet tree parameters
   const bool   isMC(true);
-  const bool   doDebug(false);
+  const bool   doDebug(true);
   const bool   saveDst(true);
   const bool   doQuality(true);
   const bool   addTracks(true);
@@ -200,20 +200,20 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   // create correlator jet tree
   SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, doDebug);
   correlatorJetTree -> Verbosity(verbosity);
-  correlatorJetTree -> setDoQualityPlots(doQuality);
-  correlatorJetTree -> setAddTracks(addTracks);
-  correlatorJetTree -> setAddEMCalClusters(addEMClusters);
-  correlatorJetTree -> setAddHCalClusters(addHClusters);
-  correlatorJetTree -> setAddParticleFlow(addParticleFlow);
-  correlatorJetTree -> setTrackPtAcc(ptTrackAccept[0], ptTrackAccept[1]);
-  correlatorJetTree -> setEMCalClusterPtAcc(ptEMClustAccept[0], ptEMClustAccept[1]);
-  correlatorJetTree -> setHCalClusterPtAcc(ptHClustAccept[0], ptHClustAccept[1]);
-  correlatorJetTree -> setTrackEtaAcc(etaTrackAccept[0], etaTrackAccept[1]);
-  correlatorJetTree -> setEMCalClusterEtaAcc(etaEMClustAccept[0], etaEMClustAccept[1]);
-  correlatorJetTree -> setHCalClusterEtaAcc(etaHClustAccept[0], etaHClustAccept[1]);
-  correlatorJetTree -> setParticleFlowEtaAcc(etaPartFlowAccept[0], etaPartFlowAccept[1]);
-  correlatorJetTree -> setJetParameters(jetRes, jetType, jetAlgo, jetReco);
-  correlatorJetTree -> setSaveDST(saveDst);
+  correlatorJetTree -> SetDoQualityPlots(doQuality);
+  correlatorJetTree -> SetAddTracks(addTracks);
+  correlatorJetTree -> SetAddEMCalClusters(addEMClusters);
+  correlatorJetTree -> SetAddHCalClusters(addHClusters);
+  correlatorJetTree -> SetAddParticleFlow(addParticleFlow);
+  correlatorJetTree -> SetTrackPtAcc(ptTrackAccept[0], ptTrackAccept[1]);
+  correlatorJetTree -> SetEMCalClusterPtAcc(ptEMClustAccept[0], ptEMClustAccept[1]);
+  correlatorJetTree -> SetHCalClusterPtAcc(ptHClustAccept[0], ptHClustAccept[1]);
+  correlatorJetTree -> SetTrackEtaAcc(etaTrackAccept[0], etaTrackAccept[1]);
+  correlatorJetTree -> SetEMCalClusterEtaAcc(etaEMClustAccept[0], etaEMClustAccept[1]);
+  correlatorJetTree -> SetHCalClusterEtaAcc(etaHClustAccept[0], etaHClustAccept[1]);
+  correlatorJetTree -> SetParticleFlowEtaAcc(etaPartFlowAccept[0], etaPartFlowAccept[1]);
+  correlatorJetTree -> SetJetParameters(jetRes, jetType, jetAlgo, jetReco);
+  correlatorJetTree -> SetSaveDST(saveDst);
   se                -> registerSubsystem(correlatorJetTree);
 
   // run reconstruction & close f4a

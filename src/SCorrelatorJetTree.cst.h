@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.constituents.h'
+// 'SCorrelatorJetTree.csts.h'
 // Derek Anderson
 // 01.18.2023
 //
@@ -24,11 +24,11 @@ using namespace findNode;
 
 // constituent methods --------------------------------------------------------
 
-bool SCorrelatorJetTree::isAcceptableParticleFlow(ParticleFlowElement *pfPart) {
+bool SCorrelatorJetTree::IsGoodParticleFlow(ParticleFlowElement *pfPart) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::isAcceptableParticleFlow(ParticleFlowElement*) Checking if particle flow element is good..." << endl;
+    cout << "SCorrelatorJetTree::IsGoodParticleFlow(ParticleFlowElement*) Checking if particle flow element is good..." << endl;
   }
 
   // TODO: explore particle flow cuts
@@ -37,15 +37,15 @@ bool SCorrelatorJetTree::isAcceptableParticleFlow(ParticleFlowElement *pfPart) {
   const bool   isGoodElement = isInEtaRange;
   return isGoodElement;
 
-}  // end 'isAcceptableParticleFlow(ParticleFlowElement*)'
+}  // end 'IsGoodParticleFlow(ParticleFlowElement*)'
 
 
 
-bool SCorrelatorJetTree::isAcceptableTrack(SvtxTrack *track) {
+bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack *track) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::isAcceptableTrack(SvtxTrack*) Checking if track is good..." << endl;
+    cout << "SCorrelatorJetTree::IsGoodTrack(SvtxTrack*) Checking if track is good..." << endl;
   }
 
   const double trkPt        = track -> get_pt();
@@ -55,15 +55,15 @@ bool SCorrelatorJetTree::isAcceptableTrack(SvtxTrack *track) {
   const bool   isGoodTrack  = (isInPtRange && isInEtaRange);
   return isGoodTrack;
 
-}  // end 'isAcceptableTrack(SvtxTrack*)'
+}  // end 'IsGoodTrack(SvtxTrack*)'
 
 
 
-bool SCorrelatorJetTree::isAcceptableEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster) {
+bool SCorrelatorJetTree::IsGoodEMCalCluster(CLHEP::Hep3Vector &E_vec_cluster) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::isAcceptableEMCalCluster(CLHEP::Hep3Vector&) Checking if ECal cluster is good..." << endl;
+    cout << "SCorrelatorJetTree::IsGoodEMCalCluster(CLHEP::Hep3Vector&) Checking if ECal cluster is good..." << endl;
   }
 
   const double clustPt      = E_vec_cluster.perp();
@@ -73,15 +73,15 @@ bool SCorrelatorJetTree::isAcceptableEMCalCluster(CLHEP::Hep3Vector &E_vec_clust
   const bool   isGoodClust  = (isInPtRange && isInEtaRange);
   return isGoodClust;
 
-}  // end 'isAcceptableEMCalCluster(CLHEP::Hep3Vector&)'
+}  // end 'IsGoodEMCalCluster(CLHEP::Hep3Vector&)'
 
 
 
-bool SCorrelatorJetTree::isAcceptableHCalCluster(CLHEP::Hep3Vector &E_vec_cluster) {
+bool SCorrelatorJetTree::IsGoodHCalCluster(CLHEP::Hep3Vector &E_vec_cluster) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::isAcceptableHCalCluster(CLHEP::Hep3Vector&) Checking if HCal cluster is good..." << endl;
+    cout << "SCorrelatorJetTree::IsGoodHCalCluster(CLHEP::Hep3Vector&) Checking if HCal cluster is good..." << endl;
   }
 
   // TODO: explore particle cuts. These should vary with particle charge/species.
@@ -92,15 +92,15 @@ bool SCorrelatorJetTree::isAcceptableHCalCluster(CLHEP::Hep3Vector &E_vec_cluste
   const bool   isGoodClust  = (isInPtRange && isInEtaRange);
   return isGoodClust;
 
-}  // end 'isAcceptableHCalCluster(CLHEP::Hep3Vector&)'
+}  // end 'IsGoodHCalCluster(CLHEP::Hep3Vector&)'
 
 
 
-bool SCorrelatorJetTree::isAcceptableParticle(HepMC::GenParticle *part) {
+bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *part) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::isAcceptableParticle(HepMC::GenParticle*) Checking if MC particle is good..." << endl;
+    cout << "SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle*) Checking if MC particle is good..." << endl;
   }
 
   // check charge if needed
@@ -109,7 +109,7 @@ bool SCorrelatorJetTree::isAcceptableParticle(HepMC::GenParticle *part) {
   float parChrg;
   if (m_jetType != 1) {
     parID        = part -> pdg_id();
-    parChrg      = getParticleCharge(parID);
+    parChrg      = GetParticleCharge(parID);
     isGoodCharge = (parChrg != 0.);
   } else {
     isGoodCharge = true;
@@ -124,15 +124,15 @@ bool SCorrelatorJetTree::isAcceptableParticle(HepMC::GenParticle *part) {
   const bool   isGoodPar    = (isGoodCharge && isInPtRange && isInEtaRange);
   return isGoodPar;
 
-}  // end 'isAcceptableParticle(HepMC::GenParticle*)'
+}  // end 'IsGoodParticle(HepMC::GenParticle*)'
 
 
 
-float SCorrelatorJetTree::getParticleCharge(const int pid) {
+float SCorrelatorJetTree::GetParticleCharge(const int pid) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 2)) {
-    cout << "SCorrelatorJetTree::getParticleCharge(int) Grabbing MC particle charge..." << endl;
+    cout << "SCorrelatorJetTree::GetParticleCharge(int) Grabbing MC particle charge..." << endl;
   }
 
   // particle charge
@@ -257,7 +257,7 @@ float SCorrelatorJetTree::getParticleCharge(const int pid) {
     default:
       charge = 0.;
       if (m_doDebug && (Verbosity() > 1)) {
-        cerr << "SCorrelatorJetTree::getParticleCharge(int) WARNING: trying to determine charge of unknown particle (PID = " << pid << ")..." << endl;
+        cerr << "SCorrelatorJetTree::GetParticleCharge(int) WARNING: trying to determine charge of unknown particle (PID = " << pid << ")..." << endl;
       }
       break;
   }  // end switch (abs(pid))
@@ -268,6 +268,6 @@ float SCorrelatorJetTree::getParticleCharge(const int pid) {
   }
   return charge;
 
-}  // end 'getParticleCharge(int)'
+}  // end 'GetParticleCharge(int)'
 
 // end ------------------------------------------------------------------------

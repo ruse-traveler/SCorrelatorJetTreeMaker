@@ -10,10 +10,10 @@ src/*
 !src/SCorrelatorJetTree.h
 !src/SCorrelatorJetTree.cc
 !src/SCorrelatorJetTree.io.h
-!src/SCorrelatorJetTree.jets.h
-!src/SCorrelatorJetTree.system.h
+!src/SCorrelatorJetTree.jet.h
+!src/SCorrelatorJetTree.sys.h
 !src/SCorrelatorJetTreeLinkDef.h
-!src/SCorrelatorJetTree.constituents.h
+!src/SCorrelatorJetTree.cst.h
 !src/autogen.sh
 !src/configure.ac
 !src/Makefile.am
