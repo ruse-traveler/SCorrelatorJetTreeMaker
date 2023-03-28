@@ -79,6 +79,15 @@ void SCorrelatorJetTree::FindRecoJets(PHCompositeNode *topNode) {
 
 
 
+void SCorrelatorJetTree::DoMatching() {
+
+  /* jet/cst matching will go here */
+  return;
+
+}  // end 'DoMatching()'
+
+
+
 void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
 
   // print debug statement
@@ -160,9 +169,9 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
   }  // end particle loop
 
   // fill QA histograms
-  m_hNumObject[OBJECT::PART]             -> Fill(nParAcc);  // TODO: fill this one in cst collection method
+  m_hNumObject[OBJECT::PART]             -> Fill(nParAcc);
   m_hNumCstAccept[CST_TYPE::PART_CST][0] -> Fill(nParTot);
-  m_hNumCstAccept[CST_TYPE::PART_CST][1] -> Fill(nParAcc);  // TODO: fill this one in jet finding method
+  m_hNumCstAccept[CST_TYPE::PART_CST][1] -> Fill(nParAcc);
   m_hSumCstEne[CST_TYPE::PART_CST]       -> Fill(eParSum);
   return;
 
@@ -235,9 +244,9 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &
   }  // end track loop
 
   // fill QA histograms
-  m_hNumObject[OBJECT::TRACK]             -> Fill(nTrkAcc);  // TODO: fill this one in cst collection method
+  m_hNumObject[OBJECT::TRACK]             -> Fill(nTrkAcc);
   m_hNumCstAccept[CST_TYPE::TRACK_CST][0] -> Fill(nTrkTot);
-  m_hNumCstAccept[CST_TYPE::TRACK_CST][1] -> Fill(nTrkAcc);  // TODO: fill this one in jet finding method
+  m_hNumCstAccept[CST_TYPE::TRACK_CST][1] -> Fill(nTrkAcc);
   m_hSumCstEne[CST_TYPE::TRACK_CST]       -> Fill(eTrkSum);
   return;
 
@@ -310,9 +319,9 @@ void SCorrelatorJetTree::AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &pa
   }  // end pf element loop
 
   // fill QA histograms
-  m_hNumObject[OBJECT::FLOW]             -> Fill(nFlowAcc);  // TODO: fill this one in cst collection method
+  m_hNumObject[OBJECT::FLOW]             -> Fill(nFlowAcc);
   m_hNumCstAccept[CST_TYPE::FLOW_CST][0] -> Fill(nFlowTot);
-  m_hNumCstAccept[CST_TYPE::FLOW_CST][1] -> Fill(nFlowAcc);  // TODO: fill this one in jet finding method
+  m_hNumCstAccept[CST_TYPE::FLOW_CST][1] -> Fill(nFlowAcc);
   m_hSumCstEne[CST_TYPE::FLOW_CST]       -> Fill(eFlowSum);
   return;
 
@@ -425,9 +434,9 @@ void SCorrelatorJetTree::AddECal(PHCompositeNode *topNode, vector<PseudoJet> &pa
   }  // end em cluster loop
 
   // fill QA histograms
-  m_hNumObject[OBJECT::ECLUST]           -> Fill(nClustEM);  // TODO: fill this one in cst collection method
+  m_hNumObject[OBJECT::ECLUST]           -> Fill(nClustEM);
   m_hNumCstAccept[CST_TYPE::ECAL_CST][0] -> Fill(nClustTot);
-  m_hNumCstAccept[CST_TYPE::ECAL_CST][1] -> Fill(nClustAcc);  // TODO: fill this one in jet finding method
+  m_hNumCstAccept[CST_TYPE::ECAL_CST][1] -> Fill(nClustAcc);
   m_hSumCstEne[CST_TYPE::ECAL_CST]       -> Fill(eClustSum);
   return;
 
@@ -605,10 +614,10 @@ void SCorrelatorJetTree::AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &pa
   }  // end oh cluster loop
 
   // fill QA histograms
-  m_hNumObject[OBJECT::HCLUST]           -> Fill(nClustH);   // TODO: fill this one in cst collection method
+  m_hNumObject[OBJECT::HCLUST]           -> Fill(nClustH);
   m_hSumCstEne[CST_TYPE::HCAL_CST]       -> Fill(eClustSum);
   m_hNumCstAccept[CST_TYPE::HCAL_CST][0] -> Fill(nClustTot);
-  m_hNumCstAccept[CST_TYPE::HCAL_CST][1] -> Fill(nClustAcc);  // TODO: fill this one in jet finding method
+  m_hNumCstAccept[CST_TYPE::HCAL_CST][1] -> Fill(nClustAcc);
   return;
 
 }  // end 'AddHCal(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'

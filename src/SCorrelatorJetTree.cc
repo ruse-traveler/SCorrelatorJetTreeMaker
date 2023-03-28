@@ -19,6 +19,7 @@
 // user includes
 #include "SCorrelatorJetTree.h"
 #include "SCorrelatorJetTree.io.h"
+#include "SCorrelatorJetTree.evt.h"
 #include "SCorrelatorJetTree.jet.h"
 #include "SCorrelatorJetTree.cst.h"
 #include "SCorrelatorJetTree.sys.h"
@@ -102,24 +103,30 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
     cout << "SCorrelatorJetTree::process_event(PHCompositeNode*) Processing Event..." << endl;
   }
 
-  // reset variables for event
+  // reset for event and get event-wise variables
   ResetVariables();
-
-  /* grab event-wise variables here */
+  GetEventVariables(topNode);
+  if (m_isMC) {
+    FindPartons(topNode);
+  }
 
   // find jets
+  FindRecoJets(topNode);
   if (m_isMC) {
     FindTrueJets(topNode);
   }
-  FindRecoJets(topNode);
 
-  /* jet matching goes here */
+  // match jets/cst.s
+  if (m_isMC && m_doMatching) {
+    DoMatching();
+  }
 
   // fill output trees
+  FillRecoTree();
   if (m_isMC) {
     FillTrueTree();
+    FillMatchTree();
   }
-  FillRecoTree();
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'process_event(PHCompositeNode*)'

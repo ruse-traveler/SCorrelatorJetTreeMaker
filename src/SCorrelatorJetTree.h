@@ -74,13 +74,13 @@
 #include <phhepmc/PHHepMCGenEvent.h>
 #include <phhepmc/PHHepMCGenEventMap.h>
 // root includes
-#include <TH1.h>
-#include <TH2.h>
-#include <TFile.h>
-#include <TTree.h>
-#include <TMath.h>
-#include <TNtuple.h>
-#include <TDirectory.h>
+#include "TH1.h"
+#include "TH2.h"
+#include "TFile.h"
+#include "TTree.h"
+#include "TMath.h"
+#include "TNtuple.h"
+#include "TDirectory.h"
 
 #pragma GCC diagnostic pop
 
@@ -259,6 +259,7 @@ class SCorrelatorJetTree : public SubsysReco {
 
     // event methods (*.evt.h)
     void   FindPartons(PHCompositeNode *topNode);
+    void   GetEventVariables(PHCompositeNode *topNode);
     long   GetNumTrks(PHCompositeNode *topNode);
     long   GetNumChrgPars(PHCompositeNode *topNode);
     double GetSumECalEne(PHCompositeNode *topNode);
@@ -268,7 +269,7 @@ class SCorrelatorJetTree : public SubsysReco {
     // jet methods (*.jet.h)
     void FindTrueJets(PHCompositeNode *topNode);
     void FindRecoJets(PHCompositeNode *topNode);
-    void MatchJets();
+    void DoMatching();
     void AddParticles(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
@@ -368,11 +369,11 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<PseudoJet> m_trueJets;
 
     // output reco event variables
-    unsigned long          m_recoNumJets           = 0;
-    long long              m_recoPartonID[NPart]   = {-9999,  -9999};
-    double                 m_recoPartonMomX[NPart] = {-9999., -9999.};
-    double                 m_recoPartonMomY[NPart] = {-9999., -9999.};
-    double                 m_recoPartonMomZ[NPart] = {-9999., -9999.};
+    unsigned long          m_recoNumJets;
+    long long              m_recoPartonID[NPart];
+    double                 m_recoPartonMomX[NPart];
+    double                 m_recoPartonMomY[NPart];
+    double                 m_recoPartonMomZ[NPart];
     // output reco jet variables
     vector<unsigned long>  m_recoJetNCst;
     vector<unsigned int>   m_recoJetId;
@@ -391,11 +392,11 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<vector<double>> m_recoCstPhi;
 
     // output truth event variables
-    unsigned long         m_trueNumJets           = 0;
-    long long             m_truePartonID[NPart]   = {-9999,  -9999};
-    double                m_truePartonMomX[NPart] = {-9999., -9999.};
-    double                m_truePartonMomY[NPart] = {-9999., -9999.};
-    double                m_truePartonMomZ[NPart] = {-9999., -9999.};
+    unsigned long         m_trueNumJets;
+    long long             m_truePartonID[NPart];
+    double                m_truePartonMomX[NPart];
+    double                m_truePartonMomY[NPart];
+    double                m_truePartonMomZ[NPart];
     // output truth jet variables
     vector<unsigned long> m_trueJetNCst;
     vector<unsigned int>  m_trueJetId;

@@ -601,6 +601,15 @@ void SCorrelatorJetTree::FillRecoTree() {
 
 
 
+void SCorrelatorJetTree::FillMatchTree() {
+
+  /* TODO fill match tree here */
+  return;
+
+}  // end 'FillMatchTree()'
+
+
+
 void SCorrelatorJetTree::SaveOutput() {
 
   // print debug statement
