@@ -180,6 +180,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetAddECal(const bool addECal)     {m_addECal        = addECal;}
     void SetAddHCal(const bool addHCal)     {m_addHCal        = addHCal;}
     void SetDoQualityPlots(const bool doQA) {m_doQualityPlots = doQA;}
+    void SetDoMatching(const bool doMatch)  {m_doMatching     = doMatch;}
     void SetSaveDST(const bool doSave)      {m_saveDST        = doSave;}
     void SetIsMC(const bool isMC)           {m_isMC           = isMC;}
     void SetJetR(const double jetR)         {m_jetR           = jetR;}
@@ -197,6 +198,10 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetECalEtaRange(const pair<double, double> etaRange);
     void SetHCalPtRange(const pair<double, double> ptRange);
     void SetHCalEtaRange(const pair<double, double> etaRange);
+    void SetJetMatchQtRange(const pair<double, double> qtRange);
+    void SetJetMatchDrRange(const pair<double, double> drRange);
+    void SetCstMatchQtRange(const pair<double, double> qtRange);
+    void SetCstMatchDrRange(const pair<double, double> drRange);
     void SetJetAlgo(const ALGO jetAlgo);
     void SetRecombScheme(const RECOMB recombScheme);
     void SetJetParameters(const double rJet, const uint32_t jetType, const ALGO jetAlgo, const RECOMB recombScheme);
@@ -207,6 +212,7 @@ class SCorrelatorJetTree : public SubsysReco {
     bool   GetAddECal()        {return m_addECal;}
     bool   GetAddHCal()        {return m_addHCal;}
     bool   GetDoQualityPlots() {return m_doQualityPlots;}
+    bool   GetDoMatching()     {return m_doMatching;}
     bool   GetSaveDST()        {return m_saveDST;}
     bool   GetIsMC()           {return m_isMC;}
     string GetJetTreeName()    {return m_jetTreeName;}
@@ -233,6 +239,16 @@ class SCorrelatorJetTree : public SubsysReco {
     double GetHCalMinEta()  {return m_hcalEtaRange[0];}
     double GetHCalMaxEta()  {return m_hcalEtaRange[1];}
 
+    // matching getters
+    double GetJetMatchMinQt() {return m_jetMatchQtRange[0];}
+    double GetJetMatchMaxQt() {return m_jetMatchQtRange[1];}
+    double GetJetMatchMinDr() {return m_jetMatchDrRange[0];}
+    double GetJetMatchMaxDr() {return m_jetMatchDrRange[1];}
+    double GetCstMatchMinQt() {return m_cstMatchQtRange[0];}
+    double GetCstMatchMaxQt() {return m_cstMatchQtRange[1];}
+    double GetCstMatchMinDr() {return m_cstMatchDrRange[0];}
+    double GetCstMatchMaxDr() {return m_cstMatchDrRange[1];}
+
     // jet getters
     double              GetJetR()         {return m_jetR;}
     uint32_t            GetJetType()      {return m_jetType;}
@@ -258,7 +274,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddECal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
-    bool IsJetGoodMatch();
+    bool IsJetGoodMatch(const double qtJet, const double drJet);
 
     // constituent methods (*.cst.h)
     bool  IsGoodParticle(HepMC::GenParticle *part);
@@ -266,7 +282,7 @@ class SCorrelatorJetTree : public SubsysReco {
     bool  IsGoodFlow(ParticleFlowElement *pfPart);
     bool  IsGoodECal(CLHEP::Hep3Vector &E_vec_cluster);
     bool  IsGoodHCal(CLHEP::Hep3Vector &E_vec_cluster);
-    bool  IsCstGoodMatch();
+    bool  IsCstGoodMatch(const double qtCst, const double drCst);
     float GetParticleCharge(const int pid);
 
     // system methods (*.sys.h)
@@ -306,6 +322,7 @@ class SCorrelatorJetTree : public SubsysReco {
     bool m_saveDST;
     bool m_isMC;
     bool m_doDebug;
+    bool m_doMatching;
     bool m_addTracks;
     bool m_addFlow;
     bool m_addECal;
@@ -322,6 +339,12 @@ class SCorrelatorJetTree : public SubsysReco {
     double m_ecalEtaRange[NRange];
     double m_hcalPtRange[NRange];
     double m_hcalEtaRange[NRange];
+
+    // matching parameters
+    double m_jetMatchQtRange[NRange];
+    double m_jetMatchDrRange[NRange];
+    double m_cstMatchQtRange[NRange];
+    double m_cstMatchDrRange[NRange];
 
     // jet parameters
     double               m_jetR;

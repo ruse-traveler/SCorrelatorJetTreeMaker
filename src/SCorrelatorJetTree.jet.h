@@ -613,4 +613,20 @@ void SCorrelatorJetTree::AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &pa
 
 }  // end 'AddHCal(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
+
+
+bool SCorrelatorJetTree::IsJetGoodMatch(const double qtJet, const double drJet) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 2)) {
+    cout << "SCorrelatorJetTree::IsJetGoodMatch(double, double) Checking if jet match is good..." << endl;
+  }
+
+  const bool isInQtRange = ((qtJet > m_jetMatchQtRange[0]) && (qtJet < m_jetMatchQtRange[1]));
+  const bool isInDrRange = ((drJet > m_jetMatchDrRange[0]) && (drJet < m_jetMatchDrRange[1]));
+  const bool isGoodMatch = (isInQtRange && isInDrRange);
+  return isGoodMatch;
+
+}  // end 'IsJetGoodMatch(double, double)'
+
 // end ------------------------------------------------------------------------

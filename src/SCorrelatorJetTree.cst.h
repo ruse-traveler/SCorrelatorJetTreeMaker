@@ -128,6 +128,22 @@ bool SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector &E_vec_cluster) {
 
 
 
+bool SCorrelatorJetTree::IsCstGoodMatch(const double qtCst, const double drCst) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 2)) {
+    cout << "SCorrelatorJetTree::IsCstGoodMatch(double, double) Checking if constituent match is good..." << endl;
+  }
+
+  const bool isInQtRange = ((qtCst > m_cstMatchQtRange[0]) && (qtCst < m_cstMatchQtRange[1]));
+  const bool isInDrRange = ((drCst > m_cstMatchDrRange[0]) && (drCst < m_cstMatchDrRange[1]));
+  const bool isGoodMatch = (isInQtRange && isInDrRange);
+  return isGoodMatch;
+
+}  // end 'IsCstGoodMatch(double, double)'
+
+
+
 float SCorrelatorJetTree::GetParticleCharge(const int pid) {
 
   // print debug statement
