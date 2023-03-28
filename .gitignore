@@ -10,6 +10,7 @@ src/*
 !src/SCorrelatorJetTree.h
 !src/SCorrelatorJetTree.cc
 !src/SCorrelatorJetTree.io.h
+!src/SCorrelatorJetTree.evt.h
 !src/SCorrelatorJetTree.jet.h
 !src/SCorrelatorJetTree.sys.h
 !src/SCorrelatorJetTreeLinkDef.h
