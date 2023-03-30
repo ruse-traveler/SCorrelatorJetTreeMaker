@@ -102,6 +102,8 @@ void SCorrelatorJetTree::InitVariables() {
   m_partonID[1]           = -9999;
   m_partonMom[0]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
   m_partonMom[1]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_recoVtx               = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_trueVtx               = CLHEP::Hep3Vector(-9999., -9999., -9999.);
   m_trueJets.clear();
   m_recoJets.clear();
   m_trueJetNCst.clear();
@@ -856,5 +858,118 @@ int SCorrelatorJetTree::CreateJetNode(PHCompositeNode* topNode) {
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'CreateJetNode(PHCompositeNode*)'
+
+
+
+SvtxTrackMap* SCorrelatorJetTree::GetTrackMap(PHCompositeNode *topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetTrackMap(PHCompositeNode*) Grabbing track map..." << endl;
+  }
+
+  // grab track map
+  SvtxTrackMap *mapTrks = findNode::getClass<SvtxTrackMap>(topNode, "SvtxTrackMap");
+  if (!mapTrks) {
+    cerr << PHWHERE
+         << "PANIC: SvtxTrackMap node is missing!"
+         << endl;
+    assert(mapTrks);
+  }
+  return mapTrks;
+
+}  // end 'GetTrackMap(PHCompositeNode*)'
+
+
+
+GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode *topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode*) Getting global vertex..." << endl;
+  }
+
+  // get vertex map & check if good
+  GlobalVertexMap *mapVtx = findNode::getClass<GlobalVertexMap>(topNode, "GlobalVertexMap");
+
+  const bool isVtxMapGood = (mapVtx && !(mapVtx -> empty()));
+  if (!isVtxMapGood) {
+    cerr << PHWHERE
+         << "PANIC: GlobalVertexMap node is missing or empty!\n"
+         << "       Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
+         << endl;
+    assert(isVtxMapGood);
+  }
+
+  // grab vertex
+  GlobalVertex *vtx = mapVtx -> begin() -> second;
+  if (!vtx) {
+    cerr << PHWHERE
+         << "PANIC: no vertex!"
+         << endl;
+    assert(vtx);
+  }
+  return vtx;
+
+}  // end 'GetGlobalVertex(PHCompositeNode*)'
+
+
+
+HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode *topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetMcEvent(PHCompositeNode*) Grabbing mc event..." << endl;
+  }
+
+  // grab mc event map
+  PHHepMCGenEventMap *mapMcEvts = findNode::getClass<PHHepMCGenEventMap>(topNode, "PHHepMCGenEventMap");
+  if (!mapMcEvts) {
+    cerr << PHWHERE
+         << "PANIC: HEPMC event map node is missing!"
+         << endl;
+    assert(mapMcEvts);
+  }
+
+  // grab mc event & check if good
+  PHHepMCGenEvent *mcEvtStart = mapMcEvts -> get(1);
+  if (!mcEvtStart) {
+    cerr << PHWHERE
+         << "PANIC: Couldn't grab start of mc events!"
+         << endl;
+    assert(mcEvtStart);
+  }
+
+  HepMC::GenEvent *mcEvt = mcEvtStart -> getEvent();
+  if (!mcEvt) {
+    cerr << PHWHERE
+         << "PANIC: Couldn't grab HepMC event!"
+         << endl;
+    assert(mcEvt);
+  }
+  return mcEvt;
+
+}  // end 'GetMcEvent(PHCompositeNode*)'
+
+
+
+RawClusterContainer* SCorrelatorJetTree::GetClusterStore(PHCompositeNode *topNode, const TString sNodeName) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetClusterStore(PHCompositeNode*, TString) Grabbing calorimeter cluster container..." << endl;
+  }
+
+  // grab clusters
+  RawClusterContainer *clustStore = findNode::getClass<RawClusterContainer>(topNode, sNodeName.Data());
+  if (!clustStore) {
+    cout << PHWHERE
+         << "PANIC: " << sNodeName.Data() << " node is missing!"
+         << endl;
+    assert(clustStore);
+  }
+  return clustStore;
+
+}  // end 'GetClusterStore(PHCompositeNode*, TString)'
 
 // end ------------------------------------------------------------------------

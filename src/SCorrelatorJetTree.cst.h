@@ -24,7 +24,7 @@ using namespace findNode;
 
 // constituent methods --------------------------------------------------------
 
-bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *part) {
+bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *part, const bool ignoreCharge) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
@@ -32,10 +32,13 @@ bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *part) {
   }
 
   // check charge if needed
+  const bool isJetCharged  = (m_jetType != 1);
+  const bool doChargeCheck = (isJetCharged && !ignoreCharge);
+
   int   parID;
   bool  isGoodCharge;
   float parChrg;
-  if (m_jetType != 1) {
+  if (doChargeCheck) {
     parID        = part -> pdg_id();
     parChrg      = GetParticleCharge(parID);
     isGoodCharge = (parChrg != 0.);

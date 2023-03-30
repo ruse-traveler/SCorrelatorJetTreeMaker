@@ -101,7 +101,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
     cerr << PHWHERE
          << "PANIC: HEPMC event map node is missing, can't collect HEPMC truth particles!"
          << endl;
-    return;
+    assert(hepmceventmap);
   }
 
   // grab mc event & check if good
@@ -110,7 +110,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
     cerr << PHWHERE
          << "PANIC: Couldn't grab HepMCEvent begin()! Abandoning particle collection!"
          << endl;
-    return;
+    assert(hepmcevent);
   }
 
   HepMC::GenEvent *hepMCevent = hepmcevent -> getEvent();
@@ -118,7 +118,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
     cerr << PHWHERE
          << "PANIC: Couldn't grab HepMC event! Abandoning particle collection!"
          << endl;
-    return;
+    assert(hepMCevent);
   }
 
   // loop over particles
@@ -192,7 +192,7 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &
     cerr << PHWHERE
          << "PANIC: SvtxTrackMap node is missing, can't collect tracks!"
          << endl;
-    return;
+    assert(trackmap);
   }
 
   // loop over tracks
@@ -213,7 +213,7 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &
 
     // check if good
     const bool isGoodTrack = IsGoodTrack(track);
-    if(!isGoodTrack) {
+    if (!isGoodTrack) {
       continue;
     } else {
       ++nTrkAcc;
@@ -268,6 +268,12 @@ void SCorrelatorJetTree::AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &pa
 
   // declare pf  objects
   ParticleFlowElementContainer *pflowContainer = findNode::getClass<ParticleFlowElementContainer>(topNode, "ParticleFlowElements");
+  if (!pflowContainer) {
+    cerr << PHWHERE
+         << "PANIC: Couldn't grab particle flow container! Abandoning particle flow collection!"
+         << endl;
+    assert(pflowContainer);
+  }
 
   // loop over pf elements
   unsigned int                                iPart     = particles.size();
@@ -348,18 +354,17 @@ void SCorrelatorJetTree::AddECal(PHCompositeNode *topNode, vector<PseudoJet> &pa
          << "  Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
          << endl;
     assert(vertexmap);
-    return;
   }
   if (vertexmap -> empty()) {
     cerr << "SCorrelatorJetTree::AddECal - Fatal Error - GlobalVertexMap node is empty!\n"
          << "  Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
          << endl;
-    return;
+    assert(!(vertexmap -> empty()));
   }
-
+  
   // grab vertex
   GlobalVertex *vtx = vertexmap -> begin() -> second;
-  if (vtx == nullptr) return;
+  if (vtx == nullptr) assert(vtx);
 
   // add emcal clusters if needed
   unsigned int iPart     = particles.size();
@@ -463,18 +468,17 @@ void SCorrelatorJetTree::AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &pa
          << "  Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
          << endl;
     assert(vertexmap);
-    return;
   }
   if (vertexmap -> empty()) {
     cerr << "SCorrelatorJetTree::AddHCal - Fatal Error - GlobalVertexMap node is empty!\n"
          << "  Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
          << endl;
-    return;
+    assert(!(vertexmap -> empty()));
   }
 
   // grab vertex
   GlobalVertex *vtx = vertexmap -> begin() -> second;
-  if (vtx == nullptr) return;
+  if (vtx == nullptr) assert(vtx);
 
   // add emcal clusters if needed
   unsigned int iPart     = particles.size();

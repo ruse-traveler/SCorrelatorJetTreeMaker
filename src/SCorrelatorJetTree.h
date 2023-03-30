@@ -258,13 +258,15 @@ class SCorrelatorJetTree : public SubsysReco {
   private:
 
     // event methods (*.evt.h)
-    void   FindPartons(PHCompositeNode *topNode);
-    void   GetEventVariables(PHCompositeNode *topNode);
-    long   GetNumTrks(PHCompositeNode *topNode);
-    long   GetNumChrgPars(PHCompositeNode *topNode);
-    double GetSumECalEne(PHCompositeNode *topNode);
-    double GetSumHCalEne(PHCompositeNode *topNode);
-    double GetSumParEne(PHCompositeNode *topNode);
+    void              FindPartons(PHCompositeNode *topNode);
+    void              GetEventVariables(PHCompositeNode *topNode);
+    long              GetNumTrks(PHCompositeNode *topNode);
+    long              GetNumChrgPars(PHCompositeNode *topNode);
+    double            GetSumECalEne(PHCompositeNode *topNode);
+    double            GetSumHCalEne(PHCompositeNode *topNode);
+    double            GetSumParEne(PHCompositeNode *topNode);
+    CLHEP::Hep3Vector GetRecoVtx(PHCompositeNode *topNode);
+    CLHEP::Hep3Vector GetTrueVtx(PHCompositeNode *topNode);
 
     // jet methods (*.jet.h)
     void FindTrueJets(PHCompositeNode *topNode);
@@ -278,7 +280,7 @@ class SCorrelatorJetTree : public SubsysReco {
     bool IsJetGoodMatch(const double qtJet, const double drJet);
 
     // constituent methods (*.cst.h)
-    bool  IsGoodParticle(HepMC::GenParticle *part);
+    bool  IsGoodParticle(HepMC::GenParticle *part, const bool ignoreCharge=false);
     bool  IsGoodTrack(SvtxTrack *track);
     bool  IsGoodFlow(ParticleFlowElement *pfPart);
     bool  IsGoodECal(CLHEP::Hep3Vector &E_vec_cluster);
@@ -287,15 +289,19 @@ class SCorrelatorJetTree : public SubsysReco {
     float GetParticleCharge(const int pid);
 
     // system methods (*.sys.h)
-    void InitVariables();
-    void InitHists();
-    void InitTrees();
-    void FillTrueTree();
-    void FillRecoTree();
-    void FillMatchTree();
-    void SaveOutput();
-    void ResetVariables();
-    int  CreateJetNode(PHCompositeNode* topNode);
+    void                 InitVariables();
+    void                 InitHists();
+    void                 InitTrees();
+    void                 FillTrueTree();
+    void                 FillRecoTree();
+    void                 FillMatchTree();
+    void                 SaveOutput();
+    void                 ResetVariables();
+    int                  CreateJetNode(PHCompositeNode *topNode);
+    SvtxTrackMap*        GetTrackMap(PHCompositeNode *topNode);
+    GlobalVertex*        GetGlobalVertex(PHCompositeNode *topNode);
+    HepMC::GenEvent*     GetMcEvent(PHCompositeNode *topNode);
+    RawClusterContainer* GetClusterStore(PHCompositeNode *topNode, const TString sNodeName);
 
     // F4A members
     Fun4AllHistoManager *m_histMan;
@@ -365,6 +371,8 @@ class SCorrelatorJetTree : public SubsysReco {
     double            m_sumParEne;
     long long         m_partonID[NPart];
     CLHEP::Hep3Vector m_partonMom[NPart];
+    CLHEP::Hep3Vector m_recoVtx;
+    CLHEP::Hep3Vector m_trueVtx;
     vector<PseudoJet> m_recoJets;
     vector<PseudoJet> m_trueJets;
 
