@@ -20,29 +20,29 @@ using namespace findNode;
 
 // event methods --------------------------------------------------------------
 
-void SCorrelatorJetTree::FindPartons(PHCompositeNode *topNode) {
-
-  /* TODO will find partons here */
-  return;
-
-}  // end 'FindPartons(PHCompositeNode*)'
-
-
-
 void SCorrelatorJetTree::GetEventVariables(PHCompositeNode *topNode) {
 
-  m_recoVtx    = GetRecoVtx(topNode);
-  m_numTrks    = GetNumTrks(topNode);
-  m_sumECalEne = GetSumECalEne(topNode);
-  m_sumHCalEne = GetSumHCalEne(topNode);
+  m_recoVtx     = GetRecoVtx(topNode);
+  m_recoNumTrks = GetNumTrks(topNode);
+  m_recoSumECal = GetSumECalEne(topNode);
+  m_recoSumHCal = GetSumHCalEne(topNode);
   if (m_isMC) {
-    m_numChrgPars = GetNumChrgPars(topNode);
-    m_sumParEne   = GetSumParEne(topNode);
-    m_trueVtx     = GetTrueVtx(topNode);
+    m_trueNumChrgPars = GetNumChrgPars(topNode);
+    m_trueSumPar      = GetSumParEne(topNode);
+    m_trueVtx         = GetTrueVtx(topNode);
   }
   return;
 
 }  // end 'GetEventVariables(PHCompositeNode*)'
+
+
+
+void SCorrelatorJetTree::GetPartonInfo(PHCompositeNode *topNode) {
+
+  /* TODO will find partons here */
+  return;
+
+}  // end 'GetPartonInfo(PHCompositeNode*)'
 
 
 

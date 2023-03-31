@@ -107,7 +107,7 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
   ResetVariables();
   GetEventVariables(topNode);
   if (m_isMC) {
-    FindPartons(topNode);
+    GetPartonInfo(topNode);
   }
 
   // find jets

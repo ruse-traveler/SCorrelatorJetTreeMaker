@@ -258,8 +258,8 @@ class SCorrelatorJetTree : public SubsysReco {
   private:
 
     // event methods (*.evt.h)
-    void              FindPartons(PHCompositeNode *topNode);
     void              GetEventVariables(PHCompositeNode *topNode);
+    void              GetPartonInfo(PHCompositeNode *topNode);
     long              GetNumTrks(PHCompositeNode *topNode);
     long              GetNumChrgPars(PHCompositeNode *topNode);
     double            GetSumECalEne(PHCompositeNode *topNode);
@@ -364,11 +364,6 @@ class SCorrelatorJetTree : public SubsysReco {
     RecombinationScheme  m_recombScheme;
 
     // event, jet members
-    long              m_numTrks;
-    long              m_numChrgPars;
-    double            m_sumECalEne;
-    double            m_sumHCalEne;
-    double            m_sumParEne;
     long long         m_partonID[NPart];
     CLHEP::Hep3Vector m_partonMom[NPart];
     CLHEP::Hep3Vector m_recoVtx;
@@ -378,13 +373,15 @@ class SCorrelatorJetTree : public SubsysReco {
 
     // output reco event variables
     unsigned long          m_recoNumJets;
-    long long              m_recoPartonID[NPart];
-    double                 m_recoPartonMomX[NPart];
-    double                 m_recoPartonMomY[NPart];
-    double                 m_recoPartonMomZ[NPart];
+    double                 m_recoVtxX;
+    double                 m_recoVtxY;
+    double                 m_recoVtxZ;
+    double                 m_recoSumECal;
+    double                 m_recoSumHCal;
+    long                   m_recoNumTrks;
     // output reco jet variables
     vector<unsigned long>  m_recoJetNCst;
-    vector<unsigned int>   m_recoJetId;
+    vector<unsigned int>   m_recoJetRecId;
     vector<unsigned int>   m_recoJetTruId;
     vector<double>         m_recoJetE;
     vector<double>         m_recoJetPt;
@@ -405,9 +402,14 @@ class SCorrelatorJetTree : public SubsysReco {
     double                m_truePartonMomX[NPart];
     double                m_truePartonMomY[NPart];
     double                m_truePartonMomZ[NPart];
+    double                m_trueVtxX;
+    double                m_trueVtxY;
+    double                m_trueVtxZ;
+    double                m_trueSumPar;
+    long                  m_trueNumChrgPars;
     // output truth jet variables
     vector<unsigned long> m_trueJetNCst;
-    vector<unsigned int>  m_trueJetId;
+    vector<unsigned int>  m_trueJetRecId;
     vector<unsigned int>  m_trueJetTruId;
     vector<double>        m_trueJetE;
     vector<double>        m_trueJetPt;
