@@ -266,7 +266,6 @@ class SCorrelatorJetTree : public SubsysReco {
     double            GetSumHCalEne(PHCompositeNode *topNode);
     double            GetSumParEne(PHCompositeNode *topNode);
     CLHEP::Hep3Vector GetRecoVtx(PHCompositeNode *topNode);
-    CLHEP::Hep3Vector GetTrueVtx(PHCompositeNode *topNode);
 
     // jet methods (*.jet.h)
     void FindTrueJets(PHCompositeNode *topNode);
@@ -280,12 +279,13 @@ class SCorrelatorJetTree : public SubsysReco {
     bool IsJetGoodMatch(const double qtJet, const double drJet);
 
     // constituent methods (*.cst.h)
-    bool  IsGoodParticle(HepMC::GenParticle *part, const bool ignoreCharge=false);
+    bool  IsGoodParticle(HepMC::GenParticle *par, const bool ignoreCharge=false);
     bool  IsGoodTrack(SvtxTrack *track);
-    bool  IsGoodFlow(ParticleFlowElement *pfPart);
-    bool  IsGoodECal(CLHEP::Hep3Vector &E_vec_cluster);
-    bool  IsGoodHCal(CLHEP::Hep3Vector &E_vec_cluster);
+    bool  IsGoodFlow(ParticleFlowElement *flow);
+    bool  IsGoodECal(CLHEP::Hep3Vector &hepVecECal);
+    bool  IsGoodHCal(CLHEP::Hep3Vector &hepVecHCal);
     bool  IsCstGoodMatch(const double qtCst, const double drCst);
+    bool  IsOutgoingParton(HepMC::GenParticle *par);
     float GetParticleCharge(const int pid);
 
     // system methods (*.sys.h)

@@ -29,7 +29,6 @@ void SCorrelatorJetTree::GetEventVariables(PHCompositeNode *topNode) {
   if (m_isMC) {
     m_trueNumChrgPars = GetNumChrgPars(topNode);
     m_trueSumPar      = GetSumParEne(topNode);
-    m_trueVtx         = GetTrueVtx(topNode);
   }
   return;
 
@@ -39,7 +38,36 @@ void SCorrelatorJetTree::GetEventVariables(PHCompositeNode *topNode) {
 
 void SCorrelatorJetTree::GetPartonInfo(PHCompositeNode *topNode) {
 
-  /* TODO will find partons here */
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetPartonInfo(PHCompositeNode*) Grabbing parton info..." << endl;
+  }
+
+  // loop over particles
+  unsigned int     iOutPart = 0;
+  HepMC::GenEvent *mcEvt    = GetMcEvent(topNode);
+  for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
+
+    // check if outputing parton
+    const bool isOutParton      = IsOutgoingParton(*itPar);
+    const bool foundBothPartons = (iOutPart == 2);
+    if (!isOutParton || foundBothPartons) continue;
+
+    // grab parton info
+    const double parPx = (*itPar) -> momentum().px();
+    const double parPy = (*itPar) -> momentum().py();
+    const double parPz = (*itPar) -> momentum().pz();
+    const double parVx = (*itPar) -> production_vertex() -> position().x();
+    const double parVy = (*itPar) -> production_vertex() -> position().y();
+    const double parVz = (*itPar) -> production_vertex() -> position().z();
+
+    // record ids, momentum, and vtx
+    m_partonID[iOutPart]  = (*itPar) -> pdg_id();
+    m_partonMom[iOutPart] = CLHEP::Hep3Vector(parPx, parPy, parPz);
+    m_trueVtx             = CLHEP::Hep3Vector(parVx, parVy, parVz);
+    ++iOutPart;
+  }  // end particle loop
   return;
 
 }  // end 'GetPartonInfo(PHCompositeNode*)'
@@ -246,25 +274,6 @@ CLHEP::Hep3Vector SCorrelatorJetTree::GetRecoVtx(PHCompositeNode* topNode) {
   const double             vtxZ    = vtx -> get_z();
   const CLHEP::Hep3Vector  recoVtx = CLHEP::Hep3Vector(vtxX, vtxY, vtxZ);
   return recoVtx;
-
-}  // end 'GetRecoVtx(PHCompositeNode*)'
-
-
-
-CLHEP::Hep3Vector SCorrelatorJetTree::GetTrueVtx(PHCompositeNode* topNode) {
-
-  // print debug statement
-  if (m_doDebug) {
-    cout << "SCorrelatorJetTree::GetTrueVtx(PHComposite*) Getting truth vertex..." << endl;
-  }
-
-  // grab event
-  //HepMC::GenEvent *mcEvt = GetMcEvent(topNode);
-
-  // get vertex
-  /* TODO vertex grabbing goes here */
-  const CLHEP::Hep3Vector trueVtx = CLHEP::Hep3Vector(0., 0., 0.);
-  return trueVtx;
 
 }  // end 'GetRecoVtx(PHCompositeNode*)'
 
