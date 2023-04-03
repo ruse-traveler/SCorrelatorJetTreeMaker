@@ -289,19 +289,20 @@ class SCorrelatorJetTree : public SubsysReco {
     float GetParticleCharge(const int pid);
 
     // system methods (*.sys.h)
-    void                 InitVariables();
-    void                 InitHists();
-    void                 InitTrees();
-    void                 FillTrueTree();
-    void                 FillRecoTree();
-    void                 FillMatchTree();
-    void                 SaveOutput();
-    void                 ResetVariables();
-    int                  CreateJetNode(PHCompositeNode *topNode);
-    SvtxTrackMap*        GetTrackMap(PHCompositeNode *topNode);
-    GlobalVertex*        GetGlobalVertex(PHCompositeNode *topNode);
-    HepMC::GenEvent*     GetMcEvent(PHCompositeNode *topNode);
-    RawClusterContainer* GetClusterStore(PHCompositeNode *topNode, const TString sNodeName);
+    void                          InitVariables();
+    void                          InitHists();
+    void                          InitTrees();
+    void                          FillTrueTree();
+    void                          FillRecoTree();
+    void                          FillMatchTree();
+    void                          SaveOutput();
+    void                          ResetVariables();
+    int                           CreateJetNode(PHCompositeNode *topNode);
+    SvtxTrackMap*                 GetTrackMap(PHCompositeNode *topNode);
+    GlobalVertex*                 GetGlobalVertex(PHCompositeNode *topNode);
+    HepMC::GenEvent*              GetMcEvent(PHCompositeNode *topNode);
+    RawClusterContainer*          GetClusterStore(PHCompositeNode *topNode, const TString sNodeName);
+    ParticleFlowElementContainer* GetFlowStore(PHCompositeNode *topNode);
 
     // F4A members
     Fun4AllHistoManager *m_histMan;
@@ -425,7 +426,7 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<vector<double>> m_trueCstPhi;
 
     // output match event variables
-    /* will go here */
+    
 
 };
 

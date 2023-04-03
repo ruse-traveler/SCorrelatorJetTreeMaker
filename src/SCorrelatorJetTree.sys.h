@@ -963,4 +963,25 @@ RawClusterContainer* SCorrelatorJetTree::GetClusterStore(PHCompositeNode *topNod
 
 }  // end 'GetClusterStore(PHCompositeNode*, TString)'
 
+
+
+ParticleFlowElementContainer* SCorrelatorJetTree::GetFlowStore(PHCompositeNode *topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetFlowStore(PHCompositeNode*) Grabbing particle flow container..." << endl;
+  }
+
+  // declare pf  objects
+  ParticleFlowElementContainer *flowStore = findNode::getClass<ParticleFlowElementContainer>(topNode, "ParticleFlowElements");
+  if (!flowStore) {
+    cerr << PHWHERE
+         << "PANIC: Couldn't grab particle flow container!"
+         << endl;
+    assert(flowStore);
+  }
+  return flowStore;
+
+}  // end 'GetFlowStore(PHCompositeNode*)'
+
 // end ------------------------------------------------------------------------
