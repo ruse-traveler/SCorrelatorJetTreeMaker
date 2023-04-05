@@ -95,41 +95,16 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
     cout << "SCorrelatorJetTree::AddParticles(PHComposite*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding MC particles..." << endl;
   }
 
-  // grab mc event map
-  PHHepMCGenEventMap *hepmceventmap = findNode::getClass<PHHepMCGenEventMap>(topNode, "PHHepMCGenEventMap");
-  if (!hepmceventmap) {
-    cerr << PHWHERE
-         << "PANIC: HEPMC event map node is missing, can't collect HEPMC truth particles!"
-         << endl;
-    assert(hepmceventmap);
-  }
-
-  // grab mc event & check if good
-  PHHepMCGenEvent *hepmcevent = hepmceventmap -> get(1);
-  if (!hepmcevent) {
-    cerr << PHWHERE
-         << "PANIC: Couldn't grab HepMCEvent begin()! Abandoning particle collection!"
-         << endl;
-    assert(hepmcevent);
-  }
-
-  HepMC::GenEvent *hepMCevent = hepmcevent -> getEvent();
-  if (!hepMCevent) {
-    cerr << PHWHERE
-         << "PANIC: Couldn't grab HepMC event! Abandoning particle collection!"
-         << endl;
-    assert(hepMCevent);
-  }
-
   // loop over particles
-  unsigned int iPart   = particles.size();
-  unsigned int nParTot = 0;
-  unsigned int nParAcc = 0;
-  double       eParSum = 0.;
-  for (HepMC::GenEvent::particle_const_iterator p = hepMCevent -> particles_begin(); p != hepMCevent -> particles_end(); ++p) {
+  unsigned int     iCst    = particles.size();
+  unsigned int     nParTot = 0;
+  unsigned int     nParAcc = 0;
+  double           eParSum = 0.;
+  HepMC::GenEvent *mcEvt   = GetMcEvent(topNode);
+  for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
     // check if particle is final state
-    const bool isFinalState = ((*p) -> status() == 1);
+    const bool isFinalState = ((*itPar) -> status() == 1);
     if (!isFinalState) {
       continue;
     } else {
@@ -137,7 +112,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
     }
 
     // check if particle is good
-    const bool isGoodPar = IsGoodParticle(*p);
+    const bool isGoodPar = IsGoodParticle(*itPar);
     if (!isGoodPar) {
       continue;
     } else {
@@ -145,27 +120,27 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
     }
 
     // create pseudojet & add to constituent vector
-    const int    parID = (*p) -> barcode();
-    const double parPx = (*p) -> momentum().px();
-    const double parPy = (*p) -> momentum().py();
-    const double parPz = (*p) -> momentum().pz();
-    const double parE  = (*p) -> momentum().e();
+    const int    parID = (*itPar) -> barcode();
+    const double parPx = (*itPar) -> momentum().px();
+    const double parPy = (*itPar) -> momentum().py();
+    const double parPz = (*itPar) -> momentum().pz();
+    const double parE  = (*itPar) -> momentum().e();
 
-    fastjet::PseudoJet fjMCParticle(parPx, parPy, parPz, parE);
-    fjMCParticle.set_user_index(iPart);
-    particles.push_back(fjMCParticle);
+    fastjet::PseudoJet fjParticle(parPx, parPy, parPz, parE);
+    fjParticle.set_user_index(iCst);
+    particles.push_back(fjParticle);
 
     // add particle to mc fastjet map
-    pair<int, pair<Jet::SRC, int>> jetPartPair(iPart, make_pair(Jet::SRC::PARTICLE, parID));
+    pair<int, pair<Jet::SRC, int>> jetPartPair(iCst, make_pair(Jet::SRC::PARTICLE, parID));
     fjMap.insert(jetPartPair);
 
     // fill QA histograms, increment sums and counters
-    m_hObjectQA[OBJECT::PART][INFO::PT]  -> Fill(fjMCParticle.perp());
-    m_hObjectQA[OBJECT::PART][INFO::ETA] -> Fill(fjMCParticle.pseudorapidity());
-    m_hObjectQA[OBJECT::PART][INFO::PHI] -> Fill(fjMCParticle.phi_std());
-    m_hObjectQA[OBJECT::PART][INFO::ENE] -> Fill(fjMCParticle.E());
+    m_hObjectQA[OBJECT::PART][INFO::PT]  -> Fill(fjParticle.perp());
+    m_hObjectQA[OBJECT::PART][INFO::ETA] -> Fill(fjParticle.pseudorapidity());
+    m_hObjectQA[OBJECT::PART][INFO::PHI] -> Fill(fjParticle.phi_std());
+    m_hObjectQA[OBJECT::PART][INFO::ENE] -> Fill(fjParticle.E());
     eParSum += parE;
-    ++iPart;
+    ++iCst;
   }  // end particle loop
 
   // fill QA histograms
