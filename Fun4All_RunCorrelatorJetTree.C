@@ -82,7 +82,6 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   // jet tree general parameters
   const bool isMC(true);
   const bool doDebug(true);
-  const bool doMatching(true);
   const bool saveDst(true);
   const bool doQuality(true);
   const bool addTracks(true);
@@ -107,12 +106,6 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   const pair<double, double> etaECalRange  = {-1.1, 1.1};
   const pair<double, double> ptHCalRange   = {0.3,  9999.};
   const pair<double, double> etaHCalRange  = {-1.1, 1.1};
-
-  // matching parameters
-  const pair<double, double> qtJetRange = {0.5,  1.3};
-  const pair<double, double> drJetRange = {0.,   jetRes};
-  const pair<double, double> qtCstRange = {0.15, 1.5};
-  const pair<double, double> drCstRange = {0.,   2. * jetRes};
 
   // load libraries and create f4a server
   gSystem -> Load("libg4dst.so");
@@ -213,7 +206,6 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, doDebug);
   correlatorJetTree -> Verbosity(verbosity);
   correlatorJetTree -> SetDoQualityPlots(doQuality);
-  correlatorJetTree -> SetDoMatching(doMatching);
   correlatorJetTree -> SetAddTracks(addTracks);
   correlatorJetTree -> SetAddFlow(addParticleFlow);
   correlatorJetTree -> SetAddECal(addECal);
@@ -228,10 +220,6 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   correlatorJetTree -> SetECalEtaRange(etaECalRange);
   correlatorJetTree -> SetHCalPtRange(ptHCalRange);
   correlatorJetTree -> SetHCalEtaRange(etaHCalRange);
-  correlatorJetTree -> SetJetMatchQtRange(qtJetRange);
-  correlatorJetTree -> SetJetMatchDrRange(drJetRange);
-  correlatorJetTree -> SetCstMatchQtRange(qtCstRange);
-  correlatorJetTree -> SetCstMatchDrRange(drCstRange);
   correlatorJetTree -> SetJetParameters(jetRes, jetType, jetAlgo, jetReco);
   correlatorJetTree -> SetSaveDST(saveDst);
   ffaServer         -> registerSubsystem(correlatorJetTree);

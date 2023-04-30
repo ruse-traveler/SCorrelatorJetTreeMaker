@@ -63,14 +63,6 @@ void SCorrelatorJetTree::InitVariables() {
   m_hcalPtRange[1]       = 9999.;
   m_hcalEtaRange[0]      = -1.1;
   m_hcalEtaRange[1]      = 1.1;
-  m_jetMatchQtRange[0]   = 0.5;
-  m_jetMatchQtRange[1]   = 1.3;
-  m_jetMatchDrRange[0]   = 0.;
-  m_jetMatchDrRange[1]   = 0.4;
-  m_cstMatchQtRange[0]   = 0.15;
-  m_cstMatchQtRange[1]   = 1.5;
-  m_cstMatchDrRange[0]   = 0.;
-  m_cstMatchDrRange[1]   = 0.8;
   m_jetR                 = 0.4;
   m_jetType              = 0;
   m_jetAlgo              = antikt_algorithm;

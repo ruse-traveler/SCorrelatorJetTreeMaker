@@ -198,10 +198,6 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetECalEtaRange(const pair<double, double> etaRange);
     void SetHCalPtRange(const pair<double, double> ptRange);
     void SetHCalEtaRange(const pair<double, double> etaRange);
-    void SetJetMatchQtRange(const pair<double, double> qtRange);
-    void SetJetMatchDrRange(const pair<double, double> drRange);
-    void SetCstMatchQtRange(const pair<double, double> qtRange);
-    void SetCstMatchDrRange(const pair<double, double> drRange);
     void SetJetAlgo(const ALGO jetAlgo);
     void SetRecombScheme(const RECOMB recombScheme);
     void SetJetParameters(const double rJet, const uint32_t jetType, const ALGO jetAlgo, const RECOMB recombScheme);
@@ -239,16 +235,6 @@ class SCorrelatorJetTree : public SubsysReco {
     double GetHCalMinEta()  {return m_hcalEtaRange[0];}
     double GetHCalMaxEta()  {return m_hcalEtaRange[1];}
 
-    // matching getters
-    double GetJetMatchMinQt() {return m_jetMatchQtRange[0];}
-    double GetJetMatchMaxQt() {return m_jetMatchQtRange[1];}
-    double GetJetMatchMinDr() {return m_jetMatchDrRange[0];}
-    double GetJetMatchMaxDr() {return m_jetMatchDrRange[1];}
-    double GetCstMatchMinQt() {return m_cstMatchQtRange[0];}
-    double GetCstMatchMaxQt() {return m_cstMatchQtRange[1];}
-    double GetCstMatchMinDr() {return m_cstMatchDrRange[0];}
-    double GetCstMatchMaxDr() {return m_cstMatchDrRange[1];}
-
     // jet getters
     double              GetJetR()         {return m_jetR;}
     uint32_t            GetJetType()      {return m_jetType;}
@@ -270,13 +256,11 @@ class SCorrelatorJetTree : public SubsysReco {
     // jet methods (*.jet.h)
     void FindTrueJets(PHCompositeNode *topNode);
     void FindRecoJets(PHCompositeNode *topNode);
-    void DoMatching();
     void AddParticles(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddECal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
     void AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
-    bool IsJetGoodMatch(const double qtJet, const double drJet);
 
     // constituent methods (*.cst.h)
     bool  IsGoodParticle(HepMC::GenParticle *par, const bool ignoreCharge=false);
@@ -284,7 +268,6 @@ class SCorrelatorJetTree : public SubsysReco {
     bool  IsGoodFlow(ParticleFlowElement *flow);
     bool  IsGoodECal(CLHEP::Hep3Vector &hepVecECal);
     bool  IsGoodHCal(CLHEP::Hep3Vector &hepVecHCal);
-    bool  IsCstGoodMatch(const double qtCst, const double drCst);
     bool  IsOutgoingParton(HepMC::GenParticle *par);
     float GetParticleCharge(const int pid);
 
@@ -347,12 +330,6 @@ class SCorrelatorJetTree : public SubsysReco {
     double m_ecalEtaRange[NRange];
     double m_hcalPtRange[NRange];
     double m_hcalEtaRange[NRange];
-
-    // matching parameters
-    double m_jetMatchQtRange[NRange];
-    double m_jetMatchDrRange[NRange];
-    double m_cstMatchQtRange[NRange];
-    double m_cstMatchDrRange[NRange];
 
     // jet parameters
     double               m_jetR;
@@ -424,9 +401,6 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<vector<double>> m_trueCstJt;
     vector<vector<double>> m_trueCstEta;
     vector<vector<double>> m_trueCstPhi;
-
-    // output match event variables
-    
 
 };
 

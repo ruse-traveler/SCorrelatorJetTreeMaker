@@ -79,15 +79,6 @@ void SCorrelatorJetTree::FindRecoJets(PHCompositeNode *topNode) {
 
 
 
-void SCorrelatorJetTree::DoMatching() {
-
-  /* jet/cst matching will go here */
-  return;
-
-}  // end 'DoMatching()'
-
-
-
 void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
 
   // print debug statement
@@ -528,21 +519,5 @@ void SCorrelatorJetTree::AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &pa
   return;
 
 }  // end 'AddHCal(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
-
-
-
-bool SCorrelatorJetTree::IsJetGoodMatch(const double qtJet, const double drJet) {
-
-  // print debug statement
-  if (m_doDebug && (Verbosity() > 2)) {
-    cout << "SCorrelatorJetTree::IsJetGoodMatch(double, double) Checking if jet match is good..." << endl;
-  }
-
-  const bool isInQtRange = ((qtJet > m_jetMatchQtRange[0]) && (qtJet < m_jetMatchQtRange[1]));
-  const bool isInDrRange = ((drJet > m_jetMatchDrRange[0]) && (drJet < m_jetMatchDrRange[1]));
-  const bool isGoodMatch = (isInQtRange && isInDrRange);
-  return isGoodMatch;
-
-}  // end 'IsJetGoodMatch(double, double)'
 
 // end ------------------------------------------------------------------------

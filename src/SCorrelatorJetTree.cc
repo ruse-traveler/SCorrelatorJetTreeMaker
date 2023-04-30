@@ -116,11 +116,6 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
     FindTrueJets(topNode);
   }
 
-  // match jets/cst.s
-  if (m_isMC && m_doMatching) {
-    DoMatching();
-  }
-
   // fill output trees
   FillRecoTree();
   if (m_isMC) {
