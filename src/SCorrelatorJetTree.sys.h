@@ -97,8 +97,7 @@ void SCorrelatorJetTree::InitVariables() {
   m_trueJets.clear();
   m_recoJets.clear();
   m_trueJetNCst.clear();
-  m_trueJetRecId.clear();
-  m_trueJetTruId.clear();
+  m_trueJetID.clear();
   m_trueJetE.clear();
   m_trueJetPt.clear();
   m_trueJetEta.clear();
@@ -111,8 +110,7 @@ void SCorrelatorJetTree::InitVariables() {
   m_trueCstEta.clear();
   m_trueCstPhi.clear();
   m_recoJetNCst.clear();
-  m_recoJetRecId.clear();
-  m_recoJetTruId.clear();
+  m_recoJetID.clear();
   m_recoJetE.clear();
   m_recoJetPt.clear();
   m_recoJetEta.clear();
@@ -257,8 +255,7 @@ void SCorrelatorJetTree::InitTrees() {
   m_trueTree -> Branch("EvtVtxZ",        &m_trueVtxZ,          "EvtVtxZ/D");
   m_trueTree -> Branch("EvtSumParEne",   &m_trueSumPar,        "EvtSumParEne/D");
   m_trueTree -> Branch("JetNumCst",      &m_trueJetNCst);
-  m_trueTree -> Branch("JetRecoID",      &m_trueJetRecId);
-  m_trueTree -> Branch("JetTruthID",     &m_trueJetTruId);
+  m_trueTree -> Branch("JetID",          &m_trueJetID);
   m_trueTree -> Branch("JetEnergy",      &m_trueJetE);
   m_trueTree -> Branch("JetPt",          &m_trueJetPt);
   m_trueTree -> Branch("JetEta",         &m_trueJetEta);
@@ -281,8 +278,7 @@ void SCorrelatorJetTree::InitTrees() {
   m_recoTree -> Branch("EvtSumECalEne", &m_recoSumECal, "EvtSumECalEne/D");
   m_recoTree -> Branch("EvtSumHCalEne", &m_recoSumHCal, "EvtSumHCalEne/D");
   m_recoTree -> Branch("JetNumCst",     &m_recoJetNCst);
-  m_recoTree -> Branch("JetRecoID",     &m_recoJetRecId);
-  m_recoTree -> Branch("JetTruthID",    &m_recoJetTruId);
+  m_recoTree -> Branch("JetID",         &m_recoJetID);
   m_recoTree -> Branch("JetEnergy",     &m_recoJetE);
   m_recoTree -> Branch("JetPt",         &m_recoJetPt);
   m_recoTree -> Branch("JetEta",        &m_recoJetEta);
@@ -309,8 +305,7 @@ void SCorrelatorJetTree::FillTrueTree() {
 
   // prepare vectors for filling
   m_trueJetNCst.clear();
-  m_trueJetRecId.clear();
-  m_trueJetTruId.clear();
+  m_trueJetID.clear();
   m_trueJetE.clear();
   m_trueJetPt.clear();
   m_trueJetEta.clear();
@@ -344,7 +339,6 @@ void SCorrelatorJetTree::FillTrueTree() {
 
     // get jet info
     const unsigned int jetNCst  = m_trueJets[iTruJet].constituents().size();
-    const unsigned int jetRecID = 9999.;  // FIXME: this will need to be changed to the matched reco jet
     const unsigned int jetTruID = iTruJet;
     const double       jetPhi   = m_trueJets[iTruJet].phi_std();
     const double       jetEta   = m_trueJets[iTruJet].pseudorapidity();
@@ -400,8 +394,7 @@ void SCorrelatorJetTree::FillTrueTree() {
 
     // store jet/cst output
     m_trueJetNCst.push_back(jetNCst);
-    m_trueJetRecId.push_back(jetRecID);
-    m_trueJetTruId.push_back(jetTruID);
+    m_trueJetID.push_back(jetTruID);
     m_trueJetE.push_back(jetE);
     m_trueJetPt.push_back(jetPt);
     m_trueJetEta.push_back(jetEta);
@@ -459,8 +452,7 @@ void SCorrelatorJetTree::FillRecoTree() {
 
   // prepare vectors for filling
   m_recoJetNCst.clear();
-  m_recoJetRecId.clear();
-  m_recoJetTruId.clear();
+  m_recoJetID.clear();
   m_recoJetE.clear();
   m_recoJetPt.clear();
   m_recoJetEta.clear();
@@ -495,7 +487,6 @@ void SCorrelatorJetTree::FillRecoTree() {
     // get jet info
     const unsigned int jetNCst  = m_recoJets[iJet].constituents().size();
     const unsigned int jetRecID = iJet;
-    const unsigned int jetTruID = 99999;  // FIXME: this will need to be changed to the matched truth jet
     const double       jetPhi   = m_recoJets[iJet].phi_std();
     const double       jetEta   = m_recoJets[iJet].pseudorapidity();
     const double       jetArea  = 0.;  // FIXME: jet area needs to be defined
@@ -550,8 +541,7 @@ void SCorrelatorJetTree::FillRecoTree() {
 
     // store jet/cst output
     m_recoJetNCst.push_back(jetNCst);
-    m_recoJetRecId.push_back(jetRecID);
-    m_recoJetTruId.push_back(jetTruID);
+    m_recoJetID.push_back(jetRecID);
     m_recoJetE.push_back(jetE);
     m_recoJetPt.push_back(jetPt);
     m_recoJetEta.push_back(jetEta);
@@ -737,8 +727,7 @@ void SCorrelatorJetTree::ResetVariables() {
   m_trueJets.clear();
   m_recoJets.clear();
   m_trueJetNCst.clear();
-  m_trueJetRecId.clear();
-  m_trueJetTruId.clear();
+  m_trueJetID.clear();
   m_trueJetE.clear();
   m_trueJetPt.clear();
   m_trueJetEta.clear();
@@ -751,8 +740,7 @@ void SCorrelatorJetTree::ResetVariables() {
   m_trueCstEta.clear();
   m_trueCstPhi.clear();
   m_recoJetNCst.clear();
-  m_recoJetRecId.clear();
-  m_recoJetTruId.clear();
+  m_recoJetID.clear();
   m_recoJetE.clear();
   m_recoJetPt.clear();
   m_recoJetEta.clear();

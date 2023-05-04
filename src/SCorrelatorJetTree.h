@@ -43,8 +43,9 @@
 #include <g4jets/JetMap.h>
 #include <g4jets/JetMapv1.h>
 #include <g4jets/FastJetAlgo.h>
-#include <g4vertex/GlobalVertex.h>
-#include <g4vertex/GlobalVertexMap.h>
+// vtx includes
+#include <globalvertex/GlobalVertex.h>
+#include <globalvertex/GlobalVertexMap.h>
 // tracking includes
 #include <trackbase_historic/SvtxTrack.h>
 #include <trackbase_historic/SvtxVertex.h>
@@ -359,8 +360,7 @@ class SCorrelatorJetTree : public SubsysReco {
     long                   m_recoNumTrks;
     // output reco jet variables
     vector<unsigned long>  m_recoJetNCst;
-    vector<unsigned int>   m_recoJetRecId;
-    vector<unsigned int>   m_recoJetTruId;
+    vector<unsigned int>   m_recoJetID;
     vector<double>         m_recoJetE;
     vector<double>         m_recoJetPt;
     vector<double>         m_recoJetEta;
@@ -387,8 +387,7 @@ class SCorrelatorJetTree : public SubsysReco {
     long                  m_trueNumChrgPars;
     // output truth jet variables
     vector<unsigned long> m_trueJetNCst;
-    vector<unsigned int>  m_trueJetRecId;
-    vector<unsigned int>  m_trueJetTruId;
+    vector<unsigned int>  m_trueJetID;
     vector<double>        m_trueJetE;
     vector<double>        m_trueJetPt;
     vector<double>        m_trueJetEta;
