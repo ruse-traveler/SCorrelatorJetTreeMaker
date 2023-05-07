@@ -11,22 +11,22 @@
 require 'fileutils'
 
 # input parameters
-in_path = "./intermediate_merge/"
-in_pref = "sPhenixG4_forTrackCutStudy_embedOnly0t99_g4svtxeval.d"
-in_suff = "m12y2022.root"
+in_path = "./condor/intermediate_merge/pp200py8jet10run6_trksAndChargPars_2023may7"
+in_pref = "correlatorJetTree.pp200py8jet10run6_trksAndChrgPars_"
+in_suff = ".d7m5y2023.root"
 
 # output parameters
-out_list = "testingRubyScript.list"
-out_file = "testingRubyScript.root"
+out_list = "correlatorJetTree.pp200py8jet10run6_trksAndChrgPars.d7m5y2023.list"
+out_file = "correlatorJetTree.pp200py8jet10run6_trksAndChrgPars.d7m5y2023.root"
 
 # create input matching pattern
 in_pattern = in_path + "/" + in_pref + "*" + in_suff
 in_pattern.gsub!("//", "/")
+in_pattern.gsub!("..", ".")
 
 # create list of files to merge
 File.open(out_list, "w") { |out|
   Dir[in_pattern].each do |file|
-    puts file
     out.puts file
   end
 }
