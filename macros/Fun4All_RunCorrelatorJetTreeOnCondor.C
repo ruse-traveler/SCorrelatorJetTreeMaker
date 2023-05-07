@@ -217,7 +217,7 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   ffaServer   -> registerSubsystem(parFlowReco);
 
   // create correlator jet tree
-  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, doDebug);
+  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", outputRecoFile, isMC, doDebug);
   correlatorJetTree -> Verbosity(verbosity);
   correlatorJetTree -> SetDoQualityPlots(doQuality);
   correlatorJetTree -> SetAddTracks(addTracks);
