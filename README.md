@@ -7,5 +7,4 @@ Derived from code by Antonio Silva (thanks!!)
 ---
 
 ### TODO Items:
-  - [Major] Implement jet-matching
   - [Minor] Implement jet area calculation
