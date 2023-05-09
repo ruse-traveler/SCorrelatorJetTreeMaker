@@ -43,6 +43,8 @@
 #include <g4jets/JetMap.h>
 #include <g4jets/JetMapv1.h>
 #include <g4jets/FastJetAlgo.h>
+#include <g4eval/SvtxTrackEval.h>
+#include <g4eval/SvtxEvalStack.h>
 // vtx includes
 #include <globalvertex/GlobalVertex.h>
 #include <globalvertex/GlobalVertexMap.h>
@@ -264,6 +266,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap);
 
     // constituent methods (*.cst.h)
+    int   GetMatchID(SvtxTrack *track);
     bool  IsGoodParticle(HepMC::GenParticle *par, const bool ignoreCharge=false);
     bool  IsGoodTrack(SvtxTrack *track);
     bool  IsGoodFlow(ParticleFlowElement *flow);
@@ -276,9 +279,9 @@ class SCorrelatorJetTree : public SubsysReco {
     void                          InitVariables();
     void                          InitHists();
     void                          InitTrees();
+    void                          InitEvals(PHCompositeNode *topNode);
     void                          FillTrueTree();
     void                          FillRecoTree();
-    void                          FillMatchTree();
     void                          SaveOutput();
     void                          ResetVariables();
     int                           CreateJetNode(PHCompositeNode *topNode);
@@ -288,8 +291,10 @@ class SCorrelatorJetTree : public SubsysReco {
     RawClusterContainer*          GetClusterStore(PHCompositeNode *topNode, const TString sNodeName);
     ParticleFlowElementContainer* GetFlowStore(PHCompositeNode *topNode);
 
-    // F4A members
+    // F4A/utility members
     Fun4AllHistoManager *m_histMan;
+    SvtxEvalStack       *m_evalStack;
+    SvtxTrackEval       *m_trackEval;
 
     // io members
     TFile    *m_outFile;
@@ -367,6 +372,7 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<double>         m_recoJetPhi;
     vector<double>         m_recoJetArea;
     // output reco constituent variables
+    vector<vector<int>>    m_recoCstMatchID;
     vector<vector<double>> m_recoCstZ;
     vector<vector<double>> m_recoCstDr;
     vector<vector<double>> m_recoCstE;
@@ -394,6 +400,7 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<double>        m_trueJetPhi;
     vector<double>        m_trueJetArea;
     // output truth constituent variables
+    vector<vector<int>>    m_trueCstID;
     vector<vector<double>> m_trueCstZ;
     vector<vector<double>> m_trueCstDr;
     vector<vector<double>> m_trueCstE;

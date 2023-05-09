@@ -54,6 +54,8 @@ SCorrelatorJetTree::~SCorrelatorJetTree() {
     cout << "SCorrelatorJetTree::~SCorrelatorJetTree() Calling dtor" << endl;
   }
   delete m_histMan;
+  delete m_evalStack;
+  delete m_trackEval;
   delete m_outFile;
   delete m_recoTree;
   delete m_trueTree;
@@ -87,9 +89,12 @@ int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
     CreateJetNode(topNode);
   }
 
-  // initialize QA histograms and output trees
+  // initialize QA histograms, output trees, and evaluators (if needed)
   InitHists();
   InitTrees();
+  if (m_isMC) {
+    InitEvals(topNode);
+  }
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'Init(PHcompositeNode*)'
@@ -120,7 +125,6 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
   FillRecoTree();
   if (m_isMC) {
     FillTrueTree();
-    FillMatchTree();
   }
   return Fun4AllReturnCodes::EVENT_OK;
 

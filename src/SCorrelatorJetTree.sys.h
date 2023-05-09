@@ -33,6 +33,8 @@ void SCorrelatorJetTree::InitVariables() {
 
   // initialize class members as needed
   m_histMan              = 0x0;
+  m_evalStack            = 0x0;
+  m_trackEval            = 0x0;
   m_outFile              = 0x0;
   m_trueTree             = 0x0;
   m_recoTree             = 0x0;
@@ -261,6 +263,7 @@ void SCorrelatorJetTree::InitTrees() {
   m_trueTree -> Branch("JetEta",         &m_trueJetEta);
   m_trueTree -> Branch("JetPhi",         &m_trueJetPhi);
   m_trueTree -> Branch("JetArea",        &m_trueJetArea);
+  m_trueTree -> Branch("CstID",          &m_trueCstID);
   m_trueTree -> Branch("CstZ",           &m_trueCstZ);
   m_trueTree -> Branch("CstDr",          &m_trueCstDr);
   m_trueTree -> Branch("CstEnergy",      &m_trueCstE);
@@ -284,6 +287,7 @@ void SCorrelatorJetTree::InitTrees() {
   m_recoTree -> Branch("JetEta",        &m_recoJetEta);
   m_recoTree -> Branch("JetPhi",        &m_recoJetPhi);
   m_recoTree -> Branch("JetArea",       &m_recoJetArea);
+  m_recoTree -> Branch("CstMatchID",    &m_recoCstMatchID);
   m_recoTree -> Branch("CstZ",          &m_recoCstZ);
   m_recoTree -> Branch("CstDr",         &m_recoCstDr);
   m_recoTree -> Branch("CstEnergy",     &m_recoCstE);
@@ -296,11 +300,37 @@ void SCorrelatorJetTree::InitTrees() {
 
 
 
+void SCorrelatorJetTree::InitEvals(PHCompositeNode *topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) Initializing evaluators..." << endl;
+  }
+
+  // get track evaluator stack
+  m_evalStack = new SvtxEvalStack(topNode);
+  if (!m_evalStack) {
+    cerr << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) PANIC: couldn't grab SvtxEvalStack! Aborting!" << endl;
+    assert(m_evalStack);
+  }
+
+  // get track evaluator
+  m_trackEval = m_evalStack -> get_track_eval();
+  if (!m_trackEval) {
+    cerr << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) PANIC: couldn't grab track evaluator! Aborting!" << endl;
+    assert(m_trackEval);
+  }
+  return;
+
+}  // end 'InitEvals(PHCompositeNode*)'
+
+
+
 void SCorrelatorJetTree::FillTrueTree() {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::FillTrueTree(PHCompositeNode*) Filling truth jet tree..." << endl;
+    cout << "SCorrelatorJetTree::FillTrueTree() Filling truth jet tree..." << endl;
   }
 
   // prepare vectors for filling
@@ -311,6 +341,7 @@ void SCorrelatorJetTree::FillTrueTree() {
   m_trueJetEta.clear();
   m_trueJetPhi.clear();
   m_trueJetArea.clear();
+  m_trueCstID.clear();
   m_trueCstZ.clear();
   m_trueCstDr.clear();
   m_trueCstE.clear();
@@ -319,12 +350,14 @@ void SCorrelatorJetTree::FillTrueTree() {
   m_trueCstPhi.clear();
 
   // declare vectors to storing constituents
+  vector<int>    vecTruCstID;
   vector<double> vecTruCstZ;
   vector<double> vecTruCstDr;
   vector<double> vecTruCstE;
   vector<double> vecTruCstJt;
   vector<double> vecTruCstEta;
   vector<double> vecTruCstPhi;
+  vecTruCstID.clear();
   vecTruCstZ.clear();
   vecTruCstDr.clear();
   vecTruCstE.clear();
@@ -351,6 +384,7 @@ void SCorrelatorJetTree::FillTrueTree() {
     const double       jetP     = sqrt((jetPx * jetPx) + (jetPy * jetPy) + (jetPz * jetPz));
 
     // clear constituent vectors
+    vecTruCstID.clear();
     vecTruCstZ.clear();
     vecTruCstDr.clear();
     vecTruCstE.clear();
@@ -363,6 +397,7 @@ void SCorrelatorJetTree::FillTrueTree() {
     for (unsigned int iTruCst = 0; iTruCst < trueCsts.size(); ++iTruCst) {
 
       // get constituent info
+      const int    cstID  = trueCsts[iTruCst].user_index();
       const double cstPhi = trueCsts[iTruCst].phi_std();
       const double cstEta = trueCsts[iTruCst].pseudorapidity();
       const double cstE   = trueCsts[iTruCst].E();
@@ -376,7 +411,11 @@ void SCorrelatorJetTree::FillTrueTree() {
       const double cstDh  = cstEta - jetEta;
       const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
 
+      // TEST
+      cout << " TEST [AFTER JET FINDING, PARTICLE] barcode = " << cstID << endl;
+
       // add csts to vectors
+      vecTruCstID.push_back(cstID);
       vecTruCstZ.push_back(cstZ);
       vecTruCstDr.push_back(cstDr);
       vecTruCstE.push_back(cstE);
@@ -400,6 +439,7 @@ void SCorrelatorJetTree::FillTrueTree() {
     m_trueJetEta.push_back(jetEta);
     m_trueJetPhi.push_back(jetPhi);
     m_trueJetArea.push_back(jetArea);
+    m_trueCstID.push_back(vecTruCstID);
     m_trueCstZ.push_back(vecTruCstZ);
     m_trueCstDr.push_back(vecTruCstDr);
     m_trueCstE.push_back(vecTruCstE);
@@ -447,7 +487,7 @@ void SCorrelatorJetTree::FillRecoTree() {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::FillRecoTree(PHCompositeNode*) Filling reco jet tree..." << endl;
+    cout << "SCorrelatorJetTree::FillRecoTree() Filling reco jet tree..." << endl;
   }
 
   // prepare vectors for filling
@@ -458,6 +498,7 @@ void SCorrelatorJetTree::FillRecoTree() {
   m_recoJetEta.clear();
   m_recoJetPhi.clear();
   m_recoJetArea.clear();
+  m_recoCstMatchID.clear();
   m_recoCstZ.clear();
   m_recoCstDr.clear();
   m_recoCstE.clear();
@@ -466,12 +507,14 @@ void SCorrelatorJetTree::FillRecoTree() {
   m_recoCstPhi.clear();
 
   // declare vectors for storing constituents
+  vector<int>    vecRecCstMatchID;
   vector<double> vecRecCstZ;
   vector<double> vecRecCstDr;
   vector<double> vecRecCstE;
   vector<double> vecRecCstJt;
   vector<double> vecRecCstEta;
   vector<double> vecRecCstPhi;
+  vecRecCstMatchID.clear();
   vecRecCstZ.clear();
   vecRecCstDr.clear();
   vecRecCstE.clear();
@@ -498,6 +541,7 @@ void SCorrelatorJetTree::FillRecoTree() {
     const double       jetP     = sqrt((jetPx * jetPx) + (jetPy * jetPy) + (jetPz * jetPz));
 
     // clear constituent vectors
+    vecRecCstMatchID.clear();
     vecRecCstZ.clear();
     vecRecCstDr.clear();
     vecRecCstE.clear();
@@ -510,20 +554,25 @@ void SCorrelatorJetTree::FillRecoTree() {
     for (unsigned int iCst = 0; iCst < recoCsts.size(); ++iCst) {
 
       // get constituent info
-      const double cstPhi = recoCsts[iCst].phi_std();
-      const double cstEta = recoCsts[iCst].pseudorapidity();
-      const double cstE   = recoCsts[iCst].E();
-      const double cstJt  = recoCsts[iCst].perp();
-      const double cstJx  = recoCsts[iCst].px();
-      const double cstJy  = recoCsts[iCst].py();
-      const double cstJz  = recoCsts[iCst].pz();
-      const double cstJ   = ((cstJx * cstJx) + (cstJy * cstJy) + (cstJz * cstJz));
-      const double cstZ   = cstJ / jetP;
-      const double cstDf  = cstPhi - jetPhi;
-      const double cstDh  = cstEta - jetEta;
-      const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
+      const double cstMatchID = recoCsts[iCst].user_index();
+      const double cstPhi     = recoCsts[iCst].phi_std();
+      const double cstEta     = recoCsts[iCst].pseudorapidity();
+      const double cstE       = recoCsts[iCst].E();
+      const double cstJt      = recoCsts[iCst].perp();
+      const double cstJx      = recoCsts[iCst].px();
+      const double cstJy      = recoCsts[iCst].py();
+      const double cstJz      = recoCsts[iCst].pz();
+      const double cstJ       = ((cstJx * cstJx) + (cstJy * cstJy) + (cstJz * cstJz));
+      const double cstZ       = cstJ / jetP;
+      const double cstDf      = cstPhi - jetPhi;
+      const double cstDh      = cstEta - jetEta;
+      const double cstDr      = sqrt((cstDf * cstDf) + (cstDh * cstDh));
+
+      // TEST
+      cout << " TEST [AFTER JET FINDING, TRACK] barcode = " << cstMatchID << endl;
 
       // add csts to vectors
+      vecRecCstMatchID.push_back(cstMatchID);
       vecRecCstZ.push_back(cstZ);
       vecRecCstDr.push_back(cstDr);
       vecRecCstE.push_back(cstE);
@@ -547,6 +596,7 @@ void SCorrelatorJetTree::FillRecoTree() {
     m_recoJetEta.push_back(jetEta);
     m_recoJetPhi.push_back(jetPhi);
     m_recoJetArea.push_back(jetArea);
+    m_recoCstMatchID.push_back(vecRecCstMatchID);
     m_recoCstZ.push_back(vecRecCstZ);
     m_recoCstDr.push_back(vecRecCstDr);
     m_recoCstE.push_back(vecRecCstE);
@@ -579,15 +629,6 @@ void SCorrelatorJetTree::FillRecoTree() {
   return;
 
 }  // end 'FillRecoTree()'
-
-
-
-void SCorrelatorJetTree::FillMatchTree() {
-
-  /* TODO fill match tree here */
-  return;
-
-}  // end 'FillMatchTree()'
 
 
 

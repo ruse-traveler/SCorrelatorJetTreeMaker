@@ -24,6 +24,29 @@ using namespace findNode;
 
 // constituent methods --------------------------------------------------------
 
+int SCorrelatorJetTree::GetMatchID(SvtxTrack *track) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 1)) {
+    cout << "SCorrelatorJetTree::GetMatchID(SvtxTrack*) Grabbing barcode of matching particle..." << endl;
+  }
+
+  // get best match from truth particles
+  PHG4Particle *bestMatch = m_trackEval -> max_truth_particle_by_nclusters(track);
+
+  // grab barcode of best match
+  int matchID;
+  if (bestMatch) {
+    matchID = bestMatch -> get_barcode();
+  } else {
+    matchID = -1;
+  }
+  return matchID;
+
+}  // end 'GetMatchID(SvtxTrack*)'
+
+
+
 bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *par, const bool ignoreCharge) {
 
   // print debug statement

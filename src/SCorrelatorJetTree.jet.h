@@ -66,9 +66,9 @@ void SCorrelatorJetTree::FindRecoJets(PHCompositeNode *topNode) {
 
   // add constitutents
   if (m_addTracks) AddTracks(topNode, particles, fjMap);
-  if (m_addFlow)   AddFlow(topNode, particles, fjMap);
-  if (m_addECal)   AddECal(topNode, particles, fjMap);
-  if (m_addHCal)   AddHCal(topNode, particles, fjMap);
+  if (m_addFlow)   AddFlow(topNode,   particles, fjMap);
+  if (m_addECal)   AddECal(topNode,   particles, fjMap);
+  if (m_addHCal)   AddHCal(topNode,   particles, fjMap);
 
   // cluster jets
   m_recoClust = new ClusterSequence(particles, *m_recoJetDef);
@@ -117,8 +117,11 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
     const double parPz = (*itPar) -> momentum().pz();
     const double parE  = (*itPar) -> momentum().e();
 
+    // TEST
+    cout << " TEST [BEFORE JET FINDING, PARTICLE] barcode = " << parID << endl;
+
     fastjet::PseudoJet fjParticle(parPx, parPy, parPz, parE);
-    fjParticle.set_user_index(iCst);
+    fjParticle.set_user_index(parID);
     particles.push_back(fjParticle);
 
     // add particle to mc fastjet map
@@ -184,8 +187,19 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &
     const double trkPz = track -> get_pz();
     const double trkE  = sqrt((trkPx * trkPx) + (trkPy * trkPy) + (trkPz * trkPz) + (MassPion * MassPion));
 
+    // grab barcode of matching particle
+    int matchID;
+    if (m_isMC) {
+      matchID = GetMatchID(track);
+    } else {
+      matchID = -1;
+    }
+
+    // TEST
+    cout << " TEST [BEFORE JET FINDING, TRACK] barcode = " << matchID << endl;
+
     fastjet::PseudoJet fjTrack(trkPx, trkPy, trkPz, trkE);
-    fjTrack.set_user_index(iCst);
+    fjTrack.set_user_index(matchID);
     particles.push_back(fjTrack);
 
     // add track to fastjet map
