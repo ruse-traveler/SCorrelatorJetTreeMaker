@@ -8,3 +8,5 @@ Derived from code by Antonio Silva (thanks!!)
 
 ### TODO Items:
   - [Minor] Implement jet area calculation
+  - [Minor] Clean up unnecessary includes/members
+  - [Minor] Fix verbosity levels
