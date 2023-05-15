@@ -50,20 +50,23 @@ R__LOAD_LIBRARY(/sphenix/user/danderson/install/lib/libscorrelatorjettree.so)
 using namespace std;
 
 // global constants
-static const string       SInHitsDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/g4hits/run0006/jet30/G4Hits_pythia8_Jet30-0000000006-06666.root";
-static const string       SInCaloDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/calocluster/run0006/jet30/DST_CALO_CLUSTER_pythia8_Jet30-0000000006-06666.root";
-static const string       SInSeedDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/trackseeds/nopileup/run0006/jet30/DST_TRACKSEEDS_pythia8_Jet30-0000000006-06666.root";
-static const string       SInTrksDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/tracks/nopileup/run0006/jet30/DST_TRACKS_pythia8_Jet30-0000000006-06666.root";
-static const string       SInTrueDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/trkrhit/run0006/jet30/DST_TRUTH_pythia8_Jet30-0000000006-06666.root";
-static const string       SOutDefault    = "update6.jetStyleUpdate.root";
-static const int          NEvtDefault    = 10;
-static const int          VerbDefault    = 0;
-static const unsigned int NTopoClusts    = 2;
-static const unsigned int NTopoPar       = 3;
+static const string       SInGHitsDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/g4hits/run0006/jet10/G4Hits_pythia8_Jet10-0000000006-00004.root";
+static const string       SInTHitsDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/trkrhit/run0006/jet10/DST_TRKR_HIT_pythia8_Jet10-0000000006-00004.root";
+static const string       SInSeedDefault  = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/trackseeds/nopileup/run0006/jet10/DST_TRACKSEEDS_pythia8_Jet10-0000000006-00004.root";
+static const string       SInClustDefault = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/trkrcluster/nopileup/run0006/jet10/DST_TRKR_CLUSTER_pythia8_Jet10-0000000006-00004.root";
+static const string       SInTrksDefault  = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/tracks/nopileup/run0006/jet10/DST_TRACKS_pythia8_Jet10-0000000006-00004.root";
+static const string       SInCaloDefault  = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/calocluster/run0006/jet10/DST_CALO_CLUSTER_pythia8_Jet10-0000000006-00004.root";
+static const string       SInTrueDefault  = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/trkrhit/run0006/jet10/DST_TRUTH_pythia8_Jet10-0000000006-00004.root";
+static const string       SInGlobDefault  = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/global/run0006/jet10/DST_GLOBAL_pythia8_Jet10-0000000006-00004.root";
+static const string       SOutDefault     = "debug.testingTrkMatching.root";
+static const int          NEvtDefault     = 10;
+static const int          VerbDefault     = 100000;
+static const unsigned int NTopoClusts     = 2;
+static const unsigned int NTopoPar        = 3;
 
 
 
-void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const string sInCalo = SInCaloDefault, const string sInSeed = SInSeedDefault, const string sInTrks = SInTrksDefault, const string sInTrue = SInTrueDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
+void Fun4All_RunCorrelatorJetTree(const string sInGHits = SInGHitsDefault, const string sInTHits = SInTHitsDefault, const string sInSeed = SInSeedDefault, const string sInClust = SInClustDefault, const string sInTrks = SInTrksDefault, const string sInCalo = SInCaloDefault, const string sInTrue = SInTrueDefault, const string sInGlob = SInGlobDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
 
   // track & particle flow parameters
   const bool   runTracking(false);
@@ -116,22 +119,31 @@ void Fun4All_RunCorrelatorJetTree(const string sInHits = SInHitsDefault, const s
   ffaServer -> Verbosity(verbosity);
 
   // add input files
-  Fun4AllInputManager *inHitsMan = new Fun4AllDstInputManager("InputDstManager_G4Hits");
-  Fun4AllInputManager *inCaloMan = new Fun4AllDstInputManager("InputDstManager_CaloClusts");
-  Fun4AllInputManager *inSeedMan = new Fun4AllDstInputManager("InputDstManager_TrackSeeds");
-  Fun4AllInputManager *inTrksMan = new Fun4AllDstInputManager("InputDstManager_Tracks");
-  Fun4AllInputManager *inTrueMan = new Fun4AllDstInputManager("InputDstManager_Truth");
-  inHitsMan -> AddFile(sInHits);
-  inCaloMan -> AddFile(sInCalo);
-  inSeedMan -> AddFile(sInSeed);
-  inTrksMan -> AddFile(sInTrks);
-  inTrueMan -> AddFile(sInTrue);
-  ffaServer -> registerInputManager(inHitsMan);
-  ffaServer -> registerInputManager(inCaloMan);
+  Fun4AllInputManager *inGHitsMan = new Fun4AllDstInputManager("InputDstManager_G4Hits");
+  Fun4AllInputManager *inTHitsMan = new Fun4AllDstInputManager("InputDstManager_TrkrHits");
+  Fun4AllInputManager *inSeedMan  = new Fun4AllDstInputManager("InputDstManager_TrackSeeds");
+  Fun4AllInputManager *inClustMan = new Fun4AllDstInputManager("InputDstManager_TrackClusts");
+  Fun4AllInputManager *inTrksMan  = new Fun4AllDstInputManager("InputDstManager_Tracks");
+  Fun4AllInputManager *inCaloMan  = new Fun4AllDstInputManager("InputDstManager_CaloClusts");
+  Fun4AllInputManager *inTrueMan  = new Fun4AllDstInputManager("InputDstManager_Truth");
+  Fun4AllInputManager *inGlobMan  = new Fun4AllDstInputManager("InputDstManager_Global");
+  inGHitsMan -> AddFile(sInGHits);
+  inTHitsMan -> AddFile(sInTHits);
+  inCaloMan  -> AddFile(sInCalo);
+  inSeedMan  -> AddFile(sInSeed);
+  inClustMan -> AddFile(sInClust);
+  inTrksMan  -> AddFile(sInTrks);
+  inTrueMan  -> AddFile(sInTrue); 
+  inGlobMan  -> AddFile(sInGlob);
+  ffaServer  -> registerInputManager(inGHitsMan);
+  ffaServer  -> registerInputManager(inTHitsMan);
+  ffaServer  -> registerInputManager(inCaloMan);
   if (isMC) {
     ffaServer -> registerInputManager(inSeedMan);
+    ffaServer -> registerInputManager(inClustMan);
     ffaServer -> registerInputManager(inTrksMan);
     ffaServer -> registerInputManager(inTrueMan);
+    ffaServer -> registerInputManager(inGlobMan);
   }
 
   // run the tracking if not already done

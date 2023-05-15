@@ -33,13 +33,16 @@ int SCorrelatorJetTree::GetMatchID(SvtxTrack *track) {
 
   // get best match from truth particles
   PHG4Particle *bestMatch = m_trackEval -> max_truth_particle_by_nclusters(track);
+  cout << "CHECK0" << endl;
 
   // grab barcode of best match
   int matchID;
   if (bestMatch) {
     matchID = bestMatch -> get_barcode();
+    cout << "CHECK1A" << endl;
   } else {
     matchID = -1;
+    cout << "CHECK1AB" << endl;
   }
   return matchID;
 

@@ -312,6 +312,12 @@ void SCorrelatorJetTree::InitEvals(PHCompositeNode *topNode) {
   if (!m_evalStack) {
     cerr << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) PANIC: couldn't grab SvtxEvalStack! Aborting!" << endl;
     assert(m_evalStack);
+  } else {
+    m_evalStack -> set_strict(true);
+    m_evalStack -> set_verbosity(Verbosity());
+    m_evalStack -> set_use_initial_vertex(true);
+    m_evalStack -> set_use_genfit_vertex(false);
+    m_evalStack -> next_event(topNode);
   }
 
   // get track evaluator
@@ -319,6 +325,10 @@ void SCorrelatorJetTree::InitEvals(PHCompositeNode *topNode) {
   if (!m_trackEval) {
     cerr << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) PANIC: couldn't grab track evaluator! Aborting!" << endl;
     assert(m_trackEval);
+  } else {
+    m_trackEval -> set_strict(true);
+    m_trackEval -> set_verbosity(Verbosity());
+    m_trackEval -> do_caching(false);
   }
   return;
 
