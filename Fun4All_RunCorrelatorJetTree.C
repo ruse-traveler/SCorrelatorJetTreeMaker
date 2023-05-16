@@ -47,6 +47,9 @@ R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libparticleflow.so)
 R__LOAD_LIBRARY(/sphenix/user/danderson/install/lib/libscorrelatorjettree.so)
 
+// TEST
+R__LOAD_LIBRARY(libg4eval.so)
+
 using namespace std;
 
 // global constants
@@ -60,7 +63,7 @@ static const string       SInTrueDefault  = "/sphenix/lustre01/sphnxpro/mdc2/js_
 static const string       SInGlobDefault  = "/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/nopileup/global/run0006/jet10/DST_GLOBAL_pythia8_Jet10-0000000006-00004.root";
 static const string       SOutDefault     = "debug.testingTrkMatching.root";
 static const int          NEvtDefault     = 10;
-static const int          VerbDefault     = 100000;
+static const int          VerbDefault     = 0;
 static const unsigned int NTopoClusts     = 2;
 static const unsigned int NTopoPar        = 3;
 

@@ -307,28 +307,18 @@ void SCorrelatorJetTree::InitEvals(PHCompositeNode *topNode) {
     cout << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) Initializing evaluators..." << endl;
   }
 
-  // get track evaluator stack
   m_evalStack = new SvtxEvalStack(topNode);
   if (!m_evalStack) {
     cerr << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) PANIC: couldn't grab SvtxEvalStack! Aborting!" << endl;
     assert(m_evalStack);
   } else {
-    m_evalStack -> set_strict(true);
-    m_evalStack -> set_verbosity(Verbosity());
-    m_evalStack -> set_use_initial_vertex(true);
-    m_evalStack -> set_use_genfit_vertex(false);
     m_evalStack -> next_event(topNode);
   }
 
-  // get track evaluator
   m_trackEval = m_evalStack -> get_track_eval();
   if (!m_trackEval) {
     cerr << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) PANIC: couldn't grab track evaluator! Aborting!" << endl;
     assert(m_trackEval);
-  } else {
-    m_trackEval -> set_strict(true);
-    m_trackEval -> set_verbosity(Verbosity());
-    m_trackEval -> do_caching(false);
   }
   return;
 
@@ -420,9 +410,6 @@ void SCorrelatorJetTree::FillTrueTree() {
       const double cstDf  = cstPhi - jetPhi;
       const double cstDh  = cstEta - jetEta;
       const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
-
-      // TEST
-      cout << " TEST [AFTER JET FINDING, PARTICLE] barcode = " << cstID << endl;
 
       // add csts to vectors
       vecTruCstID.push_back(cstID);
@@ -577,9 +564,6 @@ void SCorrelatorJetTree::FillRecoTree() {
       const double cstDf      = cstPhi - jetPhi;
       const double cstDh      = cstEta - jetEta;
       const double cstDr      = sqrt((cstDf * cstDf) + (cstDh * cstDh));
-
-      // TEST
-      cout << " TEST [AFTER JET FINDING, TRACK] barcode = " << cstMatchID << endl;
 
       // add csts to vectors
       vecRecCstMatchID.push_back(cstMatchID);

@@ -92,9 +92,6 @@ int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
   // initialize QA histograms, output trees, and evaluators (if needed)
   InitHists();
   InitTrees();
-  if (m_isMC) {
-    InitEvals(topNode);
-  }
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'Init(PHcompositeNode*)'
@@ -106,6 +103,11 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
   // print debug statement
   if (m_doDebug || (Verbosity() > 1)) {
     cout << "SCorrelatorJetTree::process_event(PHCompositeNode*) Processing Event..." << endl;
+  }
+
+  // initialize evaluator for event
+  if (m_isMC) {
+    InitEvals(topNode);
   }
 
   // reset for event and get event-wise variables

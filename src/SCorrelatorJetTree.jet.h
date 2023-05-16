@@ -117,9 +117,6 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
     const double parPz = (*itPar) -> momentum().pz();
     const double parE  = (*itPar) -> momentum().e();
 
-    // TEST
-    cout << " TEST [BEFORE JET FINDING, PARTICLE] barcode = " << parID << endl;
-
     fastjet::PseudoJet fjParticle(parPx, parPy, parPz, parE);
     fjParticle.set_user_index(parID);
     particles.push_back(fjParticle);
@@ -194,9 +191,6 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &
     } else {
       matchID = -1;
     }
-
-    // TEST
-    cout << " TEST [BEFORE JET FINDING, TRACK] barcode = " << matchID << endl;
 
     fastjet::PseudoJet fjTrack(trkPx, trkPy, trkPz, trkE);
     fjTrack.set_user_index(matchID);
