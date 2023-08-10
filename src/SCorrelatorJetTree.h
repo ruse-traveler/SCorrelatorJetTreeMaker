@@ -34,15 +34,16 @@
 #include <phool/PHIODataNode.h>
 #include <phool/PHNodeIterator.h>
 #include <phool/PHCompositeNode.h>
-// g4 includes
+// main geant4 includes
 #include <g4main/PHG4Hit.h>
 #include <g4main/PHG4Particle.h>
 #include <g4main/PHG4TruthInfoContainer.h>
-#include <g4jets/Jet.h>
-#include <g4jets/Jetv1.h>
-#include <g4jets/JetMap.h>
-#include <g4jets/JetMapv1.h>
-#include <g4jets/FastJetAlgo.h>
+// jet includes
+#include <jetbase/Jet.h>
+#include <jetbase/JetMap.h>
+#include <jetbase/JetMapv1.h>
+#include <jetbase/FastJetAlgo.h>
+// track evaluator includes
 #include <g4eval/SvtxTrackEval.h>
 #include <g4eval/SvtxEvalStack.h>
 // vtx includes
