@@ -9,6 +9,6 @@
 # script
 # -----------------------------------------------------------------------------
 
-python3 makeCondorJobs.py --inputType PYTHIA8_PP_MB --run 50 --truth --calo --g4hit --trkr_hit
+python3 makeCondorJobs.py --inputType JET_20GEV --run 6 --embed pau --truth --calo --g4hit
 
 # end -------------------------------------------------------------------------
