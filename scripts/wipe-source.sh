@@ -12,6 +12,7 @@ mv ./src/*.{cc,h} ./
 mv ./src/autogen.sh ./
 mv ./src/Makefile.am ./
 mv ./src/configure.ac ./
+mv ./src/sphx-build ./
 
 # remove source
 rm -r ./src/
