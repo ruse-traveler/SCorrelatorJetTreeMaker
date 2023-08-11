@@ -22,26 +22,34 @@
 /****************************/
 
 // standard c includes
+#include <vector>
 #include <string>
 #include <cstdlib>
 #include <utility>
 // f4a/sphenix includes
 #include <QA.C>
 #include <FROG.h>
-#include <fun4all/Fun4AllDstInputManager.h>
-// g4 includes
 #include <G4_Magnet.C>
-#include <G4_Tracking.C>
+#include <fun4all/Fun4AllDstInputManager.h>
+#include <g4main/Fun4AllDstPileupInputManager.h>
+// tracking includes
+#include <Trkr_QA.C>
+#include <Trkr_Reco.C>
+#include <Trkr_Eval.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Clustering.C>
+#include <Trkr_Diagnostics.C>
+#include <G4_TrkrSimulation.C>
 #include <g4eval/SvtxEvaluator.h>
 #include <g4eval/SvtxTruthRecoTableEval.h>
-#include <g4main/Fun4AllDstPileupInputManager.h>
-// misc includes
+// calo/pf includes
 #include <caloreco/RawClusterBuilderTopo.h>
 #include <particleflowreco/ParticleFlowReco.h>
 // user includes
-#include </sphenix/user/danderson/install/include/scorrelatorjettree/SCorrelatorJetTree.h>
+#include "/sphenix/user/danderson/install/include/scorrelatorjettree/SCorrelatorJetTree.h"
 
 // load libraries
+R__LOAD_LIBRARY(libg4eval.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libparticleflow.so)
@@ -64,6 +72,7 @@ static const unsigned int NAccept          = 2;
 void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListDefault}, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
 
   // track & particle flow parameters
+  const bool   doTruthTableReco(false);
   const bool   runTracking(false);
   const double nSigma(1.5);
 
@@ -177,44 +186,50 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   }
 
   // construct track/truth table
-  SvtxTruthRecoTableEval *tables = new SvtxTruthRecoTableEval();
-  tables -> Verbosity(verbosity);
-  if (runTracking) {
-    ffaServer -> registerSubsystem(tables);
+  if (doTruthTableReco) {
+    SvtxTruthRecoTableEval *tables = new SvtxTruthRecoTableEval();
+    tables -> Verbosity(verbosity);
+    if (runTracking) {
+      ffaServer -> registerSubsystem(tables);
+    }
   }
 
-  // build topo clusters
-  RawClusterBuilderTopo* ecalClusterBuilder = new RawClusterBuilderTopo("EcalRawClusterBuilderTopo");
-  ecalClusterBuilder -> Verbosity(verbosity);
-  ecalClusterBuilder -> set_nodename("TOPOCLUSTER_EMCAL");
-  ecalClusterBuilder -> set_enable_HCal(enableHCal[0]);
-  ecalClusterBuilder -> set_enable_EMCal(enableECal[0]);
-  ecalClusterBuilder -> set_noise(noiseLevels[0], noiseLevels[1], noiseLevels[2]);
-  ecalClusterBuilder -> set_significance(significance[0], significance[1], significance[2]);
-  ecalClusterBuilder -> allow_corner_neighbor(allowCorners);
-  ecalClusterBuilder -> set_do_split(doSplit);
-  ecalClusterBuilder -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
-  ecalClusterBuilder -> set_R_shower(showerR);
-  ffaServer          -> registerSubsystem(ecalClusterBuilder);
+  // if using particle flow, run pf reconstruction
+  if (addParticleFlow) {
 
-  RawClusterBuilderTopo* hcalClusterBuilder = new RawClusterBuilderTopo("HcalRawClusterBuilderTopo");
-  hcalClusterBuilder -> Verbosity(verbosity);
-  hcalClusterBuilder -> set_nodename("TOPOCLUSTER_HCAL");
-  hcalClusterBuilder -> set_enable_HCal(enableHCal[1]);
-  hcalClusterBuilder -> set_enable_EMCal(enableECal[1]);
-  hcalClusterBuilder -> set_noise(noiseLevels[0], noiseLevels[1], noiseLevels[2]);
-  hcalClusterBuilder -> set_significance(significance[0], significance[1], significance[1]);
-  hcalClusterBuilder -> allow_corner_neighbor(allowCorners);
-  hcalClusterBuilder -> set_do_split(doSplit);
-  hcalClusterBuilder -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
-  hcalClusterBuilder -> set_R_shower(showerR);
-  ffaServer          -> registerSubsystem(hcalClusterBuilder);
+    // build topo clusters
+    RawClusterBuilderTopo* ecalClusterBuilder = new RawClusterBuilderTopo("EcalRawClusterBuilderTopo");
+    ecalClusterBuilder -> Verbosity(verbosity);
+    ecalClusterBuilder -> set_nodename("TOPOCLUSTER_EMCAL");
+    ecalClusterBuilder -> set_enable_HCal(enableHCal[0]);
+    ecalClusterBuilder -> set_enable_EMCal(enableECal[0]);
+    ecalClusterBuilder -> set_noise(noiseLevels[0], noiseLevels[1], noiseLevels[2]);
+    ecalClusterBuilder -> set_significance(significance[0], significance[1], significance[2]);
+    ecalClusterBuilder -> allow_corner_neighbor(allowCorners);
+    ecalClusterBuilder -> set_do_split(doSplit);
+    ecalClusterBuilder -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
+    ecalClusterBuilder -> set_R_shower(showerR);
+    ffaServer          -> registerSubsystem(ecalClusterBuilder);
 
-  // do particle flow
-  ParticleFlowReco *parFlowReco = new ParticleFlowReco();
-  parFlowReco -> set_energy_match_Nsigma(nSigma);
-  parFlowReco -> Verbosity(verbosity);
-  ffaServer   -> registerSubsystem(parFlowReco);
+    RawClusterBuilderTopo* hcalClusterBuilder = new RawClusterBuilderTopo("HcalRawClusterBuilderTopo");
+    hcalClusterBuilder -> Verbosity(verbosity);
+    hcalClusterBuilder -> set_nodename("TOPOCLUSTER_HCAL");
+    hcalClusterBuilder -> set_enable_HCal(enableHCal[1]);
+    hcalClusterBuilder -> set_enable_EMCal(enableECal[1]);
+    hcalClusterBuilder -> set_noise(noiseLevels[0], noiseLevels[1], noiseLevels[2]);
+    hcalClusterBuilder -> set_significance(significance[0], significance[1], significance[1]);
+    hcalClusterBuilder -> allow_corner_neighbor(allowCorners);
+    hcalClusterBuilder -> set_do_split(doSplit);
+    hcalClusterBuilder -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
+    hcalClusterBuilder -> set_R_shower(showerR);
+    ffaServer          -> registerSubsystem(hcalClusterBuilder);
+
+    // do particle flow
+    ParticleFlowReco *parFlowReco = new ParticleFlowReco();
+    parFlowReco -> set_energy_match_Nsigma(nSigma);
+    parFlowReco -> Verbosity(verbosity);
+    ffaServer   -> registerSubsystem(parFlowReco);
+  }
 
   // create correlator jet tree
   SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", outputRecoFile, isMC, doDebug);
