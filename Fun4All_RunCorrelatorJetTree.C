@@ -39,6 +39,7 @@
 #include <Trkr_RecoInit.C>
 #include <Trkr_Clustering.C>
 #include <Trkr_Diagnostics.C>
+#include <G4_TrkrSimulation.C>
 #include <g4eval/SvtxEvaluator.h>
 #include <g4eval/SvtxTruthRecoTableEval.h>
 // calo/pf includes
@@ -80,6 +81,7 @@ static const vector<string> SInDefault  = {
 void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
 
   // track & particle flow parameters
+  const bool   runTracking(false);
   const bool   doTruthTableReco(false);
   const double nSigma(1.5);
 
@@ -133,6 +135,34 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   Fun4AllInputManager* inManager = new Fun4AllDstInputManager("InputDstManager");
   for (string input : sInput) {
     inManager -> AddFile(input);
+  }
+
+  // run the tracking if not already done
+  if (runTracking) {
+
+    // enable mms
+    Enable::MICROMEGAS = true;
+
+    // initialize magnetic field
+    G4MAGNET::magfield_rescale = 1.;
+    MagnetInit();
+    MagnetFieldInit();
+
+    // initialize tracker cells
+    Mvtx_Cells();
+    Intt_Cells();
+    TPC_Cells();
+    Micromegas_Cells();
+
+    // initialize tracking 
+    TrackingInit();
+
+    // do tracker clustering & reconstruction
+    Mvtx_Clustering();
+    Intt_Clustering();
+    TPC_Clustering();
+    Micromegas_Clustering();
+    Tracking_Reco();
   }
 
   // construct track/truth table
