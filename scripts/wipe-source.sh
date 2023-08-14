@@ -23,5 +23,6 @@ mv ./*.{cc,h} ./src/
 mv ./autogen.sh ./src/
 mv ./Makefile.am ./src/
 mv ./configure.ac ./src/
+mv ./sphx-build ./src/
 
 # end -------------------------------------------------------------------------
