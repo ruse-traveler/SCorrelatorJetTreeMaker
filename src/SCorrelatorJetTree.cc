@@ -53,17 +53,33 @@ SCorrelatorJetTree::~SCorrelatorJetTree() {
   if (m_doDebug) {
     cout << "SCorrelatorJetTree::~SCorrelatorJetTree() Calling dtor" << endl;
   }
-  delete m_histMan;
-  delete m_evalStack;
-  delete m_trackEval;
-  delete m_outFile;
-  delete m_recoTree;
-  delete m_trueTree;
-  delete m_matchTree;
-  delete m_trueJetDef;
-  delete m_recoJetDef;
-  delete m_trueClust;
-  delete m_recoClust;
+
+  // clean up dangling pointers
+  if (m_histMan) {
+    delete m_histMan;
+    m_histMan = NULL;
+  }
+  if (m_evalStack) {
+    delete m_evalStack;
+    m_evalStack = NULL;
+    m_trackEval = NULL;
+  }
+  if (m_trueJetDef) {
+    delete m_trueJetDef;
+    m_trueJetDef = NULL;
+  }
+  if (m_recoJetDef) {
+    delete m_recoJetDef;
+    m_recoJetDef = NULL;
+  }
+  if (m_trueClust) {
+    delete m_trueClust;
+    m_trueClust = NULL;
+  }
+  if (m_recoClust) {
+    delete m_recoClust;
+    m_recoClust = NULL;
+  }
 
 }  // end dtor
 
