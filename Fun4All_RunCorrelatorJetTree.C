@@ -131,10 +131,11 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   Fun4AllServer* ffaServer = Fun4AllServer::instance();
   ffaServer -> Verbosity(verbosity);
 
-  // add input files
-  Fun4AllInputManager* inManager = new Fun4AllDstInputManager("InputDstManager");
-  for (string input : sInput) {
-    inManager -> AddFile(input);
+  // add input files 
+  for (size_t iInput = 0; iInput < sInput.size(); iInput++) {
+    Fun4AllDstInputManager* inManager = new Fun4AllDstInputManager("InputDstManager" + to_string(iInput));
+    inManager -> AddFile(sInput.at(iInput));
+    ffaServer -> registerInputManager(inManager);
   }
 
   // run the tracking if not already done
@@ -168,8 +169,10 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   // construct track/truth table
   if (doTruthTableReco) {
     SvtxTruthRecoTableEval *tables = new SvtxTruthRecoTableEval();
-    tables    -> Verbosity(verbosity);
-    ffaServer -> registerSubsystem(tables);
+    tables -> Verbosity(verbosity);
+    if (runTracking) {
+      ffaServer -> registerSubsystem(tables);
+    }
   }
 
   // if using particle flow, run pf reconstruction
