@@ -348,7 +348,6 @@ class SCorrelatorJetTree : public SubsysReco {
     TFile    *m_outFile;
     TTree    *m_trueTree;
     TTree    *m_recoTree;
-    TTree    *m_matchTree;
     string    m_outFileName;
     string    m_jetTreeName;
     JetMapv1 *m_recoJetMap;

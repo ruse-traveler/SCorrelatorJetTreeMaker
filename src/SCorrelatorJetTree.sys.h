@@ -32,13 +32,12 @@ void SCorrelatorJetTree::InitVariables() {
   }
 
   // initialize class members as needed
-  m_histMan              = 0x0;
-  m_evalStack            = 0x0;
-  m_trackEval            = 0x0;
-  m_outFile              = 0x0;
-  m_trueTree             = 0x0;
-  m_recoTree             = 0x0;
-  m_matchTree            = 0x0;
+  m_histMan              = NULL;
+  m_evalStack            = NULL;
+  m_trackEval            = NULL;
+  m_outFile              = NULL;
+  m_trueTree             = NULL;
+  m_recoTree             = NULL;
   m_doQualityPlots       = true;
   m_saveDST              = false;
   m_addTracks            = true;
@@ -732,10 +731,10 @@ void SCorrelatorJetTree::ResetVariables() {
   }
 
   // reset fastjet members
-  m_trueJetDef = 0x0;
-  m_recoJetDef = 0x0;
-  m_trueClust  = 0x0;
-  m_recoClust  = 0x0;
+  m_trueJetDef = NULL;
+  m_recoJetDef = NULL;
+  m_trueClust  = NULL;
+  m_recoClust  = NULL;
 
   // reset output variables
   m_partonID[0]           = -9999;
@@ -938,7 +937,7 @@ HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode *topNode) {
   }
 
   // grab mc event & check if good
-  PHHepMCGenEvent *mcEvtStart = mapMcEvts -> get(1);
+  PHHepMCGenEvent *mcEvtStart = mapMcEvts -> get(2);
   if (!mcEvtStart) {
     cerr << PHWHERE
          << "PANIC: Couldn't grab start of mc events!"
