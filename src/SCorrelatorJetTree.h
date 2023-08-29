@@ -86,53 +86,6 @@
 #include "TNtuple.h"
 #include "TDirectory.h"
 
-// TEST [05.12.2023] ----------------------------------------------------------
-#include "g4eval/SvtxEvaluator.h"
-
-#include "g4eval/SvtxClusterEval.h"
-#include "g4eval/SvtxHitEval.h"
-#include "g4eval/SvtxTruthEval.h"
-#include "g4eval/SvtxVertexEval.h"
-
-#include <trackbase/TrkrCluster.h>
-#include <trackbase/TrkrClusterv3.h>
-#include <trackbase/TrkrClusterv4.h>
-#include <trackbase/TrkrClusterv5.h>
-#include <trackbase/TrkrHit.h>
-#include <trackbase/TrkrHitSetContainer.h>
-#include <trackbase/TrkrDefs.h>
-#include <trackbase/ActsGeometry.h>
-#include <trackbase/ClusterErrorPara.h>
-
-#include <trackbase/TpcDefs.h>
-
-#include <trackbase/TrkrClusterContainer.h>
-#include <trackbase/TrkrHitSet.h>
-#include <trackbase/TrkrClusterHitAssoc.h>
-#include <trackbase/TrkrClusterIterationMapv1.h>
-
-#include <trackbase_historic/ActsTransformations.h>
-#include <trackbase_historic/TrackSeed.h>
-
-#include <g4main/PHG4VtxPoint.h>
-
-#include <g4detectors/PHG4TpcCylinderGeom.h>
-#include <g4detectors/PHG4TpcCylinderGeomContainer.h>
-
-#include <phool/PHTimer.h>
-#include <phool/recoConsts.h>
-
-#include <TVector3.h>
-
-#include <cmath>
-#include <iostream>
-#include <iomanip>
-#include <iterator>
-#include <map>
-#include <memory>                                       // for shared_ptr
-#include <set>                                          // for _Rb_tree_cons...
-// ----------------------------------------------------------------------------
-
 #pragma GCC diagnostic pop
 
 using namespace std;
