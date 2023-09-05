@@ -20,7 +20,7 @@ using namespace findNode;
 
 // event methods --------------------------------------------------------------
 
-void SCorrelatorJetTree::GetEventVariables(PHCompositeNode *topNode) {
+void SCorrelatorJetTree::GetEventVariables(PHCompositeNode* topNode) {
 
   m_recoVtx     = GetRecoVtx(topNode);
   m_recoNumTrks = GetNumTrks(topNode);
@@ -36,8 +36,7 @@ void SCorrelatorJetTree::GetEventVariables(PHCompositeNode *topNode) {
 
 
 
-void SCorrelatorJetTree::GetPartonInfo(PHCompositeNode *topNode) {
-
+void SCorrelatorJetTree::GetPartonInfo(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -46,7 +45,7 @@ void SCorrelatorJetTree::GetPartonInfo(PHCompositeNode *topNode) {
 
   // loop over particles
   unsigned int     iOutPart = 0;
-  HepMC::GenEvent *mcEvt    = GetMcEvent(topNode);
+  HepMC::GenEvent* mcEvt    = GetMcEvent(topNode);
   for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
     // check if outputing parton
@@ -74,7 +73,7 @@ void SCorrelatorJetTree::GetPartonInfo(PHCompositeNode *topNode) {
 
 
 
-long SCorrelatorJetTree::GetNumTrks(PHCompositeNode *topNode) {
+long SCorrelatorJetTree::GetNumTrks(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -83,8 +82,8 @@ long SCorrelatorJetTree::GetNumTrks(PHCompositeNode *topNode) {
 
   // loop over tracks
   long          nTrk    = 0;
-  SvtxTrack    *track   = 0x0;
-  SvtxTrackMap *mapTrks = GetTrackMap(topNode);
+  SvtxTrack*    track   = NULL;
+  SvtxTrackMap* mapTrks = GetTrackMap(topNode);
   for (SvtxTrackMap::Iter itTrk = mapTrks -> begin(); itTrk != mapTrks -> end(); ++itTrk) {
 
     // get track
@@ -102,7 +101,7 @@ long SCorrelatorJetTree::GetNumTrks(PHCompositeNode *topNode) {
 
 
 
-long SCorrelatorJetTree::GetNumChrgPars(PHCompositeNode *topNode) {
+long SCorrelatorJetTree::GetNumChrgPars(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -111,7 +110,7 @@ long SCorrelatorJetTree::GetNumChrgPars(PHCompositeNode *topNode) {
 
   // loop over particles
   long             nPar  = 0;
-  HepMC::GenEvent *mcEvt = GetMcEvent(topNode);
+  HepMC::GenEvent* mcEvt = GetMcEvent(topNode);
   for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
     // check if particle is final state
@@ -129,7 +128,7 @@ long SCorrelatorJetTree::GetNumChrgPars(PHCompositeNode *topNode) {
 
 
 
-double SCorrelatorJetTree::GetSumECalEne(PHCompositeNode *topNode) {
+double SCorrelatorJetTree::GetSumECalEne(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -137,8 +136,8 @@ double SCorrelatorJetTree::GetSumECalEne(PHCompositeNode *topNode) {
   }
 
   // grab vertex and clusters
-  GlobalVertex        *vtx          = GetGlobalVertex(topNode);
-  RawClusterContainer *emClustStore = GetClusterStore(topNode, "CLUSTER_CEMC");
+  GlobalVertex*        vtx          = GetGlobalVertex(topNode);
+  RawClusterContainer* emClustStore = GetClusterStore(topNode, "CLUSTER_CEMC");
 
   // loop over emcal clusters
   double                             eneECalSum   = 0.;
@@ -147,7 +146,7 @@ double SCorrelatorJetTree::GetSumECalEne(PHCompositeNode *topNode) {
   for (itEMClust = emClustRange.first; itEMClust != emClustRange.second; itEMClust++) {
 
     // grab cluster
-    const RawCluster *emClust = itEMClust -> second;
+    const RawCluster* emClust = itEMClust -> second;
     if (!emClust) continue;
 
     // construct vertex and get 4-momentum
@@ -169,7 +168,7 @@ double SCorrelatorJetTree::GetSumECalEne(PHCompositeNode *topNode) {
 
 
 
-double SCorrelatorJetTree::GetSumHCalEne(PHCompositeNode *topNode) {
+double SCorrelatorJetTree::GetSumHCalEne(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -177,9 +176,9 @@ double SCorrelatorJetTree::GetSumHCalEne(PHCompositeNode *topNode) {
   }
 
   // grab vertex and clusters
-  GlobalVertex        *vtx          = GetGlobalVertex(topNode);
-  RawClusterContainer *ihClustStore = GetClusterStore(topNode, "CLUSTER_HCALIN");
-  RawClusterContainer *ohClustStore = GetClusterStore(topNode, "CLUSTER_HCALOUT");
+  GlobalVertex*        vtx          = GetGlobalVertex(topNode);
+  RawClusterContainer* ihClustStore = GetClusterStore(topNode, "CLUSTER_HCALIN");
+  RawClusterContainer* ohClustStore = GetClusterStore(topNode, "CLUSTER_HCALOUT");
 
   // loop over ihcal clusters
   double                             eneIHCalSum  = 0.;
@@ -188,7 +187,7 @@ double SCorrelatorJetTree::GetSumHCalEne(PHCompositeNode *topNode) {
   for (itIHClust = ihClustRange.first; itIHClust != ihClustRange.second; itIHClust++) {
 
     // grab cluster
-    const RawCluster *ihClust = itIHClust -> second;
+    const RawCluster* ihClust = itIHClust -> second;
     if (!ihClust) continue;
 
     // construct vertex and get 4-momentum
@@ -211,7 +210,7 @@ double SCorrelatorJetTree::GetSumHCalEne(PHCompositeNode *topNode) {
   for (itOHClust = ohClustRange.first; itOHClust != ohClustRange.second; itOHClust++) {
 
     // grab cluster
-    const RawCluster *ohClust = itOHClust -> second;
+    const RawCluster* ohClust = itOHClust -> second;
     if (!ohClust) continue;
 
     // construct vertex and get 4-momentum
@@ -234,7 +233,7 @@ double SCorrelatorJetTree::GetSumHCalEne(PHCompositeNode *topNode) {
 
 
 
-double SCorrelatorJetTree::GetSumParEne(PHCompositeNode *topNode) {
+double SCorrelatorJetTree::GetSumParEne(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -243,7 +242,7 @@ double SCorrelatorJetTree::GetSumParEne(PHCompositeNode *topNode) {
 
   // loop over particles
   double           eSumPar = 0.;
-  HepMC::GenEvent *mcEvt   = GetMcEvent(topNode);
+  HepMC::GenEvent* mcEvt   = GetMcEvent(topNode);
   for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
     // check if particle is final state
@@ -268,11 +267,11 @@ CLHEP::Hep3Vector SCorrelatorJetTree::GetRecoVtx(PHCompositeNode* topNode) {
     cout << "SCorrelatorJetTree::GetRecoVtx(PHComposite*) Getting reconstructed vertex..." << endl;
   }
 
-  const GlobalVertex      *vtx     = GetGlobalVertex(topNode);
-  const double             vtxX    = vtx -> get_x();
-  const double             vtxY    = vtx -> get_y();
-  const double             vtxZ    = vtx -> get_z();
-  const CLHEP::Hep3Vector  recoVtx = CLHEP::Hep3Vector(vtxX, vtxY, vtxZ);
+  const GlobalVertex*     vtx     = GetGlobalVertex(topNode);
+  const double            vtxX    = vtx -> get_x();
+  const double            vtxY    = vtx -> get_y();
+  const double            vtxZ    = vtx -> get_z();
+  const CLHEP::Hep3Vector recoVtx = CLHEP::Hep3Vector(vtxX, vtxY, vtxZ);
   return recoVtx;
 
 }  // end 'GetRecoVtx(PHCompositeNode*)'

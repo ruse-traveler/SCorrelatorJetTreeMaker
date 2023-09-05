@@ -24,7 +24,7 @@ using namespace findNode;
 
 // jet methods ----------------------------------------------------------------
 
-void SCorrelatorJetTree::FindTrueJets(PHCompositeNode *topNode) {
+void SCorrelatorJetTree::FindTrueJets(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -50,7 +50,7 @@ void SCorrelatorJetTree::FindTrueJets(PHCompositeNode *topNode) {
 
 
 
-void SCorrelatorJetTree::FindRecoJets(PHCompositeNode *topNode) {
+void SCorrelatorJetTree::FindRecoJets(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -79,7 +79,7 @@ void SCorrelatorJetTree::FindRecoJets(PHCompositeNode *topNode) {
 
 
 
-void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
   // print debug statement
   if (m_doDebug) {
@@ -91,7 +91,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
   unsigned int     nParTot = 0;
   unsigned int     nParAcc = 0;
   double           eParSum = 0.;
-  HepMC::GenEvent *mcEvt   = GetMcEvent(topNode);
+  HepMC::GenEvent* mcEvt   = GetMcEvent(topNode);
   for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
     // check if particle is final state
@@ -145,7 +145,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode *topNode, vector<PseudoJet
 
 
 
-void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
   // print debug statement
   if (m_doDebug) {
@@ -157,8 +157,8 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &
   unsigned int  nTrkTot = 0;
   unsigned int  nTrkAcc = 0;
   double        eTrkSum = 0.;
-  SvtxTrack    *track   = 0x0;
-  SvtxTrackMap *mapTrks = GetTrackMap(topNode);
+  SvtxTrack*    track   = NULL;
+  SvtxTrackMap* mapTrks = GetTrackMap(topNode);
   for (SvtxTrackMap::Iter itTrk = mapTrks -> begin(); itTrk != mapTrks -> end(); ++itTrk) {
 
     // get track
@@ -220,7 +220,7 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode *topNode, vector<PseudoJet> &
 
 
 
-void SCorrelatorJetTree::AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddFlow(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
   // print debug statement
   if (m_doDebug) {
@@ -233,17 +233,17 @@ void SCorrelatorJetTree::AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &pa
   }
 
   // loop over pf elements
-  unsigned int                                iCst       = particles.size();
-  unsigned int                                nFlowTot   = 0;
-  unsigned int                                nFlowAcc   = 0;
-  double                                      eFlowSum   = 0.;
-  ParticleFlowElementContainer                *flowStore = GetFlowStore(topNode);
-  ParticleFlowElementContainer::ConstRange    flowRange  = flowStore -> getParticleFlowElements();
+  unsigned int                                iCst      = particles.size();
+  unsigned int                                nFlowTot  = 0;
+  unsigned int                                nFlowAcc  = 0;
+  double                                      eFlowSum  = 0.;
+  ParticleFlowElementContainer*               flowStore = GetFlowStore(topNode);
+  ParticleFlowElementContainer::ConstRange    flowRange = flowStore -> getParticleFlowElements();
   ParticleFlowElementContainer::ConstIterator itFlow;
   for (itFlow = flowRange.first; itFlow != flowRange.second; ++itFlow) {
 
     // get pf element
-    ParticleFlowElement *flow = itFlow -> second;
+    ParticleFlowElement* flow = itFlow -> second;
     if (!flow) {
       continue;
     } else {
@@ -293,7 +293,7 @@ void SCorrelatorJetTree::AddFlow(PHCompositeNode *topNode, vector<PseudoJet> &pa
 
 
 
-void SCorrelatorJetTree::AddECal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddECal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
   // print debug statement
   if (m_doDebug) {
@@ -306,8 +306,8 @@ void SCorrelatorJetTree::AddECal(PHCompositeNode *topNode, vector<PseudoJet> &pa
   }
 
   // grab vertex and clusters
-  GlobalVertex        *vtx          = GetGlobalVertex(topNode);
-  RawClusterContainer *emClustStore = GetClusterStore(topNode, "CLUSTER_CEMC");
+  GlobalVertex*        vtx          = GetGlobalVertex(topNode);
+  RawClusterContainer* emClustStore = GetClusterStore(topNode, "CLUSTER_CEMC");
 
   // add emcal clusters if needed
   unsigned int iCst      = particles.size();
@@ -322,7 +322,7 @@ void SCorrelatorJetTree::AddECal(PHCompositeNode *topNode, vector<PseudoJet> &pa
   for (itEMClust = emClustRange.first; itEMClust != emClustRange.second; ++itEMClust) {
 
     // grab cluster
-    const RawCluster *emClust = itEMClust -> second;
+    const RawCluster* emClust = itEMClust -> second;
     if (!emClust) {
       continue;
     } else {
@@ -383,7 +383,7 @@ void SCorrelatorJetTree::AddECal(PHCompositeNode *topNode, vector<PseudoJet> &pa
 
 
 
-void SCorrelatorJetTree::AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &particles, map<int, pair<Jet::SRC, int>> &fjMap) {
+void SCorrelatorJetTree::AddHCal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
   // print debug statement
   if (m_doDebug) {
@@ -396,9 +396,9 @@ void SCorrelatorJetTree::AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &pa
   }
 
   // grab vertex and clusters
-  GlobalVertex        *vtx          = GetGlobalVertex(topNode);
-  RawClusterContainer *ihClustStore = GetClusterStore(topNode, "CLUSTER_HCALIN");
-  RawClusterContainer *ohClustStore = GetClusterStore(topNode, "CLUSTER_HCALOUT");
+  GlobalVertex*        vtx          = GetGlobalVertex(topNode);
+  RawClusterContainer* ihClustStore = GetClusterStore(topNode, "CLUSTER_HCALIN");
+  RawClusterContainer* ohClustStore = GetClusterStore(topNode, "CLUSTER_HCALOUT");
 
   // add emcal clusters if needed
   unsigned int iCst      = particles.size();
@@ -413,7 +413,7 @@ void SCorrelatorJetTree::AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &pa
   for (itIHClust = ihClustRange.first; itIHClust != ihClustRange.second; ++itIHClust) {
 
     // get ih cluster
-    const RawCluster *ihClust = itIHClust -> second;
+    const RawCluster* ihClust = itIHClust -> second;
     if (!ihClust) {
       continue;
     } else {
@@ -469,7 +469,7 @@ void SCorrelatorJetTree::AddHCal(PHCompositeNode *topNode, vector<PseudoJet> &pa
   for (itOHClust = ohClustRange.first; itOHClust != ohClustRange.second; ++itOHClust) {
 
     // get oh cluster
-    const RawCluster *ohClust = itOHClust -> second;
+    const RawCluster* ohClust = itOHClust -> second;
     if (!ohClust) {
       continue;
     } else {

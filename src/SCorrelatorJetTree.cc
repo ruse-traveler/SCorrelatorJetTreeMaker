@@ -32,7 +32,7 @@ using namespace findNode;
 
 // ctor/dtor ------------------------------------------------------------------
 
-SCorrelatorJetTree::SCorrelatorJetTree(const string &name, const string &outFile, const bool isMC, const bool debug) : SubsysReco(name) {
+SCorrelatorJetTree::SCorrelatorJetTree(const string& name, const string& outFile, const bool isMC, const bool debug) : SubsysReco(name) {
 
   // print debug statement
   m_isMC    = isMC;
@@ -43,7 +43,7 @@ SCorrelatorJetTree::SCorrelatorJetTree(const string &name, const string &outFile
   m_outFileName = outFile;
   InitVariables();
 
-}  // end ctor(string, string, bool, bool)
+}  // end ctor(string&, string&, bool, bool)
 
 
 
@@ -87,7 +87,7 @@ SCorrelatorJetTree::~SCorrelatorJetTree() {
 
 // F4A methods ----------------------------------------------------------------
 
-int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
+int SCorrelatorJetTree::Init(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug || (Verbosity() > 1)) {
@@ -114,7 +114,7 @@ int SCorrelatorJetTree::Init(PHCompositeNode *topNode) {
 
 
 
-int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
+int SCorrelatorJetTree::process_event(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug || (Verbosity() > 1)) {
@@ -150,7 +150,7 @@ int SCorrelatorJetTree::process_event(PHCompositeNode *topNode) {
 
 
 
-int SCorrelatorJetTree::End(PHCompositeNode *topNode) {
+int SCorrelatorJetTree::End(PHCompositeNode* topNode) {
 
   // print debug statements
   if (m_doDebug || (Verbosity() > 1)) {

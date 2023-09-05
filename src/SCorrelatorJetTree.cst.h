@@ -24,7 +24,7 @@ using namespace findNode;
 
 // constituent methods --------------------------------------------------------
 
-int SCorrelatorJetTree::GetMatchID(SvtxTrack *track) {
+int SCorrelatorJetTree::GetMatchID(SvtxTrack* track) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
@@ -47,7 +47,7 @@ int SCorrelatorJetTree::GetMatchID(SvtxTrack *track) {
 
 
 
-bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *par, const bool ignoreCharge) {
+bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
@@ -78,19 +78,23 @@ bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle *par, const bool igno
   const bool   isGoodPar    = (isGoodCharge && isInPtRange && isInEtaRange);
   return isGoodPar;
 
-}  // end 'IsGoodParticle(HepMC::GenParticle*)'
+}  // end 'IsGoodParticle(HepMC::GenParticle*, bool)'
 
 
 
-bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack *track) {
+bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
     cout << "SCorrelatorJetTree::IsGoodTrack(SvtxTrack*) Checking if track is good..." << endl;
   }
 
+  // grab track info
   const double trkPt        = track -> get_pt();
   const double trkEta       = track -> get_eta();
+  //const double trkQuality   = track -> get_quality();
+
+  // apply cuts
   const bool   isInPtRange  = ((trkPt  > m_trkPtRange[0])  && (trkPt  < m_trkPtRange[1]));
   const bool   isInEtaRange = ((trkEta > m_trkEtaRange[0]) && (trkEta < m_trkEtaRange[1]));
   const bool   isGoodTrack  = (isInPtRange && isInEtaRange);
@@ -100,7 +104,7 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack *track) {
 
 
 
-bool SCorrelatorJetTree::IsGoodFlow(ParticleFlowElement *flow) {
+bool SCorrelatorJetTree::IsGoodFlow(ParticleFlowElement* flow) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
@@ -117,7 +121,7 @@ bool SCorrelatorJetTree::IsGoodFlow(ParticleFlowElement *flow) {
 
 
 
-bool SCorrelatorJetTree::IsGoodECal(CLHEP::Hep3Vector &hepVecECal) {
+bool SCorrelatorJetTree::IsGoodECal(CLHEP::Hep3Vector& hepVecECal) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
@@ -135,7 +139,7 @@ bool SCorrelatorJetTree::IsGoodECal(CLHEP::Hep3Vector &hepVecECal) {
 
 
 
-bool SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector &hepVecHCal) {
+bool SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
@@ -154,7 +158,7 @@ bool SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector &hepVecHCal) {
 
 
 
-bool SCorrelatorJetTree::IsOutgoingParton(HepMC::GenParticle *par) {
+bool SCorrelatorJetTree::IsOutgoingParton(HepMC::GenParticle* par) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 2)) {

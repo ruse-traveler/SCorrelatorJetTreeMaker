@@ -31,72 +31,24 @@ void SCorrelatorJetTree::InitVariables() {
     cout << "SCorrelatorJetTree::InitVariables() Initializing class members..." << endl;
   }
 
-  // initialize class members as needed
-  m_histMan              = NULL;
-  m_evalStack            = NULL;
-  m_trackEval            = NULL;
-  m_outFile              = NULL;
-  m_trueTree             = NULL;
-  m_recoTree             = NULL;
-  m_doQualityPlots       = true;
-  m_saveDST              = false;
-  m_addTracks            = true;
-  m_addFlow              = false;
-  m_addECal              = false;
-  m_addHCal              = false;
-  m_parPtRange[0]        = 0.;
-  m_parPtRange[1]        = 9999.;
-  m_parEtaRange[0]       = -1.1;
-  m_parEtaRange[1]       = 1.1;
-  m_trkPtRange[0]        = 0.;
-  m_trkPtRange[1]        = 9999.;
-  m_trkEtaRange[0]       = -1.1;
-  m_trkEtaRange[1]       = 1.1;
-  m_flowPtRange[0]       = 0.;
-  m_flowPtRange[1]       = 9999.;
-  m_flowEtaRange[0]      = -1.1;
-  m_flowEtaRange[1]      = 1.1;
-  m_ecalPtRange[0]       = 0.;
-  m_ecalPtRange[1]       = 9999;
-  m_ecalEtaRange[0]      = -1.1;
-  m_ecalEtaRange[1]      = 1.1;
-  m_hcalPtRange[0]       = 0.;
-  m_hcalPtRange[1]       = 9999.;
-  m_hcalEtaRange[0]      = -1.1;
-  m_hcalEtaRange[1]      = 1.1;
-  m_jetR                 = 0.4;
-  m_jetType              = 0;
-  m_jetAlgo              = antikt_algorithm;
-  m_recombScheme         = pt_scheme;
-  m_partonID[0]           = -9999;
-  m_partonID[1]           = -9999;
-  m_partonMom[0]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_partonMom[1]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_recoVtx               = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_trueVtx               = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_trueNumJets           = 0;
-  m_trueNumChrgPars       = -9999;
-  m_trueSumPar            = -9999.;
-  m_truePartonID[0]       = -9999;
-  m_truePartonID[1]       = -9999;
-  m_truePartonMomX[0]     = -9999.;
-  m_truePartonMomX[1]     = -9999.;
-  m_truePartonMomY[0]     = -9999.;
-  m_truePartonMomY[1]     = -9999.;
-  m_truePartonMomZ[0]     = -9999.;
-  m_truePartonMomZ[1]     = -9999.;
-  m_trueVtxX              = -9999.;
-  m_trueVtxY              = -9999.;
-  m_trueVtxZ              = -9999.;
-  m_recoNumJets           = 0;
-  m_recoVtxX              = -9999.;
-  m_recoVtxY              = -9999.;
-  m_recoVtxZ              = -9999.;
-  m_recoNumTrks           = -9999;
-  m_recoSumECal           = -9999.;
-  m_recoSumHCal           = -9999.;
+  // initialize truth tree address members
+  m_partonID[0]       = -9999;
+  m_partonID[1]       = -9999;
+  m_partonMom[0]      = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_partonMom[1]      = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_trueVtx           = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_trueNumJets       = 0;
+  m_trueNumChrgPars   = -9999;
+  m_trueSumPar        = -9999.;
+  m_truePartonID[0]   = -9999;
+  m_truePartonID[1]   = -9999;
+  m_truePartonMomX[0] = -9999.;
+  m_truePartonMomX[1] = -9999.;
+  m_truePartonMomY[0] = -9999.;
+  m_truePartonMomY[1] = -9999.;
+  m_truePartonMomZ[0] = -9999.;
+  m_truePartonMomZ[1] = -9999.;
   m_trueJets.clear();
-  m_recoJets.clear();
   m_trueJetNCst.clear();
   m_trueJetID.clear();
   m_trueJetE.clear();
@@ -110,6 +62,20 @@ void SCorrelatorJetTree::InitVariables() {
   m_trueCstJt.clear();
   m_trueCstEta.clear();
   m_trueCstPhi.clear();
+
+  // initialize reco tree address members
+  m_recoVtx     = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_trueVtxX    = -9999.;
+  m_trueVtxY    = -9999.;
+  m_trueVtxZ    = -9999.;
+  m_recoNumJets = 0;
+  m_recoVtxX    = -9999.;
+  m_recoVtxY    = -9999.;
+  m_recoVtxZ    = -9999.;
+  m_recoNumTrks = -9999;
+  m_recoSumECal = -9999.;
+  m_recoSumHCal = -9999.;
+  m_recoJets.clear();
   m_recoJetNCst.clear();
   m_recoJetID.clear();
   m_recoJetE.clear();
@@ -227,6 +193,7 @@ void SCorrelatorJetTree::InitHists() {
   m_hNumCstAccept[CST_TYPE::ECAL_CST][1]  = new TH1D("hNumECalCstAcc", "N_{cst}^{clust} accepted",  nNumBins,  rNumBins[0],  rNumBins[1]);
   m_hNumCstAccept[CST_TYPE::HCAL_CST][0]  = new TH1D("hNumHCalCstTot", "N_{cst}^{clust} total",     nNumBins,  rNumBins[0],  rNumBins[1]);
   m_hNumCstAccept[CST_TYPE::HCAL_CST][1]  = new TH1D("hNumHCalCstAcc", "N_{cst}^{clust} accepted",  nNumBins,  rNumBins[0],  rNumBins[1]);
+  return;
 
 }  // end 'InitHists()'
 
@@ -299,7 +266,7 @@ void SCorrelatorJetTree::InitTrees() {
 
 
 
-void SCorrelatorJetTree::InitEvals(PHCompositeNode *topNode) {
+void SCorrelatorJetTree::InitEvals(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -633,8 +600,8 @@ void SCorrelatorJetTree::SaveOutput() {
   }
 
   // save QA histograms if need be
-  const string  sQuality[NDirectory + 1] = {"Tracks", "CaloClusters", "ParticleFlow", "Particles", "TruthJets", "RecoJets", "QA"};
-  TDirectory   *dQuality[NDirectory + 1];
+  const string sQuality[NDirectory + 1] = {"Tracks", "CaloClusters", "ParticleFlow", "Particles", "TruthJets", "RecoJets", "QA"};
+  TDirectory*  dQuality[NDirectory + 1];
   if (m_doQualityPlots) {
 
     // create QA directories
@@ -736,30 +703,24 @@ void SCorrelatorJetTree::ResetVariables() {
   m_trueClust  = NULL;
   m_recoClust  = NULL;
 
-  // reset output variables
-  m_partonID[0]           = -9999;
-  m_partonID[1]           = -9999;
-  m_partonMom[0]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_partonMom[1]          = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_recoVtx               = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_trueVtx               = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_trueNumJets           = 0;
-  m_trueNumChrgPars       = -9999;
-  m_trueSumPar            = -9999.;
-  m_truePartonID[0]       = -9999;
-  m_truePartonID[1]       = -9999;
-  m_truePartonMomX[0]     = -9999.;
-  m_truePartonMomX[1]     = -9999.;
-  m_truePartonMomY[0]     = -9999.;
-  m_truePartonMomY[1]     = -9999.;
-  m_truePartonMomZ[0]     = -9999.;
-  m_truePartonMomZ[1]     = -9999.;
-  m_recoNumJets           = 0;
-  m_recoNumTrks           = -9999;
-  m_recoSumECal           = -9999.;
-  m_recoSumHCal           = -9999.;
+  // reset truth tree variables
+  m_partonID[0]       = -9999;
+  m_partonID[1]       = -9999;
+  m_partonMom[0]      = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_partonMom[1]      = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_trueVtx           = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_trueNumJets       = 0;
+  m_trueNumChrgPars   = -9999;
+  m_trueSumPar        = -9999.;
+  m_truePartonID[0]   = -9999;
+  m_truePartonID[1]   = -9999;
+  m_truePartonMomX[0] = -9999.;
+  m_truePartonMomX[1] = -9999.;
+  m_truePartonMomY[0] = -9999.;
+  m_truePartonMomY[1] = -9999.;
+  m_truePartonMomZ[0] = -9999.;
+  m_truePartonMomZ[1] = -9999.;
   m_trueJets.clear();
-  m_recoJets.clear();
   m_trueJetNCst.clear();
   m_trueJetID.clear();
   m_trueJetE.clear();
@@ -773,6 +734,14 @@ void SCorrelatorJetTree::ResetVariables() {
   m_trueCstJt.clear();
   m_trueCstEta.clear();
   m_trueCstPhi.clear();
+
+  // reset reco tree variables
+  m_recoVtx     = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_recoNumJets = 0;
+  m_recoNumTrks = -9999;
+  m_recoSumECal = -9999.;
+  m_recoSumHCal = -9999.;
+  m_recoJets.clear();
   m_recoJetNCst.clear();
   m_recoJetID.clear();
   m_recoJetE.clear();
@@ -801,7 +770,7 @@ int SCorrelatorJetTree::CreateJetNode(PHCompositeNode* topNode) {
 
   // create iterator & DST node
   PHNodeIterator   iter(topNode);
-  PHCompositeNode *lowerNode = dynamic_cast<PHCompositeNode*>(iter.findFirst("PHCompositeNode", "DST"));
+  PHCompositeNode* lowerNode = dynamic_cast<PHCompositeNode*>(iter.findFirst("PHCompositeNode", "DST"));
   if (!lowerNode) {
     lowerNode = new PHCompositeNode("DST");
     topNode   -> addNode(lowerNode);
@@ -866,7 +835,7 @@ int SCorrelatorJetTree::CreateJetNode(PHCompositeNode* topNode) {
 
 
 
-SvtxTrackMap* SCorrelatorJetTree::GetTrackMap(PHCompositeNode *topNode) {
+SvtxTrackMap* SCorrelatorJetTree::GetTrackMap(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -874,7 +843,7 @@ SvtxTrackMap* SCorrelatorJetTree::GetTrackMap(PHCompositeNode *topNode) {
   }
 
   // grab track map
-  SvtxTrackMap *mapTrks = findNode::getClass<SvtxTrackMap>(topNode, "SvtxTrackMap");
+  SvtxTrackMap* mapTrks = findNode::getClass<SvtxTrackMap>(topNode, "SvtxTrackMap");
   if (!mapTrks) {
     cerr << PHWHERE
          << "PANIC: SvtxTrackMap node is missing!"
@@ -887,7 +856,7 @@ SvtxTrackMap* SCorrelatorJetTree::GetTrackMap(PHCompositeNode *topNode) {
 
 
 
-GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode *topNode) {
+GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -895,7 +864,7 @@ GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode *topNode) {
   }
 
   // get vertex map & check if good
-  GlobalVertexMap *mapVtx = findNode::getClass<GlobalVertexMap>(topNode, "GlobalVertexMap");
+  GlobalVertexMap* mapVtx = findNode::getClass<GlobalVertexMap>(topNode, "GlobalVertexMap");
 
   const bool isVtxMapGood = (mapVtx && !(mapVtx -> empty()));
   if (!isVtxMapGood) {
@@ -907,7 +876,7 @@ GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode *topNode) {
   }
 
   // grab vertex
-  GlobalVertex *vtx = mapVtx -> begin() -> second;
+  GlobalVertex* vtx = mapVtx -> begin() -> second;
   if (!vtx) {
     cerr << PHWHERE
          << "PANIC: no vertex!"
@@ -920,7 +889,7 @@ GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode *topNode) {
 
 
 
-HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode *topNode) {
+HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -928,7 +897,7 @@ HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode *topNode) {
   }
 
   // grab mc event map
-  PHHepMCGenEventMap *mapMcEvts = findNode::getClass<PHHepMCGenEventMap>(topNode, "PHHepMCGenEventMap");
+  PHHepMCGenEventMap* mapMcEvts = findNode::getClass<PHHepMCGenEventMap>(topNode, "PHHepMCGenEventMap");
   if (!mapMcEvts) {
     cerr << PHWHERE
          << "PANIC: HEPMC event map node is missing!"
@@ -937,7 +906,7 @@ HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode *topNode) {
   }
 
   // grab mc event & check if good
-  PHHepMCGenEvent *mcEvtStart = mapMcEvts -> get(2);
+  PHHepMCGenEvent* mcEvtStart = mapMcEvts -> get(2);
   if (!mcEvtStart) {
     cerr << PHWHERE
          << "PANIC: Couldn't grab start of mc events!"
@@ -945,7 +914,7 @@ HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode *topNode) {
     assert(mcEvtStart);
   }
 
-  HepMC::GenEvent *mcEvt = mcEvtStart -> getEvent();
+  HepMC::GenEvent* mcEvt = mcEvtStart -> getEvent();
   if (!mcEvt) {
     cerr << PHWHERE
          << "PANIC: Couldn't grab HepMC event!"
@@ -958,7 +927,7 @@ HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode *topNode) {
 
 
 
-RawClusterContainer* SCorrelatorJetTree::GetClusterStore(PHCompositeNode *topNode, const TString sNodeName) {
+RawClusterContainer* SCorrelatorJetTree::GetClusterStore(PHCompositeNode* topNode, const TString sNodeName) {
 
   // print debug statement
   if (m_doDebug) {
@@ -979,7 +948,7 @@ RawClusterContainer* SCorrelatorJetTree::GetClusterStore(PHCompositeNode *topNod
 
 
 
-ParticleFlowElementContainer* SCorrelatorJetTree::GetFlowStore(PHCompositeNode *topNode) {
+ParticleFlowElementContainer* SCorrelatorJetTree::GetFlowStore(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
@@ -987,7 +956,7 @@ ParticleFlowElementContainer* SCorrelatorJetTree::GetFlowStore(PHCompositeNode *
   }
 
   // declare pf  objects
-  ParticleFlowElementContainer *flowStore = findNode::getClass<ParticleFlowElementContainer>(topNode, "ParticleFlowElements");
+  ParticleFlowElementContainer* flowStore = findNode::getClass<ParticleFlowElementContainer>(topNode, "ParticleFlowElements");
   if (!flowStore) {
     cerr << PHWHERE
          << "PANIC: Couldn't grab particle flow container!"
