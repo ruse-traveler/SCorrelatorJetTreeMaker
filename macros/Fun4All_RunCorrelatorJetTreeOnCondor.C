@@ -88,8 +88,7 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
 
   // jet tree general parameters
   const bool isMC(true);
-  const bool doDebug(true);
-  const bool doMatching(true);
+  const bool doDebug(false);
   const bool saveDst(true);
   const bool doQuality(true);
   const bool addTracks(true);
