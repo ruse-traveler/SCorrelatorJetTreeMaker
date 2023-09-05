@@ -47,6 +47,101 @@ int SCorrelatorJetTree::GetMatchID(SvtxTrack* track) {
 
 
 
+int SCorrelatorJetTree::GetNumLayer(TrackSeed* seed, const uint8_t subsys) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 3)) {
+    cout << "SCorrelatorJetTree::GetNumLayer(TrackSeed*, uint8_t) Grabbing number of track clusters..." << endl;
+  }
+
+  // issue warning if subsys is not set correctly
+  const bool isSubsysWrong = (subsys > 2);
+  if (isSubsysWrong && m_doDebug && (Verbosity() > 3)) {
+    cerr << "SCorrelatorJetTree::GetNumLayer(SvtxTrack*, uint8_t) WARNING: trying to determine no. of clusters for an unknown subsystem (subsys = " << subsys << ")..." << endl;
+    assert(subsys <= 2);
+  }
+
+  // set min no. of layers
+  const int minInttLayer = CONST::NMvtxLayer;
+  const int minTpcLayer  = CONST::NMvtxLayer + CONST::NInttLayer;
+
+  // reset hit flags
+  switch (subsys) {
+    case SUBSYS::MVTX:
+      for (int iMvtxLayer = 0; iMvtxLayer < CONST::NMvtxLayer; iMvtxLayer++) {
+        isMvtxLayerHit[iMvtxLayer] = false;
+      }
+      break;
+    case SUBSYS::INTT:
+      for (int iInttLayer = 0; iInttLayer < CONST::NInttLayer; iInttLayer++) {
+        isInttLayerHit[iInttLayer] = false;
+      }
+      break;
+    case SUBSYS::TPC:
+      for (int iTpcLayer = 0; iTpcLayer < CONST::NTpcLayer; iTpcLayer++) {
+        isTpcLayerHit[iTpcLayer] = false;
+      }
+      break;
+  }
+
+  // determine which layers were hit
+  unsigned int layer     = 0;
+  unsigned int mvtxLayer = 0;
+  unsigned int inttLayer = 0;
+  unsigned int tpcLayer  = 0;
+  for (auto itClustKey = (seed -> begin_cluster_keys()); itClustKey != (seed -> end_cluster_keys()); ++itClustKey) {
+
+    // grab layer number
+    layer = TrkrDefs::getLayer(*itClustKey);
+
+    // increment accordingly
+    switch (subsys) {
+      case SUBSYS::MVTX:
+        if (layer < CONST::NMvtxLayer) {
+          mvtxLayer                 = layer;
+          isMvtxLayerHit[mvtxLayer] = true;
+        }
+        break;
+      case SUBSYS::INTT:
+        if ((layer >= minInttLayer) && (layer < minTpcLayer)) {
+          inttLayer                 = layer - minInttLayer;
+          isInttLayerHit[inttLayer] = true;
+        }
+        break;
+      case SUBSYS::TPC:
+        if (layer >= minTpcLayer) {
+          tpcLayer                = layer - minTpcLayer;
+          isTpcLayerHit[tpcLayer] = true;
+        }
+        break;
+    }
+  }  // end cluster loop
+
+  // get the relevant no. of layers
+  int nLayer = 0;
+  switch (subsys) {
+    case SUBSYS::MVTX:
+      for (int iMvtxLayer = 0; iMvtxLayer < CONST::NMvtxLayer; iMvtxLayer++) {
+        if (isMvtxLayerHit[iMvtxLayer]) ++nLayer;
+      }
+      break;
+    case SUBSYS::INTT:
+      for (int iInttLayer = 0; iInttLayer < CONST::NInttLayer; iInttLayer++) {
+        if (isInttLayerHit[iInttLayer]) ++nLayer;
+      }
+      break;
+    case SUBSYS::TPC:
+      for (int iTpcLayer = 0; iTpcLayer < CONST::NTpcLayer; iTpcLayer++) {
+        if (isTpcLayerHit[iTpcLayer]) ++nLayer;
+      }
+      break;
+  }
+  return nLayer;
+
+}  // end 'GetNumLayer(TrackSeed*, uint8_t)'
+
+
+
 bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge) {
 
   // print debug statement
@@ -89,15 +184,44 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track) {
     cout << "SCorrelatorJetTree::IsGoodTrack(SvtxTrack*) Checking if track is good..." << endl;
   }
 
-  // grab track info
-  const double trkPt        = track -> get_pt();
-  const double trkEta       = track -> get_eta();
-  //const double trkQuality   = track -> get_quality();
+  // get track seeds
+  TrackSeed* trkSiSeed  = track -> get_silicon_seed();
+  TrackSeed* trkTpcSeed = track -> get_tpc_seed();
+
+  // ignore si seed-less tracks if needed
+  bool isSeedGood = (trkSiSeed && trkTpcSeed);
+  if (!m_requireSiSeeds) {
+    isSeedGood = (trkSiSeed || trkTpcSeed);
+  }
+
+  // get no. of layers
+  int trkNMvtx = 0;
+  int trkNIntt = 0;
+  int trkNTpc  = 0;
+  if (trkSiSeed && trkTpcSeed) {
+    trkNMvtx = GetNumLayer(trkSiSeed,  SUBSYS::MVTX);
+    trkNIntt = GetNumLayer(trkSiSeed,  SUBSYS::INTT);
+    trkNTpc  = GetNumLayer(trkTpcSeed, SUBSYS::TPC);
+  }
+  if (!trkSiSeed && trkTpcSeed) {
+    trkNMvtx = GetNumLayer(trkTpcSeed, SUBSYS::MVTX);
+    trkNIntt = GetNumLayer(trkTpcSeed, SUBSYS::INTT);
+    trkNTpc  = GetNumLayer(trkTpcSeed, SUBSYS::TPC);
+  }
+
+  // grab other track info
+  const double trkPt   = track -> get_pt();
+  const double trkEta  = track -> get_eta();
+  const double trkQual = track -> get_quality();
 
   // apply cuts
-  const bool   isInPtRange  = ((trkPt  > m_trkPtRange[0])  && (trkPt  < m_trkPtRange[1]));
-  const bool   isInEtaRange = ((trkEta > m_trkEtaRange[0]) && (trkEta < m_trkEtaRange[1]));
-  const bool   isGoodTrack  = (isInPtRange && isInEtaRange);
+  const bool   isInPtRange    = ((trkPt    > m_trkPtRange[0])    && (trkPt    <  m_trkPtRange[1]));
+  const bool   isInEtaRange   = ((trkEta   > m_trkEtaRange[0])   && (trkEta   <  m_trkEtaRange[1]));
+  const bool   isInQualRange  = ((trkQual  > m_trkQualRange[0])  && (trkQual  <  m_trkQualRange[1]));
+  const bool   isInNMvtxRange = ((trkNMvtx > m_trkNMvtxRange[0]) && (trkNMvtx <= m_trkNMvtxRange[1]));
+  const bool   isInNInttRange = ((trkNIntt > m_trkNInttRange[0]) && (trkNIntt <= m_trkNInttRange[1]));
+  const bool   isInNTpcRange  = ((trkNTpc  > m_trkNTpcRange[0])  && (trkNTpc  <= m_trkNTpcRange[1]));
+  const bool   isGoodTrack    = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNMvtxRange && isInNInttRange && isInNTpcRange);
   return isGoodTrack;
 
 }  // end 'IsGoodTrack(SvtxTrack*)'

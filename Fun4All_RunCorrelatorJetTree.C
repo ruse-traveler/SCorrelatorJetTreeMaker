@@ -100,6 +100,7 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   const bool doDebug(true);
   const bool saveDst(true);
   const bool doQuality(true);
+  const bool requireSiSeeds(true);
   const bool addTracks(true);
   const bool addECal(false);
   const bool addHCal(false);
@@ -111,17 +112,27 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   const auto         jetAlgo = SCorrelatorJetTree::ALGO::ANTIKT;
   const auto         jetReco = SCorrelatorJetTree::RECOMB::PT_SCHEME;
 
-  // constituent acceptance
-  const pair<double, double> ptParRange    = {0.,   9999.};
-  const pair<double, double> etaParRange   = {-1.1, 1.1};
-  const pair<double, double> ptTrackRange  = {0.2,  9999.};
-  const pair<double, double> etaTrackRange = {-1.1, 1.1};
-  const pair<double, double> ptFlowRange   = {0.2,  9999.};
-  const pair<double, double> etaFlowRange  = {-1.1, 1.1};
-  const pair<double, double> ptECalRange   = {0.3,  9999.};
-  const pair<double, double> etaECalRange  = {-1.1, 1.1};
-  const pair<double, double> ptHCalRange   = {0.3,  9999.};
-  const pair<double, double> etaHCalRange  = {-1.1, 1.1};
+  // particle acceptance
+  const pair<double, double> ptParRange  = {0.,   9999.};
+  const pair<double, double> etaParRange = {-1.1, 1.1};
+
+  // track acceptance
+  const pair<double, double> ptTrackRange    = {0.2,  100.};
+  const pair<double, double> etaTrackRange   = {-1.1, 1.1};
+  const pair<double, double> qualTrackRange  = {0.,   10.};
+  const pair<double, double> nMvtxTrackRange = {2.,   100.};
+  const pair<double, double> nInttTrackRange = {1.,   100.};
+  const pair<double, double> nTpcTrackRange  = {24.,  100.};
+
+  // particle flow acceptance
+  const pair<double, double> ptFlowRange  = {0.2,  9999.};
+  const pair<double, double> etaFlowRange = {-1.1, 1.1};
+
+  // calo acceptance
+  const pair<double, double> ptECalRange  = {0.3,  9999.};
+  const pair<double, double> etaECalRange = {-1.1, 1.1};
+  const pair<double, double> ptHCalRange  = {0.3,  9999.};
+  const pair<double, double> etaHCalRange = {-1.1, 1.1};
 
   // load libraries and create f4a server
   gSystem -> Load("libg4dst.so");
@@ -220,16 +231,31 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   correlatorJetTree -> SetAddFlow(addParticleFlow);
   correlatorJetTree -> SetAddECal(addECal);
   correlatorJetTree -> SetAddHCal(addHCal);
-  correlatorJetTree -> SetParPtRange(ptParRange);
-  correlatorJetTree -> SetParEtaRange(etaParRange);
-  correlatorJetTree -> SetTrackPtRange(ptTrackRange);
-  correlatorJetTree -> SetTrackEtaRange(etaTrackRange);
-  correlatorJetTree -> SetFlowPtRange(ptFlowRange);
-  correlatorJetTree -> SetFlowEtaRange(etaFlowRange);
-  correlatorJetTree -> SetECalPtRange(ptECalRange);
-  correlatorJetTree -> SetECalEtaRange(etaECalRange);
-  correlatorJetTree -> SetHCalPtRange(ptHCalRange);
-  correlatorJetTree -> SetHCalEtaRange(etaHCalRange);
+  if (isMC) {
+    correlatorJetTree -> SetParPtRange(ptParRange);
+    correlatorJetTree -> SetParEtaRange(etaParRange);
+  }
+  if (addTracks) {
+    correlatorJetTree -> SetRequireSiSeeds(requireSiSeeds);
+    correlatorJetTree -> SetTrackPtRange(ptTrackRange);
+    correlatorJetTree -> SetTrackEtaRange(etaTrackRange);
+    correlatorJetTree -> SetTrackQualityRange(qualTrackRange);
+    correlatorJetTree -> SetTrackNMvtxRange(nMvtxTrackRange);
+    correlatorJetTree -> SetTrackNInttRange(nInttTrackRange);
+    correlatorJetTree -> SetTrackNTpcRange(nTpcTrackRange);
+  }
+  if (addParticleFlow) {
+    correlatorJetTree -> SetFlowPtRange(ptFlowRange);
+    correlatorJetTree -> SetFlowEtaRange(etaFlowRange);
+  }
+  if (addECal) {
+    correlatorJetTree -> SetECalPtRange(ptECalRange);
+    correlatorJetTree -> SetECalEtaRange(etaECalRange);
+  }
+  if (addHCal) {
+    correlatorJetTree -> SetHCalPtRange(ptHCalRange);
+    correlatorJetTree -> SetHCalEtaRange(etaHCalRange);
+  }
   correlatorJetTree -> SetJetParameters(jetRes, jetType, jetAlgo, jetReco);
   correlatorJetTree -> SetSaveDST(saveDst);
   ffaServer         -> registerSubsystem(correlatorJetTree);

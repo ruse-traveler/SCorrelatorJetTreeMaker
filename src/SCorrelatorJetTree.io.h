@@ -64,6 +64,46 @@ void SCorrelatorJetTree::SetTrackEtaRange(const pair<double, double> etaRange) {
 
 
 
+void SCorrelatorJetTree::SetTrackQualityRange(const pair<double, double> qualRange) {
+
+  m_trkQualRange[0] = qualRange.first;
+  m_trkQualRange[1] = qualRange.second;
+  return;
+
+}  // end 'SetTrackQualityRange(pair<double, double>)'
+
+
+
+void SCorrelatorJetTree::SetTrackNMvtxRange(const pair<double, double> nMvtxRange) {
+
+  m_trkNMvtxRange[0] = nMvtxRange.first;
+  m_trkNMvtxRange[1] = nMvtxRange.second;
+  return;
+
+}  // end 'SetTrackNMvtxRange(pair<double, double>)'
+
+
+
+void SCorrelatorJetTree::SetTrackNInttRange(const pair<double, double> nInttRange) {
+
+  m_trkNInttRange[0] = nInttRange.first;
+  m_trkNInttRange[1] = nInttRange.second;
+  return;
+
+}  // end 'SetTrackNInttRange(pair<double, double>)'
+
+
+
+void SCorrelatorJetTree::SetTrackNTpcRange(const pair<double, double> nTpcRange) {
+
+  m_trkNTpcRange[0] = nTpcRange.first;
+  m_trkNTpcRange[1] = nTpcRange.second;
+  return;
+
+}  // end SetTrackNTpcRange(pair<double, double>)'
+
+
+
 void SCorrelatorJetTree::SetFlowPtRange(const pair<double, double> ptRange) {
 
   m_flowPtRange[0] = ptRange.first;
