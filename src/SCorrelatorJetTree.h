@@ -111,18 +111,6 @@ class SvtxTrackEval;
 class SvtxTrack;
 class ParticleFlowElement;
 
-// global constants
-static const size_t NPart(2);
-static const size_t NComp(3);
-static const size_t NRange(2);
-static const size_t NMoment(2);
-static const size_t NInfoQA(4);
-static const size_t NJetType(2);
-static const size_t NCstType(5);
-static const size_t NObjType(9);
-static const size_t NDirectory(NObjType - 3);
-static const double MassPion(0.140);
-
 
 
 // SCorrelatorJetTree definition ----------------------------------------------
@@ -245,6 +233,19 @@ class SCorrelatorJetTree : public SubsysReco {
 
   private:
 
+    // constants
+    enum CONST {
+      NPart      = 2,
+      NComp      = 3,
+      NRange     = 2,
+      NMoment    = 2,
+      NInfoQA    = 4,
+      NJetType   = 2,
+      NCstType   = 5,
+      NObjType   = 9,
+      NDirectory = 6
+    };
+
     // event methods (*.evt.h)
     void              GetEventVariables(PHCompositeNode* topNode);
     void              GetPartonInfo(PHCompositeNode* topNode);
@@ -305,12 +306,12 @@ class SCorrelatorJetTree : public SubsysReco {
     JetMapv1* m_trueJetMap  = NULL;
 
     // QA members
-    TH1D* m_hJetArea[NJetType];
-    TH1D* m_hJetNumCst[NJetType];
-    TH1D* m_hNumObject[NObjType];
-    TH1D* m_hSumCstEne[NCstType];
-    TH1D* m_hObjectQA[NObjType][NInfoQA];
-    TH1D* m_hNumCstAccept[NCstType][NMoment];
+    TH1D* m_hJetArea[CONST::NJetType];
+    TH1D* m_hJetNumCst[CONST::NJetType];
+    TH1D* m_hNumObject[CONST::NObjType];
+    TH1D* m_hSumCstEne[CONST::NCstType];
+    TH1D* m_hObjectQA[CONST::NObjType][CONST::NInfoQA];
+    TH1D* m_hNumCstAccept[CONST::NCstType][CONST::NMoment];
 
     // system members
     bool m_doQualityPlots = true;
@@ -323,16 +324,16 @@ class SCorrelatorJetTree : public SubsysReco {
     bool m_addHCal        = false;
 
     // acceptance parameters
-    double m_parPtRange[NRange]   = {0.,   9999.};
-    double m_parEtaRange[NRange]  = {-1.1, 1.1};
-    double m_trkPtRange[NRange]   = {0.,   9999.};
-    double m_trkEtaRange[NRange]  = {-1.1, 1.1};
-    double m_flowPtRange[NRange]  = {0.,   9999.};
-    double m_flowEtaRange[NRange] = {-1.1, 1.1};
-    double m_ecalPtRange[NRange]  = {0.,   9999.};
-    double m_ecalEtaRange[NRange] = {-1.1, 1.1};
-    double m_hcalPtRange[NRange]  = {0.,   9999.};
-    double m_hcalEtaRange[NRange] = {-1.1, 1.1};
+    double m_parPtRange[CONST::NRange]   = {0.,   9999.};
+    double m_parEtaRange[CONST::NRange]  = {-1.1, 1.1};
+    double m_trkPtRange[CONST::NRange]   = {0.,   9999.};
+    double m_trkEtaRange[CONST::NRange]  = {-1.1, 1.1};
+    double m_flowPtRange[CONST::NRange]  = {0.,   9999.};
+    double m_flowEtaRange[CONST::NRange] = {-1.1, 1.1};
+    double m_ecalPtRange[CONST::NRange]  = {0.,   9999.};
+    double m_ecalEtaRange[CONST::NRange] = {-1.1, 1.1};
+    double m_hcalPtRange[CONST::NRange]  = {0.,   9999.};
+    double m_hcalEtaRange[CONST::NRange] = {-1.1, 1.1};
 
     // jet parameters
     double               m_jetR         = 0.4;
@@ -345,8 +346,8 @@ class SCorrelatorJetTree : public SubsysReco {
     RecombinationScheme  m_recombScheme = pt_scheme;
 
     // event, jet members
-    long long         m_partonID[NPart];
-    CLHEP::Hep3Vector m_partonMom[NPart];
+    long long         m_partonID[CONST::NPart];
+    CLHEP::Hep3Vector m_partonMom[CONST::NPart];
     CLHEP::Hep3Vector m_recoVtx;
     CLHEP::Hep3Vector m_trueVtx;
     vector<PseudoJet> m_recoJets;
@@ -379,10 +380,10 @@ class SCorrelatorJetTree : public SubsysReco {
 
     // output truth event variables
     unsigned long         m_trueNumJets;
-    long long             m_truePartonID[NPart];
-    double                m_truePartonMomX[NPart];
-    double                m_truePartonMomY[NPart];
-    double                m_truePartonMomZ[NPart];
+    long long             m_truePartonID[CONST::NPart];
+    double                m_truePartonMomX[CONST::NPart];
+    double                m_truePartonMomY[CONST::NPart];
+    double                m_truePartonMomZ[CONST::NPart];
     double                m_trueVtxX;
     double                m_trueVtxY;
     double                m_trueVtxZ;

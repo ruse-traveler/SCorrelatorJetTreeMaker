@@ -182,7 +182,7 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& 
     const double trkPx = track -> get_px();
     const double trkPy = track -> get_py();
     const double trkPz = track -> get_pz();
-    const double trkE  = sqrt((trkPx * trkPx) + (trkPy * trkPy) + (trkPz * trkPz) + (MassPion * MassPion));
+    const double trkE  = sqrt((trkPx * trkPx) + (trkPy * trkPy) + (trkPz * trkPz) + (0.140 * 0.140));
 
     // grab barcode of matching particle
     int matchID;

@@ -109,12 +109,12 @@ void SCorrelatorJetTree::InitHists() {
   const unsigned long nEtaBins(40);
   const unsigned long nPtBins(200);
   const unsigned long nAreaBins(1000);
-  const double        rNumBins[NRange]  = {0.,    500.};
-  const double        rPhiBins[NRange]  = {-3.15, 3.15};
-  const double        rEtaBins[NRange]  = {-2.,   2.};
-  const double        rEneBins[NRange]  = {0.,    100.};
-  const double        rPtBins[NRange]   = {0.,    100.};
-  const double        rAreaBins[NRange] = {0.,    10.};
+  const double        rNumBins[CONST::NRange]  = {0.,    500.};
+  const double        rPhiBins[CONST::NRange]  = {-3.15, 3.15};
+  const double        rEtaBins[CONST::NRange]  = {-2.,   2.};
+  const double        rEneBins[CONST::NRange]  = {0.,    100.};
+  const double        rPtBins[CONST::NRange]   = {0.,    100.};
+  const double        rAreaBins[CONST::NRange] = {0.,    10.};
 
   m_outFile -> cd();
   // no. of objects in acceptance
@@ -600,18 +600,18 @@ void SCorrelatorJetTree::SaveOutput() {
   }
 
   // save QA histograms if need be
-  const string sQuality[NDirectory + 1] = {"Tracks", "CaloClusters", "ParticleFlow", "Particles", "TruthJets", "RecoJets", "QA"};
-  TDirectory*  dQuality[NDirectory + 1];
+  const string sQuality[CONST::NDirectory + 1] = {"Tracks", "CaloClusters", "ParticleFlow", "Particles", "TruthJets", "RecoJets", "QA"};
+  TDirectory*  dQuality[CONST::NDirectory + 1];
   if (m_doQualityPlots) {
 
     // create QA directories
-    dQuality[NDirectory] = (TDirectory*) m_outFile -> mkdir(sQuality[NDirectory].data());
-    for (size_t iDirect = 0; iDirect < NDirectory; iDirect++) {
-      dQuality[iDirect] = (TDirectory*) dQuality[NDirectory] -> mkdir(sQuality[iDirect].data());
+    dQuality[CONST::NDirectory] = (TDirectory*) m_outFile -> mkdir(sQuality[CONST::NDirectory].data());
+    for (size_t iDirect = 0; iDirect < CONST::NDirectory; iDirect++) {
+      dQuality[iDirect] = (TDirectory*) dQuality[CONST::NDirectory] -> mkdir(sQuality[iDirect].data());
     }
 
     // save object-specific QA hists
-    for (size_t iObj = OBJECT::TRACK; iObj < NObjType; iObj++) {
+    for (size_t iObj = OBJECT::TRACK; iObj < CONST::NObjType; iObj++) {
       switch (iObj) {
         case OBJECT::TRACK:
           dQuality[0] -> cd();
@@ -642,13 +642,13 @@ void SCorrelatorJetTree::SaveOutput() {
           break;
       }
       m_hNumObject[iObj] -> Write();
-      for (size_t iInfo = INFO::PT; iInfo < NInfoQA; iInfo++) {
+      for (size_t iInfo = INFO::PT; iInfo < CONST::NInfoQA; iInfo++) {
         m_hObjectQA[iObj][iInfo] -> Write();
       }
     }  // end object loop
 
     // save cst-specific histograms
-    for (size_t iCst = CST_TYPE::TRACK_CST; iCst < NCstType; iCst++) {
+    for (size_t iCst = CST_TYPE::TRACK_CST; iCst < CONST::NCstType; iCst++) {
       switch (iCst) {
         case CST_TYPE::TRACK_CST:
           dQuality[0] -> cd();
