@@ -9,9 +9,7 @@ Derived from code by Antonio Silva (thanks!!)
 After copying the source files (in `src/`), compile the module in the usual manner:
 
 ```
-./autogen.sh --prefix=$MYINSTALL
-make -j 4
-make install
+./sphx-build
 ```
 
 The class can then be added to and ran in a Fun4All macro, e.g.
