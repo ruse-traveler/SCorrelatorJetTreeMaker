@@ -170,7 +170,7 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& 
     }
 
     // check if good
-    const bool isGoodTrack = IsGoodTrack(track);
+    const bool isGoodTrack = IsGoodTrack(track, topNode);
     if (!isGoodTrack) {
       continue;
     } else {

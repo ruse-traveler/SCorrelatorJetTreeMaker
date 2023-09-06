@@ -885,7 +885,7 @@ GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode* topNode) {
   }
   return vtx;
 
-}  // end 'GetGlobalVertex(PHCompositeNode*)'
+}  // end 'GetGlobalVertex(PHCompositeNode*, int)'
 
 
 

@@ -177,7 +177,7 @@ bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle* par, const bool igno
 
 
 
-bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track) {
+bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug && (Verbosity() > 1)) {
@@ -210,9 +210,14 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track) {
   }
 
   // grab other track info
-  const double trkPt   = track -> get_pt();
-  const double trkEta  = track -> get_eta();
-  const double trkQual = track -> get_quality();
+  const double trkPt    = track -> get_pt();
+  const double trkEta   = track -> get_eta();
+  const double trkQual  = track -> get_quality();
+
+  // grab track dca
+  const auto   trkDca   = GetDcaPair(track, topNode);
+  const double trkDcaXY = trkDca.first;
+  const double trkDcaZ  = trkDca.second;
 
   // apply cuts
   const bool   isInPtRange    = ((trkPt    > m_trkPtRange[0])    && (trkPt    <  m_trkPtRange[1]));
@@ -221,7 +226,11 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track) {
   const bool   isInNMvtxRange = ((trkNMvtx > m_trkNMvtxRange[0]) && (trkNMvtx <= m_trkNMvtxRange[1]));
   const bool   isInNInttRange = ((trkNIntt > m_trkNInttRange[0]) && (trkNIntt <= m_trkNInttRange[1]));
   const bool   isInNTpcRange  = ((trkNTpc  > m_trkNTpcRange[0])  && (trkNTpc  <= m_trkNTpcRange[1]));
-  const bool   isGoodTrack    = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNMvtxRange && isInNInttRange && isInNTpcRange);
+  const bool   isInDcaRangeXY = ((trkDcaXY > m_trkDcaRangeXY[0]) && (trkDcaXY <  m_trkDcaRangeXY[1]));
+  const bool   isInDcaRangeZ  = ((trkDcaZ  > m_trkDcaRangeZ[0])  && (trkDcaZ  <  m_trkDcaRangeZ[1]));
+  const bool   isInNumRange   = (isInNMvtxRange && isInNInttRange && isInNTpcRange);
+  const bool   isInDcaRange   = (isInDcaRangeXY && isInDcaRangeZ);
+  const bool   isGoodTrack    = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange);
   return isGoodTrack;
 
 }  // end 'IsGoodTrack(SvtxTrack*)'
@@ -449,5 +458,24 @@ float SCorrelatorJetTree::GetParticleCharge(const int pid) {
   return charge;
 
 }  // end 'GetParticleCharge(int)'
+
+
+
+pair<double, double> SCorrelatorJetTree::GetDcaPair(SvtxTrack *track, PHCompositeNode* topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetDcaPair(SvtxTrack*, PHCompositeNode*) Getting track dca values..." << endl;
+  }
+
+  // get global vertex and convert to acts vector
+  GlobalVertex* sphxVtx = GetGlobalVertex(topNode);
+  Acts::Vector3 actsVtx = Acts::Vector3(sphxVtx -> get_x(), sphxVtx -> get_y(), sphxVtx -> get_z());
+
+  // return dca
+  const auto dcaAndErr = TrackAnalysisUtils::get_dca(track, actsVtx);
+  return make_pair(dcaAndErr.first.first, dcaAndErr.second.first);
+
+}  // end 'GetDcaPair(SvtxTrack*, PHCompositeNode*)'
 
 // end ------------------------------------------------------------------------

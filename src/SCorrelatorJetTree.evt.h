@@ -91,7 +91,7 @@ long SCorrelatorJetTree::GetNumTrks(PHCompositeNode* topNode) {
     if (!track) continue;
 
     // if good, add to count
-    const bool isGoodTrack = IsGoodTrack(track);
+    const bool isGoodTrack = IsGoodTrack(track, topNode);
     if (isGoodTrack) ++nTrk;
 
   }  // end track loop

@@ -54,6 +54,7 @@
 #include <trackbase_historic/SvtxVertex.h>
 #include <trackbase_historic/SvtxTrackMap.h>
 #include <trackbase_historic/SvtxVertexMap.h>
+#include <trackbase_historic/TrackAnalysisUtils.h>
 // calo includes
 #include <calobase/RawCluster.h>
 #include <calobase/RawClusterUtility.h>
@@ -164,6 +165,8 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetTrackNMvtxRange(const pair<double, double> nMvtxRange);
     void SetTrackNInttRange(const pair<double, double> nInttRange);
     void SetTrackNTpcRange(const pair<double, double> nTpcRange);
+    void SetTrackDcaRangeXY(const pair<double, double> dcaRangeXY);
+    void SetTrackDcaRangeZ(const pair<double, double> dcaRangeZ);
     void SetFlowPtRange(const pair<double, double> ptRange);
     void SetFlowEtaRange(const pair<double, double> etaRange);
     void SetECalPtRange(const pair<double, double> ptRange);
@@ -185,10 +188,6 @@ class SCorrelatorJetTree : public SubsysReco {
     string GetJetTreeName()    {return m_jetTreeName;}
 
     // acceptance getters
-    double GetEvtMinZVtx()    {return m_evtVtxRangeZ[0];}
-    double GetEvtMaxZVtx()    {return m_evtVtxRangeZ[1];}
-    double GetEvtMinXYVtx()   {return m_evtVtxRangeXY[0];}
-    double GetEvtMaxXYVtx()   {return m_evtVtxRangeXY[1];}
     double GetParMinPt()      {return m_parPtRange[0];}
     double GetParMaxPt()      {return m_parPtRange[1];}
     double GetParMinEta()     {return m_parEtaRange[0];}
@@ -205,6 +204,10 @@ class SCorrelatorJetTree : public SubsysReco {
     double GetTrackMaxNIntt() {return m_trkNInttRange[1];}
     double GetTrackMinNTpc()  {return m_trkNTpcRange[0];}
     double GetTrackMaxNTpc()  {return m_trkNTpcRange[1];}
+    double GetTrackMinDcaXY() {return m_trkDcaRangeXY[0];}
+    double GetTrackMaxDcaXY() {return m_trkDcaRangeXY[1];}
+    double GetTrackMinDcaZ()  {return m_trkDcaRangeZ[0];}
+    double GetTrackMaxDcaZ()  {return m_trkDcaRangeZ[1];}
     double GetFlowMinPt()     {return m_flowPtRange[0];}
     double GetFlowMaxPt()     {return m_flowPtRange[1];}
     double GetFlowMinEta()    {return m_flowEtaRange[0];}
@@ -295,15 +298,16 @@ class SCorrelatorJetTree : public SubsysReco {
     void AddHCal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
 
     // constituent methods (*.cst.h)
-    int   GetMatchID(SvtxTrack* track);
-    int   GetNumLayer(TrackSeed* seed, const uint8_t subsys = 0);
-    bool  IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge = false);
-    bool  IsGoodTrack(SvtxTrack* track);
-    bool  IsGoodFlow(ParticleFlowElement* flow);
-    bool  IsGoodECal(CLHEP::Hep3Vector& hepVecECal);
-    bool  IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
-    bool  IsOutgoingParton(HepMC::GenParticle* par);
-    float GetParticleCharge(const int pid);
+    int                  GetMatchID(SvtxTrack* track);
+    int                  GetNumLayer(TrackSeed* seed, const uint8_t subsys = 0);
+    bool                 IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge = false);
+    bool                 IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode);
+    bool                 IsGoodFlow(ParticleFlowElement* flow);
+    bool                 IsGoodECal(CLHEP::Hep3Vector& hepVecECal);
+    bool                 IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
+    bool                 IsOutgoingParton(HepMC::GenParticle* par);
+    float                GetParticleCharge(const int pid);
+    pair<double, double> GetDcaPair(SvtxTrack *track, PHCompositeNode* topNode);
 
     // system methods (*.sys.h)
     void                          InitVariables();
@@ -359,10 +363,6 @@ class SCorrelatorJetTree : public SubsysReco {
     bool m_addECal        = false;
     bool m_addHCal        = false;
 
-    // event acceptance parameters
-    double m_evtVtxRangeZ[CONST::NRange]  = {-10., 10.};
-    double m_evtVtxRangeXY[CONST::NRange] = {-5.,  5.};
-
     // particle acceptance parameters
     double m_parPtRange[CONST::NRange]  = {0.1,  9999.};
     double m_parEtaRange[CONST::NRange] = {-1.1, 1.1};
@@ -373,7 +373,9 @@ class SCorrelatorJetTree : public SubsysReco {
     double m_trkQualRange[CONST::NRange]  = {-1.,  10.};
     double m_trkNMvtxRange[CONST::NRange] = {2.,   100.};
     double m_trkNInttRange[CONST::NRange] = {1.,   100.};
-    double m_trkNTpcRange[CONST::NRange]  = {35.,  100.};
+    double m_trkNTpcRange[CONST::NRange]  = {25.,  100.};
+    double m_trkDcaRangeXY[CONST::NRange] = {-5.,  5.};
+    double m_trkDcaRangeZ[CONST::NRange]  = {-5.,  5.};
 
     // particle flow acceptance parameters
     double m_flowPtRange[CONST::NRange]  = {0.,   9999.};

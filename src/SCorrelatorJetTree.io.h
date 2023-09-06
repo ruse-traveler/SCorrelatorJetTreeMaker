@@ -104,6 +104,26 @@ void SCorrelatorJetTree::SetTrackNTpcRange(const pair<double, double> nTpcRange)
 
 
 
+void SCorrelatorJetTree::SetTrackDcaRangeXY(const pair<double, double> dcaRangeXY) {
+
+  m_trkDcaRangeXY[0] = dcaRangeXY.first;
+  m_trkDcaRangeXY[1] = dcaRangeXY.second;
+  return;
+
+}  // end 'SetTrackDcaRangeXY(pair<double, double>)'
+
+
+
+void SCorrelatorJetTree::SetTrackDcaRangeZ(const pair<double, double> dcaRangeZ) {
+
+  m_trkDcaRangeZ[0] = dcaRangeZ.first;
+  m_trkDcaRangeZ[1] = dcaRangeZ.second;
+  return;
+
+}  // end 'SetTrackDcaRangeZ(pair<double, double>)'
+
+
+
 void SCorrelatorJetTree::SetFlowPtRange(const pair<double, double> ptRange) {
 
   m_flowPtRange[0] = ptRange.first;
