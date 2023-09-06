@@ -124,6 +124,16 @@ void SCorrelatorJetTree::SetTrackDcaRangeZ(const pair<double, double> dcaRangeZ)
 
 
 
+void SCorrelatorJetTree::SetTrackDeltaPtRange(const pair<double, double> deltaPtRange) {
+
+  m_trkDeltaPtRange[0] = deltaPtRange.first;
+  m_trkDeltaPtRange[1] = deltaPtRange.second;
+  return;
+
+}  // end 'SetTrackDeltaPtRange(pair<double, double>)'
+
+
+
 void SCorrelatorJetTree::SetFlowPtRange(const pair<double, double> ptRange) {
 
   m_flowPtRange[0] = ptRange.first;

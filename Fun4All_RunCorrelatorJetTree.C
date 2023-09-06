@@ -117,14 +117,15 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   const pair<double, double> etaParRange = {-1.1, 1.1};
 
   // track acceptance
-  const pair<double, double> ptTrackRange    = {0.2,  100.};
-  const pair<double, double> etaTrackRange   = {-1.1, 1.1};
-  const pair<double, double> qualTrackRange  = {0.,   10.};
-  const pair<double, double> nMvtxTrackRange = {2.,   100.};
-  const pair<double, double> nInttTrackRange = {1.,   100.};
-  const pair<double, double> nTpcTrackRange  = {24.,  100.};
-  const pair<double, double> dcaTrackRangeXY = {-5.,  5.};
-  const pair<double, double> dcaTrackRangeZ  = {-5.,  5.};
+  const pair<double, double> ptTrackRange      = {0.2,  100.};
+  const pair<double, double> etaTrackRange     = {-1.1, 1.1};
+  const pair<double, double> qualTrackRange    = {0.,   10.};
+  const pair<double, double> nMvtxTrackRange   = {2.,   100.};
+  const pair<double, double> nInttTrackRange   = {1.,   100.};
+  const pair<double, double> nTpcTrackRange    = {24.,  100.};
+  const pair<double, double> dcaTrackRangeXY   = {-5.,  5.};
+  const pair<double, double> dcaTrackRangeZ    = {-5.,  5.};
+  const pair<double, double> deltaPtTrackRange = {0., 0.5};
 
   // particle flow acceptance
   const pair<double, double> ptFlowRange  = {0.2,  9999.};
@@ -247,6 +248,7 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
     correlatorJetTree -> SetTrackNTpcRange(nTpcTrackRange);
     correlatorJetTree -> SetTrackDcaRangeXY(dcaTrackRangeXY);
     correlatorJetTree -> SetTrackDcaRangeZ(dcaTrackRangeZ);
+    correlatorJetTree -> SetTrackDeltaPtRange(deltaPtTrackRange);
   }
   if (addParticleFlow) {
     correlatorJetTree -> SetFlowPtRange(ptFlowRange);

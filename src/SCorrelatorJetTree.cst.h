@@ -210,27 +210,29 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode)
   }
 
   // grab other track info
-  const double trkPt    = track -> get_pt();
-  const double trkEta   = track -> get_eta();
-  const double trkQual  = track -> get_quality();
+  const double trkPt      = track -> get_pt();
+  const double trkEta     = track -> get_eta();
+  const double trkQual    = track -> get_quality();
+  const double trkDeltaPt = GetTrackDeltaPt(track);
 
   // grab track dca
-  const auto   trkDca   = GetDcaPair(track, topNode);
+  const auto   trkDca   = GetTrackDcaPair(track, topNode);
   const double trkDcaXY = trkDca.first;
   const double trkDcaZ  = trkDca.second;
 
   // apply cuts
-  const bool   isInPtRange    = ((trkPt    > m_trkPtRange[0])    && (trkPt    <  m_trkPtRange[1]));
-  const bool   isInEtaRange   = ((trkEta   > m_trkEtaRange[0])   && (trkEta   <  m_trkEtaRange[1]));
-  const bool   isInQualRange  = ((trkQual  > m_trkQualRange[0])  && (trkQual  <  m_trkQualRange[1]));
-  const bool   isInNMvtxRange = ((trkNMvtx > m_trkNMvtxRange[0]) && (trkNMvtx <= m_trkNMvtxRange[1]));
-  const bool   isInNInttRange = ((trkNIntt > m_trkNInttRange[0]) && (trkNIntt <= m_trkNInttRange[1]));
-  const bool   isInNTpcRange  = ((trkNTpc  > m_trkNTpcRange[0])  && (trkNTpc  <= m_trkNTpcRange[1]));
-  const bool   isInDcaRangeXY = ((trkDcaXY > m_trkDcaRangeXY[0]) && (trkDcaXY <  m_trkDcaRangeXY[1]));
-  const bool   isInDcaRangeZ  = ((trkDcaZ  > m_trkDcaRangeZ[0])  && (trkDcaZ  <  m_trkDcaRangeZ[1]));
-  const bool   isInNumRange   = (isInNMvtxRange && isInNInttRange && isInNTpcRange);
-  const bool   isInDcaRange   = (isInDcaRangeXY && isInDcaRangeZ);
-  const bool   isGoodTrack    = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange);
+  const bool   isInPtRange      = ((trkPt      > m_trkPtRange[0])      && (trkPt      <  m_trkPtRange[1]));
+  const bool   isInEtaRange     = ((trkEta     > m_trkEtaRange[0])     && (trkEta     <  m_trkEtaRange[1]));
+  const bool   isInQualRange    = ((trkQual    > m_trkQualRange[0])    && (trkQual    <  m_trkQualRange[1]));
+  const bool   isInNMvtxRange   = ((trkNMvtx   > m_trkNMvtxRange[0])   && (trkNMvtx   <= m_trkNMvtxRange[1]));
+  const bool   isInNInttRange   = ((trkNIntt   > m_trkNInttRange[0])   && (trkNIntt   <= m_trkNInttRange[1]));
+  const bool   isInNTpcRange    = ((trkNTpc    > m_trkNTpcRange[0])    && (trkNTpc    <= m_trkNTpcRange[1]));
+  const bool   isInDcaRangeXY   = ((trkDcaXY   > m_trkDcaRangeXY[0])   && (trkDcaXY   <  m_trkDcaRangeXY[1]));
+  const bool   isInDcaRangeZ    = ((trkDcaZ    > m_trkDcaRangeZ[0])    && (trkDcaZ    <  m_trkDcaRangeZ[1]));
+  const bool   isInDeltaPtRange = ((trkDeltaPt > m_trkDeltaPtRange[0]) && (trkDeltaPt <  m_trkDeltaPtRange[1]));
+  const bool   isInNumRange     = (isInNMvtxRange && isInNInttRange && isInNTpcRange);
+  const bool   isInDcaRange     = (isInDcaRangeXY && isInDcaRangeZ);
+  const bool   isGoodTrack      = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange && isInDeltaPtRange);
   return isGoodTrack;
 
 }  // end 'IsGoodTrack(SvtxTrack*)'
@@ -461,11 +463,39 @@ float SCorrelatorJetTree::GetParticleCharge(const int pid) {
 
 
 
-pair<double, double> SCorrelatorJetTree::GetDcaPair(SvtxTrack *track, PHCompositeNode* topNode) {
+double SCorrelatorJetTree::GetTrackDeltaPt(SvtxTrack* track) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::GetDcaPair(SvtxTrack*, PHCompositeNode*) Getting track dca values..." << endl;
+    cout << "SCorrelatorJetTree::GetTrackDeltaPt(SvtxTrack*) Getting track delta pt..." << endl;
+  }
+
+  // grab covariances
+  const float trkCovXX = track -> get_error(3, 3);
+  const float trkCovXY = track -> get_error(3, 4);
+  const float trkCovYY = track -> get_error(4, 4);
+
+  // grab momentum
+  const float trkPx = track -> get_px();
+  const float trkPy = track -> get_py();
+  const float trkPt = track -> get_pt();
+ 
+  // calculate delta-pt
+  const float numer    = (trkCovXX * trkPx * trkPx) + 2 * (trkCovXY * trkPx * trkPy) + (trkCovYY * trkPy * trkPy);
+  const float denom    = (trkPx * trkPx) + (trkPy * trkPy); 
+  const float ptDelta2 = numer / denom;
+  const float ptDelta  = sqrt(ptDelta2) / trkPt;
+  return ptDelta;
+
+}  // end 'GetTrackDeltaPt(SvtxTrack*)'
+
+
+
+pair<double, double> SCorrelatorJetTree::GetTrackDcaPair(SvtxTrack *track, PHCompositeNode* topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetTrackDcaPair(SvtxTrack*, PHCompositeNode*) Getting track dca values..." << endl;
   }
 
   // get global vertex and convert to acts vector
@@ -476,6 +506,6 @@ pair<double, double> SCorrelatorJetTree::GetDcaPair(SvtxTrack *track, PHComposit
   const auto dcaAndErr = TrackAnalysisUtils::get_dca(track, actsVtx);
   return make_pair(dcaAndErr.first.first, dcaAndErr.second.first);
 
-}  // end 'GetDcaPair(SvtxTrack*, PHCompositeNode*)'
+}  // end 'GetTrackDcaPair(SvtxTrack*, PHCompositeNode*)'
 
 // end ------------------------------------------------------------------------

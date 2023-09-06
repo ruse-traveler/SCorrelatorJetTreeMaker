@@ -167,6 +167,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetTrackNTpcRange(const pair<double, double> nTpcRange);
     void SetTrackDcaRangeXY(const pair<double, double> dcaRangeXY);
     void SetTrackDcaRangeZ(const pair<double, double> dcaRangeZ);
+    void SetTrackDeltaPtRange(const pair<double, double> deltaPtRange);
     void SetFlowPtRange(const pair<double, double> ptRange);
     void SetFlowEtaRange(const pair<double, double> etaRange);
     void SetECalPtRange(const pair<double, double> ptRange);
@@ -188,38 +189,40 @@ class SCorrelatorJetTree : public SubsysReco {
     string GetJetTreeName()    {return m_jetTreeName;}
 
     // acceptance getters
-    double GetParMinPt()      {return m_parPtRange[0];}
-    double GetParMaxPt()      {return m_parPtRange[1];}
-    double GetParMinEta()     {return m_parEtaRange[0];}
-    double GetParMaxEta()     {return m_parEtaRange[1];}
-    double GetTrackMinPt()    {return m_trkPtRange[0];}
-    double GetTrackMaxPt()    {return m_trkPtRange[1];}
-    double GetTrackMinEta()   {return m_trkEtaRange[0];}
-    double GetTrackMaxEta()   {return m_trkEtaRange[1];}
-    double GetTrackMinQual()  {return m_trkQualRange[0];}
-    double GetTrackMaxQual()  {return m_trkQualRange[1];}
-    double GetTrackMinNMvtx() {return m_trkNMvtxRange[0];}
-    double GetTrackMaxNMvtx() {return m_trkNMvtxRange[1];}
-    double GetTrackMinNIntt() {return m_trkNInttRange[0];}
-    double GetTrackMaxNIntt() {return m_trkNInttRange[1];}
-    double GetTrackMinNTpc()  {return m_trkNTpcRange[0];}
-    double GetTrackMaxNTpc()  {return m_trkNTpcRange[1];}
-    double GetTrackMinDcaXY() {return m_trkDcaRangeXY[0];}
-    double GetTrackMaxDcaXY() {return m_trkDcaRangeXY[1];}
-    double GetTrackMinDcaZ()  {return m_trkDcaRangeZ[0];}
-    double GetTrackMaxDcaZ()  {return m_trkDcaRangeZ[1];}
-    double GetFlowMinPt()     {return m_flowPtRange[0];}
-    double GetFlowMaxPt()     {return m_flowPtRange[1];}
-    double GetFlowMinEta()    {return m_flowEtaRange[0];}
-    double GetFlowMaxEta()    {return m_flowEtaRange[1];}
-    double GetECalMinPt()     {return m_ecalPtRange[0];}
-    double GetECalMaxPt()     {return m_ecalPtRange[1];}
-    double GetECalMinEta()    {return m_ecalEtaRange[0];}
-    double GetECalMaxEta()    {return m_ecalEtaRange[1];}
-    double GetHCalMinPt()     {return m_hcalPtRange[0];}
-    double GetHCalMaxPt()     {return m_hcalPtRange[1];}
-    double GetHCalMinEta()    {return m_hcalEtaRange[0];}
-    double GetHCalMaxEta()    {return m_hcalEtaRange[1];}
+    double GetParMinPt()        {return m_parPtRange[0];}
+    double GetParMaxPt()        {return m_parPtRange[1];}
+    double GetParMinEta()       {return m_parEtaRange[0];}
+    double GetParMaxEta()       {return m_parEtaRange[1];}
+    double GetTrackMinPt()      {return m_trkPtRange[0];}
+    double GetTrackMaxPt()      {return m_trkPtRange[1];}
+    double GetTrackMinEta()     {return m_trkEtaRange[0];}
+    double GetTrackMaxEta()     {return m_trkEtaRange[1];}
+    double GetTrackMinQual()    {return m_trkQualRange[0];}
+    double GetTrackMaxQual()    {return m_trkQualRange[1];}
+    double GetTrackMinNMvtx()   {return m_trkNMvtxRange[0];}
+    double GetTrackMaxNMvtx()   {return m_trkNMvtxRange[1];}
+    double GetTrackMinNIntt()   {return m_trkNInttRange[0];}
+    double GetTrackMaxNIntt()   {return m_trkNInttRange[1];}
+    double GetTrackMinNTpc()    {return m_trkNTpcRange[0];}
+    double GetTrackMaxNTpc()    {return m_trkNTpcRange[1];}
+    double GetTrackMinDcaXY()   {return m_trkDcaRangeXY[0];}
+    double GetTrackMaxDcaXY()   {return m_trkDcaRangeXY[1];}
+    double GetTrackMinDcaZ()    {return m_trkDcaRangeZ[0];}
+    double GetTrackMaxDcaZ()    {return m_trkDcaRangeZ[1];}
+    double GetTrackMinDeltaPt() {return m_trkDeltaPtRange[0];}
+    double GetTrackMaxDeltaPt() {return m_trkDeltaPtRange[1];}
+    double GetFlowMinPt()       {return m_flowPtRange[0];}
+    double GetFlowMaxPt()       {return m_flowPtRange[1];}
+    double GetFlowMinEta()      {return m_flowEtaRange[0];}
+    double GetFlowMaxEta()      {return m_flowEtaRange[1];}
+    double GetECalMinPt()       {return m_ecalPtRange[0];}
+    double GetECalMaxPt()       {return m_ecalPtRange[1];}
+    double GetECalMinEta()      {return m_ecalEtaRange[0];}
+    double GetECalMaxEta()      {return m_ecalEtaRange[1];}
+    double GetHCalMinPt()       {return m_hcalPtRange[0];}
+    double GetHCalMaxPt()       {return m_hcalPtRange[1];}
+    double GetHCalMinEta()      {return m_hcalEtaRange[0];}
+    double GetHCalMaxEta()      {return m_hcalEtaRange[1];}
 
     // jet getters
     double              GetJetR()         {return m_jetR;}
@@ -307,7 +310,8 @@ class SCorrelatorJetTree : public SubsysReco {
     bool                 IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
     bool                 IsOutgoingParton(HepMC::GenParticle* par);
     float                GetParticleCharge(const int pid);
-    pair<double, double> GetDcaPair(SvtxTrack *track, PHCompositeNode* topNode);
+    double               GetTrackDeltaPt(SvtxTrack *track);
+    pair<double, double> GetTrackDcaPair(SvtxTrack *track, PHCompositeNode* topNode);
 
     // system methods (*.sys.h)
     void                          InitVariables();
@@ -368,14 +372,15 @@ class SCorrelatorJetTree : public SubsysReco {
     double m_parEtaRange[CONST::NRange] = {-1.1, 1.1};
 
     // track acceptance parameters
-    double m_trkPtRange[CONST::NRange]    = {0.1,  100.};
-    double m_trkEtaRange[CONST::NRange]   = {-1.1, 1.1};
-    double m_trkQualRange[CONST::NRange]  = {-1.,  10.};
-    double m_trkNMvtxRange[CONST::NRange] = {2.,   100.};
-    double m_trkNInttRange[CONST::NRange] = {1.,   100.};
-    double m_trkNTpcRange[CONST::NRange]  = {25.,  100.};
-    double m_trkDcaRangeXY[CONST::NRange] = {-5.,  5.};
-    double m_trkDcaRangeZ[CONST::NRange]  = {-5.,  5.};
+    double m_trkPtRange[CONST::NRange]      = {0.1,  100.};
+    double m_trkEtaRange[CONST::NRange]     = {-1.1, 1.1};
+    double m_trkQualRange[CONST::NRange]    = {-1.,  10.};
+    double m_trkNMvtxRange[CONST::NRange]   = {2.,   100.};
+    double m_trkNInttRange[CONST::NRange]   = {1.,   100.};
+    double m_trkNTpcRange[CONST::NRange]    = {25.,  100.};
+    double m_trkDcaRangeXY[CONST::NRange]   = {-5.,  5.};
+    double m_trkDcaRangeZ[CONST::NRange]    = {-5.,  5.};
+    double m_trkDeltaPtRange[CONST::NRange] = {0., 0.5};
 
     // particle flow acceptance parameters
     double m_flowPtRange[CONST::NRange]  = {0.,   9999.};
