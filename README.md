@@ -24,3 +24,4 @@ root -b -q Fun4All_RunCorrelatorJetTree.C
   - [Minor] Implement jet area calculation
   - [Minor] Clean up unnecessary includes/members
   - [Minor] Fix verbosity levels
+  - [Major] Refactor for ease-of-maintenance, readability, and organization
