@@ -103,96 +103,164 @@ void SCorrelatorJetTree::InitHists() {
   }
 
   // binning
-  const unsigned long nNumBins(500);
-  const unsigned long nEneBins(200);
-  const unsigned long nPhiBins(63);
-  const unsigned long nEtaBins(40);
-  const unsigned long nPtBins(200);
-  const unsigned long nAreaBins(1000);
-  const double        rNumBins[CONST::NRange]  = {0.,    500.};
-  const double        rPhiBins[CONST::NRange]  = {-3.15, 3.15};
-  const double        rEtaBins[CONST::NRange]  = {-2.,   2.};
-  const double        rEneBins[CONST::NRange]  = {0.,    100.};
-  const double        rPtBins[CONST::NRange]   = {0.,    100.};
-  const double        rAreaBins[CONST::NRange] = {0.,    10.};
+  const uint64_t nNumBins(500);
+  const uint64_t nEneBins(200);
+  const uint64_t nPhiBins(63);
+  const uint64_t nEtaBins(40);
+  const uint64_t nPtBins(200);
+  const uint64_t nDcaBins(10000);
+  const uint64_t nQualBins(200);
+  const uint64_t nDeltaBins(1000);
+  const uint64_t nAreaBins(1000);
+  const double   rNumBins[CONST::NRange]   = {0.,    500.};
+  const double   rPhiBins[CONST::NRange]   = {-3.15, 3.15};
+  const double   rEtaBins[CONST::NRange]   = {-2.,   2.};
+  const double   rEneBins[CONST::NRange]   = {0.,    100.};
+  const double   rPtBins[CONST::NRange]    = {0.,    100.};
+  const double   rDcaBins[CONST::NRange]   = {-5.,   5.};
+  const double   rQualBins[CONST::NRange]  = {0.,    20.};
+  const double   rDeltaBins[CONST::NRange] = {0.,    5.};
+  const double   rAreaBins[CONST::NRange]  = {0.,    10.};
 
   m_outFile -> cd();
   // no. of objects in acceptance
-  m_hNumObject[OBJECT::TRACK]             = new TH1D("hNumTrks",       "N_{accept} (tracks)",       nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumObject[OBJECT::ECLUST]            = new TH1D("hNumEClust",     "N_{accept} (EMCal clust.)", nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumObject[OBJECT::HCLUST]            = new TH1D("hNumHClust",     "N_{accept} (HCal clust.)",  nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumObject[OBJECT::FLOW]              = new TH1D("hNumFlow",       "N_{accept} (flow)",         nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumObject[OBJECT::PART]              = new TH1D("hNumPart",       "N_{accept} (par.s)",        nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumObject[OBJECT::TJET]              = new TH1D("hNumTruthJet",   "N_{jet} (truth)",           nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumObject[OBJECT::RJET]              = new TH1D("hNumRecoJets",   "N_{jet} (reco.)",           nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumObject[OBJECT::TCST]              = new TH1D("hNumTruthCst",   "N_{cst} (truth)",           nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumObject[OBJECT::RCST]              = new TH1D("hNumRecoCst",    "N_{cst} (reco.)",           nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumObject[OBJECT::TRACK]  = new TH1D("hNumTrks",     "N_{accept} (tracks)",       nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumObject[OBJECT::ECLUST] = new TH1D("hNumEClust",   "N_{accept} (EMCal clust.)", nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumObject[OBJECT::HCLUST] = new TH1D("hNumHClust",   "N_{accept} (HCal clust.)",  nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumObject[OBJECT::FLOW]   = new TH1D("hNumFlow",     "N_{accept} (flow)",         nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumObject[OBJECT::PART]   = new TH1D("hNumPart",     "N_{accept} (par.s)",        nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumObject[OBJECT::TJET]   = new TH1D("hNumTruthJet", "N_{jet} (truth)",           nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumObject[OBJECT::RJET]   = new TH1D("hNumRecoJets", "N_{jet} (reco.)",           nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumObject[OBJECT::TCST]   = new TH1D("hNumTruthCst", "N_{cst} (truth)",           nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumObject[OBJECT::RCST]   = new TH1D("hNumRecoCst",  "N_{cst} (reco.)",           nNumBins, rNumBins[0], rNumBins[1]);
   // sum of cst. energies
-  m_hSumCstEne[CST_TYPE::PART_CST]        = new TH1D("hSumPartEne",    "#SigmaE (cst. par.s)",      nEneBins,  rEneBins[0],  rEneBins[1]);
-  m_hSumCstEne[CST_TYPE::FLOW_CST]        = new TH1D("hSumFlowEne",    "#SigmaE (cst. flow)",       nEneBins,  rEneBins[0],  rEneBins[1]);
-  m_hSumCstEne[CST_TYPE::TRACK_CST]       = new TH1D("hSumTrackEne",   "#SigmaE (cst. track)",      nEneBins,  rEneBins[0],  rEneBins[1]);
-  m_hSumCstEne[CST_TYPE::ECAL_CST]        = new TH1D("hSumECalEne",    "#SigmaE (cst. ecal)",       nEneBins,  rEneBins[0],  rEneBins[1]);
-  m_hSumCstEne[CST_TYPE::HCAL_CST]        = new TH1D("hSumHCalEne",    "#SigmaE (cst. hcal)",       nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::PART_CST]  = new TH1D("hSumPartEne",  "#SigmaE (cst. par.s)", nEneBins, rEneBins[0], rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::FLOW_CST]  = new TH1D("hSumFlowEne",  "#SigmaE (cst. flow)",  nEneBins, rEneBins[0], rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::TRACK_CST] = new TH1D("hSumTrackEne", "#SigmaE (cst. track)", nEneBins, rEneBins[0], rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::ECAL_CST]  = new TH1D("hSumECalEne",  "#SigmaE (cst. ecal)",  nEneBins, rEneBins[0], rEneBins[1]);
+  m_hSumCstEne[CST_TYPE::HCAL_CST]  = new TH1D("hSumHCalEne",  "#SigmaE (cst. hcal)",  nEneBins, rEneBins[0], rEneBins[1]);
   // particle QA
-  m_hObjectQA[OBJECT::PART][INFO::PT]     = new TH1D("hPartPt",        "p_{T} (par.s)",             nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::PART][INFO::ETA]    = new TH1D("hPartEta",       "#eta (par.s)",              nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::PART][INFO::PHI]    = new TH1D("hPartPhi",       "#phi (par.s)",              nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::PART][INFO::ENE]    = new TH1D("hPartEne",       "E (par.s)",                 nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::PT]      = new TH1D("hPartPt",      "p_{T} (par.s)",                  nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::ETA]     = new TH1D("hPartEta",     "#eta (par.s)",                   nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::PHI]     = new TH1D("hPartPhi",     "#phi (par.s)",                   nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::ENE]     = new TH1D("hPartEne",     "E (par.s)",                      nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::QUAL]    = new TH1D("hPartQuality", "Quality (par.s, N/A)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::DCAXY]   = new TH1D("hPartDcaXY",   "DCA_{xy} (par.s, N/A)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::DCAZ]    = new TH1D("hPartDcaZ",    "DCA_{z} (par.s, N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::DELTAPT] = new TH1D("hPartDeltaPt", "#deltap_{T}/p_{T} (par.s, N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::PART][INFO::NTPC]    = new TH1D("hPartNumTpc",  "N_{clust}^{tpc} (par.s, N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
   // track QA
-  m_hObjectQA[OBJECT::TRACK][INFO::PT]    = new TH1D("hTrackPt",       "p_{T} (tracks)",            nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::TRACK][INFO::ETA]   = new TH1D("hTrackEta",      "#eta (tracks)",             nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::TRACK][INFO::PHI]   = new TH1D("hTrackPhi",      "#phi (tracks)",             nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::TRACK][INFO::ENE]   = new TH1D("hTrackEne",      "E (tracks)",                nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::PT]      = new TH1D("hTrackPt",      "p_{T} (tracks)",             nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::ETA]     = new TH1D("hTrackEta",     "#eta (tracks)",              nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::PHI]     = new TH1D("hTrackPhi",     "#phi (tracks)",              nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::ENE]     = new TH1D("hTrackEne",     "E (tracks)",                 nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::QUAL]    = new TH1D("hTrackQuality", "Quality (tracks)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::DCAXY]   = new TH1D("hTrackDcaXY",   "DCA_{xy} (tracks)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::DCAZ]    = new TH1D("hTrackDcaZ",    "DCA_{z} (tracks)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::DELTAPT] = new TH1D("hTrackDeltaPt", "#deltap_{T}/p_{T} (tracks)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::TRACK][INFO::NTPC]    = new TH1D("hTrackNumTpc",  "N_{clust}^{tpc} (tracks)",   nNumBins,   rNumBins[0],   rNumBins[1]);
   // particle flow QA
-  m_hObjectQA[OBJECT::FLOW][INFO::PT]     = new TH1D("hFlowPt",        "p_{T} (flow)",              nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::FLOW][INFO::ETA]    = new TH1D("hFlowEta",       "#eta (flow)",               nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::FLOW][INFO::PHI]    = new TH1D("hFlowPhi",       "#phi (flow)",               nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::FLOW][INFO::ENE]    = new TH1D("hFlowEne",       "E (flow)",                  nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::PT]      = new TH1D("hFlowPt",      "p_{T} (flow)",                  nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::ETA]     = new TH1D("hFlowEta",     "#eta (flow)",                   nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::PHI]     = new TH1D("hFlowPhi",     "#phi (flow)",                   nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::ENE]     = new TH1D("hFlowEne",     "E (flow)",                      nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::QUAL]    = new TH1D("hFlowQuality", "Quality (flow, N/A)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::DCAXY]   = new TH1D("hFlowDcaXY",   "DCA_{xy} (flow, N/A)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::DCAZ]    = new TH1D("hFlowDcaZ",    "DCA_{z} (flow, N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::DELTAPT] = new TH1D("hFlowDeltaPt", "#deltap_{T}/p_{T} (flow, N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::FLOW][INFO::NTPC]    = new TH1D("hFlowNumTpc",  "N_{clust}^{tpc} (flow, N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
   // emcal cluster QA
-  m_hObjectQA[OBJECT::ECLUST][INFO::PT]   = new TH1D("hEClustPt",      "p_{T} (EMCal clust.)",      nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::ECLUST][INFO::ETA]  = new TH1D("hEClustEta",     "#eta (EMCal clust.)",       nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::ECLUST][INFO::PHI]  = new TH1D("hEClustPhi",     "#phi (EMCal clust.)",       nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::ECLUST][INFO::ENE]  = new TH1D("hEClustEne",     "E (EMCal clust.)",          nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::PT]      = new TH1D("hEClustPt",      "p_{T} (EMCal clust.)",           nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::ETA]     = new TH1D("hEClustEta",     "#eta (EMCal clust.)",            nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::PHI]     = new TH1D("hEClustPhi",     "#phi (EMCal clust.)",            nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::ENE]     = new TH1D("hEClustEne",     "E (EMCal clust.)",               nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::QUAL]    = new TH1D("hEClustQuality", "Quality (EMCal, N/A)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::DCAXY]   = new TH1D("hEClustDcaXY",   "DCA_{xy} (EMCal, N/A)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::DCAZ]    = new TH1D("hEClustDcaZ",    "DCA_{z} (EMCal, N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::DELTAPT] = new TH1D("hEClustDeltaPt", "#deltap_{T}/p_{T} (EMCal, N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::ECLUST][INFO::NTPC]    = new TH1D("hEClustNumTpc",  "N_{clust}^{tpc} (EMCal, N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
   // hcal cluster QA
-  m_hObjectQA[OBJECT::HCLUST][INFO::PT]   = new TH1D("hHClustPt",      "p_{T} (HCal clust.)",       nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::HCLUST][INFO::ETA]  = new TH1D("hHClustEta",     "#eta (HCal clust.)",        nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::HCLUST][INFO::PHI]  = new TH1D("hHClustPhi",     "#phi (HCal clust.)",        nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::HCLUST][INFO::ENE]  = new TH1D("hHClustEne",     "E (HCal clust.)",           nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::PT]      = new TH1D("hHClustPt",      "p_{T} (HCal clust.)",           nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::ETA]     = new TH1D("hHClustEta",     "#eta (HCal clust.)",            nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::PHI]     = new TH1D("hHClustPhi",     "#phi (HCal clust.)",            nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::ENE]     = new TH1D("hHClustEne",     "E (HCal clust.)",               nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::QUAL]    = new TH1D("hHClustQuality", "Quality (HCal, N/A)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::DCAXY]   = new TH1D("hHClustDcaXY",   "DCA_{xy} (HCal, N/A)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::DCAZ]    = new TH1D("hHClustDcaZ",    "DCA_{z} (HCal, N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::DELTAPT] = new TH1D("hHClustDeltaPt", "#deltap_{T}/p_{T} (HCal, N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::HCLUST][INFO::NTPC]    = new TH1D("hHClustNumTpc",  "N_{clust}^{tpc} (HCal, N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
   // truth jet QA
-  m_hObjectQA[OBJECT::TJET][INFO::PT]     = new TH1D("hTruthJetPt",    "p_{T} (truth jet)",         nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::TJET][INFO::ETA]    = new TH1D("hTruthJetEta",   "#eta (truth jet)",          nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::TJET][INFO::PHI]    = new TH1D("hTruthJetPhi",   "#phi (truth jet)",          nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::TJET][INFO::ENE]    = new TH1D("hTruthJetEne",   "E (truth jet)",             nEneBins,  rEneBins[0],  rEneBins[1]);
-  m_hJetArea[0]                           = new TH1D("hTruthJetArea",  "Area (truth jet)",          nAreaBins, rAreaBins[0], rAreaBins[1]);
-  m_hJetNumCst[0]                         = new TH1D("hTruthJetNCst",  "N_{cst} (truth jet)",       nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::PT]      = new TH1D("hTruthJetPt",      "p_{T} (truth jet)",                  nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::ETA]     = new TH1D("hTruthJetEta",     "#eta (truth jet)",                   nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::PHI]     = new TH1D("hTruthJetPhi",     "#phi (truth jet)",                   nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::ENE]     = new TH1D("hTruthJetEne",     "E (truth jet)",                      nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::QUAL]    = new TH1D("hTruthJetQuality", "Quality (truth jet, N/A)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::DCAXY]   = new TH1D("hTruthJetDcaXY",   "DCA_{xy} (truth jet, N/A)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::DCAZ]    = new TH1D("hTruthJetDcaZ",    "DCA_{z} (truth jet, N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::DELTAPT] = new TH1D("hTruthJetDeltaPt", "#deltap_{T}/p_{T} (truth jet, N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::TJET][INFO::NTPC]    = new TH1D("hTruthJetNumTpc",  "N_{clust}^{tpc} (truth jet, N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
+  m_hJetArea[0]                            = new TH1D("hTruthJetArea",    "Area (truth jet)",                   nAreaBins,  rAreaBins[0],  rAreaBins[1]);
+  m_hJetNumCst[0]                          = new TH1D("hTruthJetNCst",    "N_{cst} (truth jet)",                nNumBins,   rNumBins[0],   rNumBins[1]);
   // reco jet QA
-  m_hObjectQA[OBJECT::RJET][INFO::PT]     = new TH1D("hRecoJetPt",     "p_{T} (reco. jet)",         nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::RJET][INFO::ETA]    = new TH1D("hRecoJetEta",    "#eta (reco. jet)",          nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::RJET][INFO::PHI]    = new TH1D("hRecoJetPhi",    "#phi (reco. jet)",          nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::RJET][INFO::ENE]    = new TH1D("hRecoJetEne",    "E (reco. jet)",             nEneBins,  rEneBins[0],  rEneBins[1]);
-  m_hJetArea[1]                           = new TH1D("hRecoJetArea",   "Area (reco. jet)",          nAreaBins, rAreaBins[0], rAreaBins[1]);
-  m_hJetNumCst[1]                         = new TH1D("hRecoJetNCst",   "N_{cst} (reco. jet)",       nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::PT]      = new TH1D("hRecoJetPt",      "p_{T} (reco. jet)",                  nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::ETA]     = new TH1D("hRecoJetEta",     "#eta (reco. jet)",                   nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::PHI]     = new TH1D("hRecoJetPhi",     "#phi (reco. jet)",                   nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::ENE]     = new TH1D("hRecoJetEne",     "E (reco. jet)",                      nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::QUAL]    = new TH1D("hRecoJetQuality", "Quality (reco. jet, N/A)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::DCAXY]   = new TH1D("hRecoJetDcaXY",   "DCA_{xy} (reco. jet, N/A)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::DCAZ]    = new TH1D("hRecoJetDcaZ",    "DCA_{z} (reco. jet, N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::DELTAPT] = new TH1D("hRecoJetDeltaPt", "#deltap_{T}/p_{T} (reco. jet, N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::RJET][INFO::NTPC]    = new TH1D("hRecoJetNumTpc",  "N_{clust}^{tpc} (reco. jet, N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
+  m_hJetArea[1]                            = new TH1D("hRecoJetArea",    "Area (reco. jet)",                   nAreaBins,  rAreaBins[0],  rAreaBins[1]);
+  m_hJetNumCst[1]                          = new TH1D("hRecoJetNCst",    "N_{cst} (reco. jet)",                nNumBins,   rNumBins[0],   rNumBins[1]);
   // truth cst. QA
-  m_hObjectQA[OBJECT::TCST][INFO::PT]     = new TH1D("hTruthCstPt",    "p_{T} (truth cst.)",        nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::TCST][INFO::ETA]    = new TH1D("hTruthCstEta",   "#eta (truth cst.)",         nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::TCST][INFO::PHI]    = new TH1D("hTruthCstPhi",   "#phi (truth cst.)",         nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::TCST][INFO::ENE]    = new TH1D("hTruthCstEne",   "E (truth cst.)",            nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::PT]      = new TH1D("hTruthCstPt",      "p_{T} (truth cst.)",                  nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::ETA]     = new TH1D("hTruthCstEta",     "#eta (truth cst.)",                   nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::PHI]     = new TH1D("hTruthCstPhi",     "#phi (truth cst.)",                   nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::ENE]     = new TH1D("hTruthCstEne",     "E (truth cst.)",                      nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::QUAL]    = new TH1D("hTruthCstQuality", "Quality (truth cst., N/A)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::DCAXY]   = new TH1D("hTruthCstDcaXY",   "DCA_{xy} (truth cst., N/A)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::DCAZ]    = new TH1D("hTruthCstDcaZ",    "DCA_{z} (truth cst., N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::DELTAPT] = new TH1D("hTruthCstDeltaPt", "#deltap_{T}/p_{T} (truth cst., N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::TCST][INFO::NTPC]    = new TH1D("hTruthCstNumTpc",  "N_{clust}^{tpc} (truth cst., N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
   // reco cst. QA
-  m_hObjectQA[OBJECT::RCST][INFO::PT]     = new TH1D("hRecoCstPt",     "p_{T} (reco. cst.)",        nPtBins,   rPtBins[0],   rPtBins[1]);
-  m_hObjectQA[OBJECT::RCST][INFO::ETA]    = new TH1D("hRecoCstEta",    "#eta (reco. cst.)",         nEtaBins,  rEtaBins[0],  rEtaBins[1]);
-  m_hObjectQA[OBJECT::RCST][INFO::PHI]    = new TH1D("hRecoCstPhi",    "#phi (reco. cst.)",         nPhiBins,  rPhiBins[0],  rPhiBins[1]);
-  m_hObjectQA[OBJECT::RCST][INFO::ENE]    = new TH1D("hRecoCstEne",    "E (reco. cst.)",            nEneBins,  rEneBins[0],  rEneBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::PT]      = new TH1D("hRecoCstPt",      "p_{T} (reco. cst.)",                  nPtBins,    rPtBins[0],    rPtBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::ETA]     = new TH1D("hRecoCstEta",     "#eta (reco. cst.)",                   nEtaBins,   rEtaBins[0],   rEtaBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::PHI]     = new TH1D("hRecoCstPhi",     "#phi (reco. cst.)",                   nPhiBins,   rPhiBins[0],   rPhiBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::ENE]     = new TH1D("hRecoCstEne",     "E (reco. cst.)",                      nEneBins,   rEneBins[0],   rEneBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::QUAL]    = new TH1D("hRecoCstQuality", "Quality (reco. cst., N/A)",           nQualBins,  rQualBins[0],  rQualBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::DCAXY]   = new TH1D("hRecoCstDcaXY",   "DCA_{xy} (reco. cst., N/A)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::DCAZ]    = new TH1D("hRecoCstDcaZ",    "DCA_{z} (reco. cst., N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::DELTAPT] = new TH1D("hRecoCstDeltaPt", "#deltap_{T}/p_{T} (reco. cst., N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
+  m_hObjectQA[OBJECT::RCST][INFO::NTPC]    = new TH1D("hRecoCstNumTpc",  "N_{clust}^{tpc} (reco. cst., N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
   // no. of cst.s
-  m_hNumCstAccept[CST_TYPE::PART_CST][0]  = new TH1D("hNumPartCstTot", "N_{cst}^{par} total",       nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::PART_CST][1]  = new TH1D("hNumPartCstAcc", "N_{cst}^{par} accepted",    nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::TRACK_CST][0] = new TH1D("hNumTrkCstTot",  "N_{cst}^{trk} total",       nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::TRACK_CST][1] = new TH1D("hNumTrkCstAcc",  "N_{cst}^{trk} accepted",    nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::FLOW_CST][0]  = new TH1D("hNumFlowCstTot", "N_{cst}^{flow} total",      nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::FLOW_CST][1]  = new TH1D("hNumFlowCstAcc", "N_{cst}^{flow} accepted",   nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::ECAL_CST][0]  = new TH1D("hNumECalCstTot", "N_{cst}^{clust} total",     nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::ECAL_CST][1]  = new TH1D("hNumECalCstAcc", "N_{cst}^{clust} accepted",  nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::HCAL_CST][0]  = new TH1D("hNumHCalCstTot", "N_{cst}^{clust} total",     nNumBins,  rNumBins[0],  rNumBins[1]);
-  m_hNumCstAccept[CST_TYPE::HCAL_CST][1]  = new TH1D("hNumHCalCstAcc", "N_{cst}^{clust} accepted",  nNumBins,  rNumBins[0],  rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::PART_CST][0]  = new TH1D("hNumPartCstTot", "N_{cst}^{par} total",      nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::PART_CST][1]  = new TH1D("hNumPartCstAcc", "N_{cst}^{par} accepted",   nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::TRACK_CST][0] = new TH1D("hNumTrkCstTot",  "N_{cst}^{trk} total",      nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::TRACK_CST][1] = new TH1D("hNumTrkCstAcc",  "N_{cst}^{trk} accepted",   nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::FLOW_CST][0]  = new TH1D("hNumFlowCstTot", "N_{cst}^{flow} total",     nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::FLOW_CST][1]  = new TH1D("hNumFlowCstAcc", "N_{cst}^{flow} accepted",  nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::ECAL_CST][0]  = new TH1D("hNumECalCstTot", "N_{cst}^{clust} total",    nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::ECAL_CST][1]  = new TH1D("hNumECalCstAcc", "N_{cst}^{clust} accepted", nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::HCAL_CST][0]  = new TH1D("hNumHCalCstTot", "N_{cst}^{clust} total",    nNumBins, rNumBins[0], rNumBins[1]);
+  m_hNumCstAccept[CST_TYPE::HCAL_CST][1]  = new TH1D("hNumHCalCstAcc", "N_{cst}^{clust} accepted", nNumBins, rNumBins[0], rNumBins[1]);
+
+  // set errors
+  for (size_t iObj = OBJECT::TRACK; iObj < CONST::NObjType; iObj++) {
+    m_hNumObject[iObj] -> Sumw2();
+    for (size_t iInfo = INFO::PT; iInfo < CONST::NInfoQA; iInfo++) {
+      m_hObjectQA[iObj][iInfo] -> Sumw2();
+    }  // end info loop
+  }  // end object loop
+  for (size_t iCst = CST_TYPE::TRACK_CST; iCst < CONST::NCstType; iCst++) {
+    m_hNumCstAccept[iCst][0] -> Sumw2();
+    m_hNumCstAccept[iCst][1] -> Sumw2();
+    m_hSumCstEne[iCst]       -> Sumw2();
+  }  // end cst loop
+  m_hJetArea[0]   -> Sumw2();
+  m_hJetNumCst[0] -> Sumw2();
+  m_hJetArea[1]   -> Sumw2();
+  m_hJetNumCst[1] -> Sumw2();
   return;
 
 }  // end 'InitHists()'

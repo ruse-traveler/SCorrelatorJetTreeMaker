@@ -24,122 +24,6 @@ using namespace findNode;
 
 // constituent methods --------------------------------------------------------
 
-int SCorrelatorJetTree::GetMatchID(SvtxTrack* track) {
-
-  // print debug statement
-  if (m_doDebug && (Verbosity() > 1)) {
-    cout << "SCorrelatorJetTree::GetMatchID(SvtxTrack*) Grabbing barcode of matching particle..." << endl;
-  }
-
-  // get best match from truth particles
-  PHG4Particle *bestMatch = m_trackEval -> max_truth_particle_by_nclusters(track);
-
-  // grab barcode of best match
-  int matchID;
-  if (bestMatch) {
-    matchID = bestMatch -> get_barcode();
-  } else {
-    matchID = -1;
-  }
-  return matchID;
-
-}  // end 'GetMatchID(SvtxTrack*)'
-
-
-
-int SCorrelatorJetTree::GetNumLayer(TrackSeed* seed, const uint8_t subsys) {
-
-  // print debug statement
-  if (m_doDebug && (Verbosity() > 3)) {
-    cout << "SCorrelatorJetTree::GetNumLayer(TrackSeed*, uint8_t) Grabbing number of track clusters..." << endl;
-  }
-
-  // issue warning if subsys is not set correctly
-  const bool isSubsysWrong = (subsys > 2);
-  if (isSubsysWrong && m_doDebug && (Verbosity() > 3)) {
-    cerr << "SCorrelatorJetTree::GetNumLayer(SvtxTrack*, uint8_t) WARNING: trying to determine no. of clusters for an unknown subsystem (subsys = " << subsys << ")..." << endl;
-    assert(subsys <= 2);
-  }
-
-  // set min no. of layers
-  const int minInttLayer = CONST::NMvtxLayer;
-  const int minTpcLayer  = CONST::NMvtxLayer + CONST::NInttLayer;
-
-  // reset hit flags
-  switch (subsys) {
-    case SUBSYS::MVTX:
-      for (int iMvtxLayer = 0; iMvtxLayer < CONST::NMvtxLayer; iMvtxLayer++) {
-        isMvtxLayerHit[iMvtxLayer] = false;
-      }
-      break;
-    case SUBSYS::INTT:
-      for (int iInttLayer = 0; iInttLayer < CONST::NInttLayer; iInttLayer++) {
-        isInttLayerHit[iInttLayer] = false;
-      }
-      break;
-    case SUBSYS::TPC:
-      for (int iTpcLayer = 0; iTpcLayer < CONST::NTpcLayer; iTpcLayer++) {
-        isTpcLayerHit[iTpcLayer] = false;
-      }
-      break;
-  }
-
-  // determine which layers were hit
-  unsigned int layer     = 0;
-  unsigned int mvtxLayer = 0;
-  unsigned int inttLayer = 0;
-  unsigned int tpcLayer  = 0;
-  for (auto itClustKey = (seed -> begin_cluster_keys()); itClustKey != (seed -> end_cluster_keys()); ++itClustKey) {
-
-    // grab layer number
-    layer = TrkrDefs::getLayer(*itClustKey);
-
-    // increment accordingly
-    switch (subsys) {
-      case SUBSYS::MVTX:
-        if (layer < CONST::NMvtxLayer) {
-          mvtxLayer                 = layer;
-          isMvtxLayerHit[mvtxLayer] = true;
-        }
-        break;
-      case SUBSYS::INTT:
-        if ((layer >= minInttLayer) && (layer < minTpcLayer)) {
-          inttLayer                 = layer - minInttLayer;
-          isInttLayerHit[inttLayer] = true;
-        }
-        break;
-      case SUBSYS::TPC:
-        if (layer >= minTpcLayer) {
-          tpcLayer                = layer - minTpcLayer;
-          isTpcLayerHit[tpcLayer] = true;
-        }
-        break;
-    }
-  }  // end cluster loop
-
-  // get the relevant no. of layers
-  int nLayer = 0;
-  switch (subsys) {
-    case SUBSYS::MVTX:
-      for (int iMvtxLayer = 0; iMvtxLayer < CONST::NMvtxLayer; iMvtxLayer++) {
-        if (isMvtxLayerHit[iMvtxLayer]) ++nLayer;
-      }
-      break;
-    case SUBSYS::INTT:
-      for (int iInttLayer = 0; iInttLayer < CONST::NInttLayer; iInttLayer++) {
-        if (isInttLayerHit[iInttLayer]) ++nLayer;
-      }
-      break;
-    case SUBSYS::TPC:
-      for (int iTpcLayer = 0; iTpcLayer < CONST::NTpcLayer; iTpcLayer++) {
-        if (isTpcLayerHit[iTpcLayer]) ++nLayer;
-      }
-      break;
-  }
-  return nLayer;
-
-}  // end 'GetNumLayer(TrackSeed*, uint8_t)'
-
 
 
 bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge) {
@@ -184,36 +68,14 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode)
     cout << "SCorrelatorJetTree::IsGoodTrack(SvtxTrack*) Checking if track is good..." << endl;
   }
 
-  // get track seeds
-  TrackSeed* trkSiSeed  = track -> get_silicon_seed();
-  TrackSeed* trkTpcSeed = track -> get_tpc_seed();
-
-  // ignore si seed-less tracks if needed
-  bool isSeedGood = (trkSiSeed && trkTpcSeed);
-  if (!m_requireSiSeeds) {
-    isSeedGood = (trkSiSeed || trkTpcSeed);
-  }
-
-  // get no. of layers
-  int trkNMvtx = 0;
-  int trkNIntt = 0;
-  int trkNTpc  = 0;
-  if (trkSiSeed && trkTpcSeed) {
-    trkNMvtx = GetNumLayer(trkSiSeed,  SUBSYS::MVTX);
-    trkNIntt = GetNumLayer(trkSiSeed,  SUBSYS::INTT);
-    trkNTpc  = GetNumLayer(trkTpcSeed, SUBSYS::TPC);
-  }
-  if (!trkSiSeed && trkTpcSeed) {
-    trkNMvtx = GetNumLayer(trkTpcSeed, SUBSYS::MVTX);
-    trkNIntt = GetNumLayer(trkTpcSeed, SUBSYS::INTT);
-    trkNTpc  = GetNumLayer(trkTpcSeed, SUBSYS::TPC);
-  }
-
   // grab other track info
   const double trkPt      = track -> get_pt();
   const double trkEta     = track -> get_eta();
   const double trkQual    = track -> get_quality();
   const double trkDeltaPt = GetTrackDeltaPt(track);
+  const int    trkNMvtx   = GetNumLayer(track, SUBSYS::MVTX);
+  const int    trkNIntt   = GetNumLayer(track, SUBSYS::INTT);
+  const int    trkNTpc    = GetNumLayer(track, SUBSYS::TPC);
 
   // grab track dca
   const auto   trkDca   = GetTrackDcaPair(track, topNode);
@@ -221,6 +83,7 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode)
   const double trkDcaZ  = trkDca.second;
 
   // apply cuts
+  const bool   isSeedGood       = IsGoodTrackSeed(track);
   const bool   isInPtRange      = ((trkPt      > m_trkPtRange[0])      && (trkPt      <  m_trkPtRange[1]));
   const bool   isInEtaRange     = ((trkEta     > m_trkEtaRange[0])     && (trkEta     <  m_trkEtaRange[1]));
   const bool   isInQualRange    = ((trkQual    > m_trkQualRange[0])    && (trkQual    <  m_trkQualRange[1]));
@@ -293,6 +156,28 @@ bool SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal) {
 
 
 
+bool SCorrelatorJetTree::IsGoodTrackSeed(SvtxTrack* track) {
+
+  // print debug statement
+  if (m_doDebug && (Verbosity() > 2)) {
+    cout << "SCorrelatorJetTree::IsGoodSeedTrack(SvtxTrack*) Checking if track seed is good..." << endl;
+  }
+
+  // get track seeds
+  TrackSeed* trkSiSeed  = track -> get_silicon_seed();
+  TrackSeed* trkTpcSeed = track -> get_tpc_seed();
+
+  // check if one or both seeds are present as needed
+  bool isSeedGood = (trkSiSeed && trkTpcSeed);
+  if (!m_requireSiSeeds) {
+    isSeedGood = (trkSiSeed || trkTpcSeed);
+  }
+  return isSeedGood;
+
+}  // end 'IsGoodSeed(SvtxTrack*)'
+
+
+
 bool SCorrelatorJetTree::IsOutgoingParton(HepMC::GenParticle* par) {
 
   // print debug statement
@@ -315,6 +200,53 @@ bool SCorrelatorJetTree::IsOutgoingParton(HepMC::GenParticle* par) {
   return isOutgoingParton;
 
 }  // end 'IsOutgoingParton(HepMC::GenParticle*)'
+
+
+
+pair<double, double> SCorrelatorJetTree::GetTrackDcaPair(SvtxTrack *track, PHCompositeNode* topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetTrackDcaPair(SvtxTrack*, PHCompositeNode*) Getting track dca values..." << endl;
+  }
+
+  // get global vertex and convert to acts vector
+  GlobalVertex* sphxVtx = GetGlobalVertex(topNode);
+  Acts::Vector3 actsVtx = Acts::Vector3(sphxVtx -> get_x(), sphxVtx -> get_y(), sphxVtx -> get_z());
+
+  // return dca
+  const auto dcaAndErr = TrackAnalysisUtils::get_dca(track, actsVtx);
+  return make_pair(dcaAndErr.first.first, dcaAndErr.second.first);
+
+}  // end 'GetTrackDcaPair(SvtxTrack*, PHCompositeNode*)'
+
+
+
+double SCorrelatorJetTree::GetTrackDeltaPt(SvtxTrack* track) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetTrackDeltaPt(SvtxTrack*) Getting track delta pt..." << endl;
+  }
+
+  // grab covariances
+  const float trkCovXX = track -> get_error(3, 3);
+  const float trkCovXY = track -> get_error(3, 4);
+  const float trkCovYY = track -> get_error(4, 4);
+
+  // grab momentum
+  const float trkPx = track -> get_px();
+  const float trkPy = track -> get_py();
+  const float trkPt = track -> get_pt();
+ 
+  // calculate delta-pt
+  const float numer    = (trkCovXX * trkPx * trkPx) + 2 * (trkCovXY * trkPx * trkPy) + (trkCovYY * trkPy * trkPy);
+  const float denom    = (trkPx * trkPx) + (trkPy * trkPy); 
+  const float ptDelta2 = numer / denom;
+  const float ptDelta  = sqrt(ptDelta2) / trkPt;
+  return ptDelta;
+
+}  // end 'GetTrackDeltaPt(SvtxTrack*)'
 
 
 
@@ -463,49 +395,154 @@ float SCorrelatorJetTree::GetParticleCharge(const int pid) {
 
 
 
-double SCorrelatorJetTree::GetTrackDeltaPt(SvtxTrack* track) {
+int SCorrelatorJetTree::GetNumLayer(SvtxTrack* track, const uint8_t subsys) {
 
   // print debug statement
-  if (m_doDebug) {
-    cout << "SCorrelatorJetTree::GetTrackDeltaPt(SvtxTrack*) Getting track delta pt..." << endl;
+  if (m_doDebug && (Verbosity() > 3)) {
+    cout << "SCorrelatorJetTree::GetNumLayer(SvtxTrack*, uint8_t) Grabbing number of track clusters..." << endl;
   }
 
-  // grab covariances
-  const float trkCovXX = track -> get_error(3, 3);
-  const float trkCovXY = track -> get_error(3, 4);
-  const float trkCovYY = track -> get_error(4, 4);
+  // issue warning if subsys is not set correctly
+  const bool isSubsysWrong = (subsys > 2);
+  if (isSubsysWrong && m_doDebug && (Verbosity() > 3)) {
+    cerr << "SCorrelatorJetTree::GetNumLayer(SvtxTrack*, uint8_t) PANIC: trying to determine no. of clusters for an unknown subsystem (subsys = " << subsys << ")! Aborting!" << endl;
+    assert(subsys <= 2);
+  }
 
-  // grab momentum
-  const float trkPx = track -> get_px();
-  const float trkPy = track -> get_py();
-  const float trkPt = track -> get_pt();
- 
-  // calculate delta-pt
-  const float numer    = (trkCovXX * trkPx * trkPx) + 2 * (trkCovXY * trkPx * trkPy) + (trkCovYY * trkPy * trkPy);
-  const float denom    = (trkPx * trkPx) + (trkPy * trkPy); 
-  const float ptDelta2 = numer / denom;
-  const float ptDelta  = sqrt(ptDelta2) / trkPt;
-  return ptDelta;
+  // check if seed is good
+  const bool isSeedGood = IsGoodTrackSeed(track);
+  if (!isSeedGood && m_doDebug && (Verbosity() > 3)) {
+    cerr << "SCorrelatorJetTree::GetNumLayer(SvtxTrack*, uint8_t) PANIC: track seed(s) is (are) no good! Aborting!" << endl;
+    assert(isSeedGood);
+  }
 
-}  // end 'GetTrackDeltaPt(SvtxTrack*)'
+  // get both track seeds
+  TrackSeed* trkSiSeed  = track -> get_silicon_seed();
+  TrackSeed* trkTpcSeed = track -> get_tpc_seed();
+
+  // select relevant seed
+  const bool hasBothSeeds   = (trkSiSeed  && trkTpcSeed);
+  const bool hasOnlyTpcSeed = (!trkSiSeed && trkTpcSeed);
+
+  TrackSeed* seed = NULL;
+  switch (subsys) {
+    case SUBSYS::MVTX:
+      if (hasBothSeeds)   seed = trkSiSeed;
+      if (hasOnlyTpcSeed) seed = trkTpcSeed;
+      break;
+    case SUBSYS::INTT:
+      if (hasBothSeeds)   seed = trkSiSeed;
+      if (hasOnlyTpcSeed) seed = trkTpcSeed;
+      break;
+    case SUBSYS::TPC:
+      seed = trkTpcSeed;
+      break;
+  }
+  if (!seed && m_doDebug && (Verbosity() > 3)) {
+    cerr << "SCorrelatorJetTree::GetNumLayer(SvtxTrack*, uint8_t) PANIC: couldn't set seed! Aborting!" << endl;
+    assert(seed);
+  }
+
+  // set min no. of layers
+  const int minInttLayer = CONST::NMvtxLayer;
+  const int minTpcLayer  = CONST::NMvtxLayer + CONST::NInttLayer;
+
+  // reset hit flags
+  switch (subsys) {
+    case SUBSYS::MVTX:
+      for (int iMvtxLayer = 0; iMvtxLayer < CONST::NMvtxLayer; iMvtxLayer++) {
+        isMvtxLayerHit[iMvtxLayer] = false;
+      }
+      break;
+    case SUBSYS::INTT:
+      for (int iInttLayer = 0; iInttLayer < CONST::NInttLayer; iInttLayer++) {
+        isInttLayerHit[iInttLayer] = false;
+      }
+      break;
+    case SUBSYS::TPC:
+      for (int iTpcLayer = 0; iTpcLayer < CONST::NTpcLayer; iTpcLayer++) {
+        isTpcLayerHit[iTpcLayer] = false;
+      }
+      break;
+  }
+
+  // determine which layers were hit
+  unsigned int layer     = 0;
+  unsigned int mvtxLayer = 0;
+  unsigned int inttLayer = 0;
+  unsigned int tpcLayer  = 0;
+  for (auto itClustKey = (seed -> begin_cluster_keys()); itClustKey != (seed -> end_cluster_keys()); ++itClustKey) {
+
+    // grab layer number
+    layer = TrkrDefs::getLayer(*itClustKey);
+
+    // increment accordingly
+    switch (subsys) {
+      case SUBSYS::MVTX:
+        if (layer < CONST::NMvtxLayer) {
+          mvtxLayer                 = layer;
+          isMvtxLayerHit[mvtxLayer] = true;
+        }
+        break;
+      case SUBSYS::INTT:
+        if ((layer >= minInttLayer) && (layer < minTpcLayer)) {
+          inttLayer                 = layer - minInttLayer;
+          isInttLayerHit[inttLayer] = true;
+        }
+        break;
+      case SUBSYS::TPC:
+        if (layer >= minTpcLayer) {
+          tpcLayer                = layer - minTpcLayer;
+          isTpcLayerHit[tpcLayer] = true;
+        }
+        break;
+    }
+  }  // end cluster loop
+
+  // get the relevant no. of layers
+  int nLayer = 0;
+  switch (subsys) {
+    case SUBSYS::MVTX:
+      for (int iMvtxLayer = 0; iMvtxLayer < CONST::NMvtxLayer; iMvtxLayer++) {
+        if (isMvtxLayerHit[iMvtxLayer]) ++nLayer;
+      }
+      break;
+    case SUBSYS::INTT:
+      for (int iInttLayer = 0; iInttLayer < CONST::NInttLayer; iInttLayer++) {
+        if (isInttLayerHit[iInttLayer]) ++nLayer;
+      }
+      break;
+    case SUBSYS::TPC:
+      for (int iTpcLayer = 0; iTpcLayer < CONST::NTpcLayer; iTpcLayer++) {
+        if (isTpcLayerHit[iTpcLayer]) ++nLayer;
+      }
+      break;
+  }
+  return nLayer;
+
+}  // end 'GetNumLayer(SvtxTrack*, uint8_t)'
 
 
 
-pair<double, double> SCorrelatorJetTree::GetTrackDcaPair(SvtxTrack *track, PHCompositeNode* topNode) {
+int SCorrelatorJetTree::GetMatchID(SvtxTrack* track) {
 
   // print debug statement
-  if (m_doDebug) {
-    cout << "SCorrelatorJetTree::GetTrackDcaPair(SvtxTrack*, PHCompositeNode*) Getting track dca values..." << endl;
+  if (m_doDebug && (Verbosity() > 1)) {
+    cout << "SCorrelatorJetTree::GetMatchID(SvtxTrack*) Grabbing barcode of matching particle..." << endl;
   }
 
-  // get global vertex and convert to acts vector
-  GlobalVertex* sphxVtx = GetGlobalVertex(topNode);
-  Acts::Vector3 actsVtx = Acts::Vector3(sphxVtx -> get_x(), sphxVtx -> get_y(), sphxVtx -> get_z());
+  // get best match from truth particles
+  PHG4Particle *bestMatch = m_trackEval -> max_truth_particle_by_nclusters(track);
 
-  // return dca
-  const auto dcaAndErr = TrackAnalysisUtils::get_dca(track, actsVtx);
-  return make_pair(dcaAndErr.first.first, dcaAndErr.second.first);
+  // grab barcode of best match
+  int matchID;
+  if (bestMatch) {
+    matchID = bestMatch -> get_barcode();
+  } else {
+    matchID = -1;
+  }
+  return matchID;
 
-}  // end 'GetTrackDcaPair(SvtxTrack*, PHCompositeNode*)'
+}  // end 'GetMatchID(SvtxTrack*)'
 
 // end ------------------------------------------------------------------------

@@ -200,11 +200,26 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& 
     pair<int, pair<Jet::SRC, int>> jetTrkPair(iCst, make_pair(Jet::SRC::TRACK, trkID));
     fjMap.insert(jetTrkPair);
 
+    // grab remaining track info
+
+    pair<double, double> trkDcaPair = GetTrackDcaPair(track, topNode);
+
+    const double trkQuality = track -> get_quality();
+    const double trkDeltaPt = GetTrackDeltaPt(track);
+    const double trkDcaXY   = trkDcaPair.first;
+    const double trkDcaZ    = trkDcaPair.second;
+    const int    trkNumTpc  = GetNumLayer(track, SUBSYS::TPC);
+
     // fill QA histograms, increment sums and counters
-    m_hObjectQA[OBJECT::TRACK][INFO::PT]  -> Fill(fjTrack.perp());
-    m_hObjectQA[OBJECT::TRACK][INFO::ETA] -> Fill(fjTrack.pseudorapidity());
-    m_hObjectQA[OBJECT::TRACK][INFO::PHI] -> Fill(fjTrack.phi_std());
-    m_hObjectQA[OBJECT::TRACK][INFO::ENE] -> Fill(fjTrack.E());
+    m_hObjectQA[OBJECT::TRACK][INFO::PT]      -> Fill(fjTrack.perp());
+    m_hObjectQA[OBJECT::TRACK][INFO::ETA]     -> Fill(fjTrack.pseudorapidity());
+    m_hObjectQA[OBJECT::TRACK][INFO::PHI]     -> Fill(fjTrack.phi_std());
+    m_hObjectQA[OBJECT::TRACK][INFO::ENE]     -> Fill(fjTrack.E());
+    m_hObjectQA[OBJECT::TRACK][INFO::QUAL]    -> Fill(trkQuality);
+    m_hObjectQA[OBJECT::TRACK][INFO::DCAXY]   -> Fill(trkDcaXY);
+    m_hObjectQA[OBJECT::TRACK][INFO::DCAZ]    -> Fill(trkDcaZ);
+    m_hObjectQA[OBJECT::TRACK][INFO::DELTAPT] -> Fill(trkDeltaPt);
+    m_hObjectQA[OBJECT::TRACK][INFO::NTPC]    -> Fill(trkNumTpc);
     eTrkSum += trkE;
     ++iCst;
   }  // end track loop

@@ -238,7 +238,7 @@ class SCorrelatorJetTree : public SubsysReco {
       NComp      = 3,
       NRange     = 2,
       NMoment    = 2,
-      NInfoQA    = 4,
+      NInfoQA    = 9,
       NJetType   = 2,
       NCstType   = 5,
       NObjType   = 9,
@@ -248,38 +248,11 @@ class SCorrelatorJetTree : public SubsysReco {
       NTpcLayer  = 48
     };
 
-    // tracking subsytems
-    enum SUBSYS {
-      MVTX = 0,
-      INTT = 1,
-      TPC  = 2
-    };
-
-    // qa info
-    enum OBJECT {
-      TRACK  = 0,
-      ECLUST = 1,
-      HCLUST = 2,
-      FLOW   = 3,
-      PART   = 4,
-      TJET   = 5,
-      RJET   = 6,
-      TCST   = 7,
-      RCST   = 8
-    };
-    enum CST_TYPE {
-      PART_CST  = 0,
-      TRACK_CST = 1,
-      FLOW_CST  = 2,
-      ECAL_CST  = 3,
-      HCAL_CST  = 4
-    };
-    enum INFO {
-      PT  = 0,
-      ETA = 1,
-      PHI = 2,
-      ENE = 3
-    };
+    // qa info & tracking subsystems
+    enum SUBSYS   {MVTX,     INTT,      TPC};
+    enum CST_TYPE {PART_CST, TRACK_CST, FLOW_CST, ECAL_CST, HCAL_CST};
+    enum OBJECT   {TRACK,    ECLUST,    HCLUST,   FLOW,     PART,  TJET,  RJET, TCST,    RCST};
+    enum INFO     {PT,       ETA,       PHI,      ENE,      QUAL,  DCAXY, DCAZ, DELTAPT, NTPC};
 
     // event methods (*.evt.h)
     void              GetEventVariables(PHCompositeNode* topNode);
@@ -301,17 +274,18 @@ class SCorrelatorJetTree : public SubsysReco {
     void AddHCal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
 
     // constituent methods (*.cst.h)
-    int                  GetMatchID(SvtxTrack* track);
-    int                  GetNumLayer(TrackSeed* seed, const uint8_t subsys = 0);
     bool                 IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge = false);
     bool                 IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode);
     bool                 IsGoodFlow(ParticleFlowElement* flow);
     bool                 IsGoodECal(CLHEP::Hep3Vector& hepVecECal);
     bool                 IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
+    bool                 IsGoodTrackSeed(SvtxTrack* track);
     bool                 IsOutgoingParton(HepMC::GenParticle* par);
-    float                GetParticleCharge(const int pid);
-    double               GetTrackDeltaPt(SvtxTrack *track);
     pair<double, double> GetTrackDcaPair(SvtxTrack *track, PHCompositeNode* topNode);
+    double               GetTrackDeltaPt(SvtxTrack *track);
+    float                GetParticleCharge(const int pid);
+    int                  GetNumLayer(SvtxTrack* track, const uint8_t subsys = 0);
+    int                  GetMatchID(SvtxTrack* track);
 
     // system methods (*.sys.h)
     void                          InitVariables();
