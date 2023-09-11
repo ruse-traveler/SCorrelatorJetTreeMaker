@@ -21,7 +21,7 @@ args = parser.parse_args()
 inputType = args.inputType.upper()
 
 types = {'PYTHIA8_PP_MB' : 3, 'HIJING_0-20' : 4, 'HIJING_0-4P88' : 6, 'HF_CHARM' : 7, 'HF_BOTTOM' : 8, 'HF_CHARMD0' : 9, 'HF_BOTTOMD0' : 10
-        , 'JET_30GEV' : 11, 'JET_10GEV' : 12, 'JET_PHOTON' : 13, 'SINGLE_PARTICLE' : 14 , 'D0JETS' : 16, 'JET_20GEV': 21}
+        , 'JET_30GEV' : 11, 'JET_10GEV' : 12, 'JET_PHOTON' : 13, 'SINGLE_PARTICLE' : 14 , 'D0JETS' : 16, 'JET_40GEV' : 19, 'JET_20GEV': 21}
 if inputType not in types:
   print("The argument, {}, was not known. Use --help to see available types".format(args.inputType))
   sys.exit()
@@ -34,7 +34,7 @@ if args.truth:
     dstSets.append('DST_TRUTH')
     dstSets.append('DST_TRKR_G4HIT')
     dstSets.append('DST_TRACKSEEDS')
-#    dstSets.append('DST_TRKR_CLUSTER')
+    dstSets.append('DST_TRKR_CLUSTER')
 if args.calo: dstSets.append('DST_CALO_CLUSTER')
 if args.trkr_hit: dstSets.append('DST_TRKR_HIT')
 if args.bbc_g4hit:
