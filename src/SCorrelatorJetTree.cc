@@ -32,18 +32,19 @@ using namespace findNode;
 
 // ctor/dtor ------------------------------------------------------------------
 
-SCorrelatorJetTree::SCorrelatorJetTree(const string& name, const string& outFile, const bool isMC, const bool debug) : SubsysReco(name) {
+SCorrelatorJetTree::SCorrelatorJetTree(const string& name, const string& outFile, const bool isMC, const bool isEmbed, const bool debug) : SubsysReco(name) {
 
   // print debug statement
   m_isMC    = isMC;
+  m_isEmbed = isEmbed;
   m_doDebug = debug;
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::SCorrelatorJetTree(string, string, bool, bool) Calling ctor" << endl;
+    cout << "SCorrelatorJetTree::SCorrelatorJetTree(string, string, bool, bool, bool) Calling ctor" << endl;
   }
   m_outFileName = outFile;
   InitVariables();
 
-}  // end ctor(string&, string&, bool, bool)
+}  // end ctor(string&, string&, bool, bool, bool)
 
 
 

@@ -97,6 +97,7 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
 
   // jet tree general parameters
   const bool isMC(true);
+  const bool isEmbed(true);
   const bool doDebug(true);
   const bool saveDst(true);
   const bool doQuality(true);
@@ -227,7 +228,7 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   }
 
   // create correlator jet tree
-  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, doDebug);
+  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, isEmbed, doDebug);
   correlatorJetTree -> Verbosity(verbosity);
   correlatorJetTree -> SetDoQualityPlots(doQuality);
   correlatorJetTree -> SetAddTracks(addTracks);

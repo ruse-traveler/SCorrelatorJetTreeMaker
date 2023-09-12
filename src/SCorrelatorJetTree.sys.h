@@ -31,11 +31,13 @@ void SCorrelatorJetTree::InitVariables() {
     cout << "SCorrelatorJetTree::InitVariables() Initializing class members..." << endl;
   }
 
-  // initialize truth tree address members
-  m_partonID[0]       = -9999;
-  m_partonID[1]       = -9999;
-  m_partonMom[0]      = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_partonMom[1]      = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  // initialize parton variables
+  m_partonID[0]  = -9999;
+  m_partonID[1]  = -9999;
+  m_partonMom[0] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_partonMom[1] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+
+  // initialize truth (inclusive) tree address members
   m_trueVtx           = CLHEP::Hep3Vector(-9999., -9999., -9999.);
   m_trueNumJets       = 0;
   m_trueNumChrgPars   = -9999;
@@ -56,6 +58,8 @@ void SCorrelatorJetTree::InitVariables() {
   m_trueJetEta.clear();
   m_trueJetPhi.clear();
   m_trueJetArea.clear();
+  m_trueCstID.clear();
+  m_trueCstIsBkgd.clear();
   m_trueCstZ.clear();
   m_trueCstDr.clear();
   m_trueCstE.clear();
@@ -83,6 +87,7 @@ void SCorrelatorJetTree::InitVariables() {
   m_recoJetEta.clear();
   m_recoJetPhi.clear();
   m_recoJetArea.clear();
+  m_recoCstMatchID.clear();
   m_recoCstZ.clear();
   m_recoCstDr.clear();
   m_recoCstE.clear();
@@ -274,7 +279,7 @@ void SCorrelatorJetTree::InitTrees() {
     cout << "SCorrelatorJetTree::InitTrees() Initializing output trees..." << endl;
   }
 
-  // initialize true jet tree
+  // initialize true (inclusive) jet tree
   m_trueTree = new TTree("TruthJetTree", "A tree of truth jets");
   m_trueTree -> Branch("EvtNumJets",     &m_trueNumJets,       "EvtNumJets/I");
   m_trueTree -> Branch("EvtNumChrgPars", &m_trueNumChrgPars,   "EvtNumChrgPars/I");
@@ -298,6 +303,7 @@ void SCorrelatorJetTree::InitTrees() {
   m_trueTree -> Branch("JetPhi",         &m_trueJetPhi);
   m_trueTree -> Branch("JetArea",        &m_trueJetArea);
   m_trueTree -> Branch("CstID",          &m_trueCstID);
+  m_trueTree -> Branch("CstIsBkgd",      &m_trueCstIsBkgd);
   m_trueTree -> Branch("CstZ",           &m_trueCstZ);
   m_trueTree -> Branch("CstDr",          &m_trueCstDr);
   m_trueTree -> Branch("CstEnergy",      &m_trueCstE);
@@ -376,6 +382,7 @@ void SCorrelatorJetTree::FillTrueTree() {
   m_trueJetPhi.clear();
   m_trueJetArea.clear();
   m_trueCstID.clear();
+  m_trueCstIsBkgd.clear();
   m_trueCstZ.clear();
   m_trueCstDr.clear();
   m_trueCstE.clear();
@@ -385,6 +392,7 @@ void SCorrelatorJetTree::FillTrueTree() {
 
   // declare vectors to storing constituents
   vector<int>    vecTruCstID;
+  vector<int>    vecTruCstIsBkgd;
   vector<double> vecTruCstZ;
   vector<double> vecTruCstDr;
   vector<double> vecTruCstE;
@@ -419,6 +427,7 @@ void SCorrelatorJetTree::FillTrueTree() {
 
     // clear constituent vectors
     vecTruCstID.clear();
+    vecTruCstIsBkgd.clear();
     vecTruCstZ.clear();
     vecTruCstDr.clear();
     vecTruCstE.clear();
@@ -431,7 +440,6 @@ void SCorrelatorJetTree::FillTrueTree() {
     for (unsigned int iTruCst = 0; iTruCst < trueCsts.size(); ++iTruCst) {
 
       // get constituent info
-      const int    cstID  = trueCsts[iTruCst].user_index();
       const double cstPhi = trueCsts[iTruCst].phi_std();
       const double cstEta = trueCsts[iTruCst].pseudorapidity();
       const double cstE   = trueCsts[iTruCst].E();
@@ -445,8 +453,13 @@ void SCorrelatorJetTree::FillTrueTree() {
       const double cstDh  = cstEta - jetEta;
       const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
 
+      // determine if constituent is background or not
+      const int  cstID     = trueCsts[iTruCst].user_index();
+      const bool cstIsBkgd = (cstID <= 0);
+
       // add csts to vectors
-      vecTruCstID.push_back(cstID);
+      vecTruCstID.push_back(abs(cstID));
+      vecTruCstIsBkgd.push_back(cstIsBkgd);
       vecTruCstZ.push_back(cstZ);
       vecTruCstDr.push_back(cstDr);
       vecTruCstE.push_back(cstE);
@@ -471,6 +484,7 @@ void SCorrelatorJetTree::FillTrueTree() {
     m_trueJetPhi.push_back(jetPhi);
     m_trueJetArea.push_back(jetArea);
     m_trueCstID.push_back(vecTruCstID);
+    m_trueCstIsBkgd.push_back(vecTruCstIsBkgd);
     m_trueCstZ.push_back(vecTruCstZ);
     m_trueCstDr.push_back(vecTruCstDr);
     m_trueCstE.push_back(vecTruCstE);
@@ -749,9 +763,11 @@ void SCorrelatorJetTree::SaveOutput() {
   }
 
   // save output trees
-  m_outFile -> cd();
-  m_trueTree -> Write();
+  m_outFile  -> cd();
   m_recoTree -> Write();
+  if (m_isMC) {
+    m_trueTree -> Write();
+  }
   return;
 
 }  // end 'SaveOutput()'
@@ -771,11 +787,13 @@ void SCorrelatorJetTree::ResetVariables() {
   m_trueClust  = NULL;
   m_recoClust  = NULL;
 
-  // reset truth tree variables
-  m_partonID[0]       = -9999;
-  m_partonID[1]       = -9999;
-  m_partonMom[0]      = CLHEP::Hep3Vector(-9999., -9999., -9999.);
-  m_partonMom[1]      = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  // reset parton variables
+  m_partonID[0]  = -9999;
+  m_partonID[1]  = -9999;
+  m_partonMom[0] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_partonMom[1] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+
+  // reset truth (inclusive) tree variables
   m_trueVtx           = CLHEP::Hep3Vector(-9999., -9999., -9999.);
   m_trueNumJets       = 0;
   m_trueNumChrgPars   = -9999;
@@ -891,7 +909,7 @@ int SCorrelatorJetTree::CreateJetNode(PHCompositeNode* topNode) {
     cout << recoNodeName << " node added" << endl;
   }
 
-  // save truth DST if needed
+  // save truth DSTs if needed
   if(m_isMC && m_saveDST) {
     PHIODataNode<PHObject> *trueJetNode = new PHIODataNode<PHObject>(m_trueJetMap, trueNodeName.c_str(), "PHObject");
     lowerNode -> addNode(trueJetNode);

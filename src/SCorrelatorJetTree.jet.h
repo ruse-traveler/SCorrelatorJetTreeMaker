@@ -28,7 +28,7 @@ void SCorrelatorJetTree::FindTrueJets(PHCompositeNode* topNode) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::FindTrueJets(PHCompositeNode*) Finding truth jets..." << endl;
+    cout << "SCorrelatorJetTree::FindTrueJets(PHCompositeNode*) Finding truth (inclusive) jets..." << endl;
   }
 
   // define jets
@@ -110,13 +110,21 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet
       ++nParAcc;
     }
 
-    // create pseudojet & add to constituent vector
-    const int    parID = (*itPar) -> barcode();
+   // grab particle info
     const double parPx = (*itPar) -> momentum().px();
     const double parPy = (*itPar) -> momentum().py();
     const double parPz = (*itPar) -> momentum().pz();
     const double parE  = (*itPar) -> momentum().e();
 
+    // TODO indicate if particle is from background 
+    // by making barcode negative
+    int  parID  = (*itPar) -> barcode();
+    bool isBkgd = false;
+    if (isBkgd) {
+      parID *= -1.;
+    } 
+
+    // create pseudojet & add to constituent vector
     fastjet::PseudoJet fjParticle(parPx, parPy, parPz, parE);
     fjParticle.set_user_index(parID);
     particles.push_back(fjParticle);

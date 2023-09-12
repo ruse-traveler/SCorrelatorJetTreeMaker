@@ -135,7 +135,7 @@ class SCorrelatorJetTree : public SubsysReco {
     };
 
     // ctor/dtor
-    SCorrelatorJetTree(const string& name = "SCorrelatorJetTree", const string& outFile = "correlator_jet_tree.root", const bool isMC = false, const bool debug = false);
+    SCorrelatorJetTree(const string& name = "SCorrelatorJetTree", const string& outFile = "correlator_jet_tree.root", const bool isMC = false, const bool isEmbed = false, const bool debug = false);
     ~SCorrelatorJetTree() override;
 
     // F4A methods
@@ -152,6 +152,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetRequireSiSeeds(const bool require) {m_requireSiSeeds = require;}
     void SetSaveDST(const bool doSave)         {m_saveDST        = doSave;}
     void SetIsMC(const bool isMC)              {m_isMC           = isMC;}
+    void SetIsEmbed(const bool isEmbed)        {m_isEmbed        = isEmbed;}
     void SetJetR(const double jetR)            {m_jetR           = jetR;}
     void SetJetType(const uint32_t type)       {m_jetType        = type;}
     void SetJetTreeName(const string name)     {m_jetTreeName    = name;}
@@ -249,10 +250,10 @@ class SCorrelatorJetTree : public SubsysReco {
     };
 
     // qa info & tracking subsystems
-    enum SUBSYS   {MVTX,     INTT,      TPC};
+    enum SUBSYS   {MVTX, INTT, TPC};
     enum CST_TYPE {PART_CST, TRACK_CST, FLOW_CST, ECAL_CST, HCAL_CST};
-    enum OBJECT   {TRACK,    ECLUST,    HCLUST,   FLOW,     PART,  TJET,  RJET, TCST,    RCST};
-    enum INFO     {PT,       ETA,       PHI,      ENE,      QUAL,  DCAXY, DCAZ, DELTAPT, NTPC};
+    enum OBJECT   {TRACK, ECLUST, HCLUST, FLOW, PART, TJET, RJET, TCST, RCST};
+    enum INFO     {PT, ETA, PHI, ENE, QUAL, DCAXY, DCAZ, DELTAPT, NTPC};
 
     // event methods (*.evt.h)
     void              GetEventVariables(PHCompositeNode* topNode);
@@ -310,8 +311,8 @@ class SCorrelatorJetTree : public SubsysReco {
 
     // io members
     TFile*    m_outFile     = NULL;
-    TTree*    m_trueTree    = NULL;
     TTree*    m_recoTree    = NULL;
+    TTree*    m_trueTree    = NULL;
     string    m_outFileName = "";
     string    m_jetTreeName = "";
     JetMapv1* m_recoJetMap  = NULL;
@@ -334,7 +335,8 @@ class SCorrelatorJetTree : public SubsysReco {
     bool m_doQualityPlots = true;
     bool m_requireSiSeeds = true;
     bool m_saveDST        = false;
-    bool m_isMC           = true;;
+    bool m_isMC           = true;
+    bool m_isEmbed        = false;
     bool m_doDebug        = false;
     bool m_addTracks      = true;
     bool m_addFlow        = false;
@@ -379,10 +381,39 @@ class SCorrelatorJetTree : public SubsysReco {
     // event, jet members
     long long         m_partonID[CONST::NPart];
     CLHEP::Hep3Vector m_partonMom[CONST::NPart];
-    CLHEP::Hep3Vector m_recoVtx;
     CLHEP::Hep3Vector m_trueVtx;
-    vector<PseudoJet> m_recoJets;
+    CLHEP::Hep3Vector m_recoVtx;
     vector<PseudoJet> m_trueJets;
+    vector<PseudoJet> m_recoJets;
+
+    // output truth event variables
+    unsigned long          m_trueNumJets;
+    long long              m_truePartonID[CONST::NPart];
+    double                 m_truePartonMomX[CONST::NPart];
+    double                 m_truePartonMomY[CONST::NPart];
+    double                 m_truePartonMomZ[CONST::NPart];
+    double                 m_trueVtxX;
+    double                 m_trueVtxY;
+    double                 m_trueVtxZ;
+    double                 m_trueSumPar;
+    long                   m_trueNumChrgPars;
+    // output truth jet variables
+    vector<unsigned long>  m_trueJetNCst;
+    vector<unsigned int>   m_trueJetID;
+    vector<double>         m_trueJetE;
+    vector<double>         m_trueJetPt;
+    vector<double>         m_trueJetEta;
+    vector<double>         m_trueJetPhi;
+    vector<double>         m_trueJetArea;
+    // output truth constituent variables
+    vector<vector<int>>    m_trueCstID;
+    vector<vector<int>>    m_trueCstIsBkgd;
+    vector<vector<double>> m_trueCstZ;
+    vector<vector<double>> m_trueCstDr;
+    vector<vector<double>> m_trueCstE;
+    vector<vector<double>> m_trueCstJt;
+    vector<vector<double>> m_trueCstEta;
+    vector<vector<double>> m_trueCstPhi;
 
     // output reco event variables
     unsigned long          m_recoNumJets;
@@ -408,34 +439,6 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<vector<double>> m_recoCstJt;
     vector<vector<double>> m_recoCstEta;
     vector<vector<double>> m_recoCstPhi;
-
-    // output truth event variables
-    unsigned long         m_trueNumJets;
-    long long             m_truePartonID[CONST::NPart];
-    double                m_truePartonMomX[CONST::NPart];
-    double                m_truePartonMomY[CONST::NPart];
-    double                m_truePartonMomZ[CONST::NPart];
-    double                m_trueVtxX;
-    double                m_trueVtxY;
-    double                m_trueVtxZ;
-    double                m_trueSumPar;
-    long                  m_trueNumChrgPars;
-    // output truth jet variables
-    vector<unsigned long> m_trueJetNCst;
-    vector<unsigned int>  m_trueJetID;
-    vector<double>        m_trueJetE;
-    vector<double>        m_trueJetPt;
-    vector<double>        m_trueJetEta;
-    vector<double>        m_trueJetPhi;
-    vector<double>        m_trueJetArea;
-    // output truth constituent variables
-    vector<vector<int>>    m_trueCstID;
-    vector<vector<double>> m_trueCstZ;
-    vector<vector<double>> m_trueCstDr;
-    vector<vector<double>> m_trueCstE;
-    vector<vector<double>> m_trueCstJt;
-    vector<vector<double>> m_trueCstEta;
-    vector<vector<double>> m_trueCstPhi;
 
 };
 
