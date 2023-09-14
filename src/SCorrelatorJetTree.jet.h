@@ -86,61 +86,78 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet
     cout << "SCorrelatorJetTree::AddParticles(PHComposite*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding MC particles..." << endl;
   }
 
-  // loop over particles
-  unsigned int     iCst    = particles.size();
-  unsigned int     nParTot = 0;
-  unsigned int     nParAcc = 0;
-  double           eParSum = 0.;
-  HepMC::GenEvent* mcEvt   = GetMcEvent(topNode);
-  for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
+  // determine what subevents to grab
+  vector<int> vecEvtsToGrab;
+  if (m_isEmbed) {
+    vecEvtsToGrab.push_back(0);
+    vecEvtsToGrab.push_back(2);
+  } else {
+    vecEvtsToGrab.push_back(1);
+  }
 
-    // check if particle is final state
-    const bool isFinalState = ((*itPar) -> status() == 1);
-    if (!isFinalState) {
-      continue;
-    } else {
-      ++nParTot;
-    }
+  // loop over relevant subevents
+  unsigned int iCst    = particles.size();
+  unsigned int nParTot = 0;
+  unsigned int nParAcc = 0;
+  double       eParSum = 0.;
+  for (const int evtToGrab : vecEvtsToGrab) {
 
-    // check if particle is good
-    const bool isGoodPar = IsGoodParticle(*itPar);
-    if (!isGoodPar) {
-      continue;
-    } else {
-      ++nParAcc;
-    }
+    // grab subevent
+    HepMC::GenEvent* mcEvt = GetMcEvent(topNode, evtToGrab);
 
-   // grab particle info
-    const double parPx = (*itPar) -> momentum().px();
-    const double parPy = (*itPar) -> momentum().py();
-    const double parPz = (*itPar) -> momentum().pz();
-    const double parE  = (*itPar) -> momentum().e();
+    // check if background
+    const int  embedID = GetEmbedID(topNode, evtToGrab);
+    const bool isBkgd  = (embedID == 0);
 
-    // TODO indicate if particle is from background 
-    // by making barcode negative
-    int  parID  = (*itPar) -> barcode();
-    bool isBkgd = false;
-    if (isBkgd) {
-      parID *= -1.;
-    } 
+    // loop over particles in subevent
+    for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
-    // create pseudojet & add to constituent vector
-    fastjet::PseudoJet fjParticle(parPx, parPy, parPz, parE);
-    fjParticle.set_user_index(parID);
-    particles.push_back(fjParticle);
+      // check if particle is final state
+      const bool isFinalState = ((*itPar) -> status() == 1);
+      if (!isFinalState) {
+        continue;
+      } else {
+        ++nParTot;
+      }
 
-    // add particle to mc fastjet map
-    pair<int, pair<Jet::SRC, int>> jetPartPair(iCst, make_pair(Jet::SRC::PARTICLE, parID));
-    fjMap.insert(jetPartPair);
+      // check if particle is good
+      const bool isGoodPar = IsGoodParticle(*itPar);
+      if (!isGoodPar) {
+        continue;
+      } else {
+        ++nParAcc;
+      }
 
-    // fill QA histograms, increment sums and counters
-    m_hObjectQA[OBJECT::PART][INFO::PT]  -> Fill(fjParticle.perp());
-    m_hObjectQA[OBJECT::PART][INFO::ETA] -> Fill(fjParticle.pseudorapidity());
-    m_hObjectQA[OBJECT::PART][INFO::PHI] -> Fill(fjParticle.phi_std());
-    m_hObjectQA[OBJECT::PART][INFO::ENE] -> Fill(fjParticle.E());
-    eParSum += parE;
-    ++iCst;
-  }  // end particle loop
+      // grab particle info
+      const double parPx = (*itPar) -> momentum().px();
+      const double parPy = (*itPar) -> momentum().py();
+      const double parPz = (*itPar) -> momentum().pz();
+      const double parE  = (*itPar) -> momentum().e();
+
+      // make barcode negative to indicate if from background
+      int parID  = (*itPar) -> barcode();
+      if (isBkgd) {
+        parID *= -1.;
+      } 
+
+      // create pseudojet & add to constituent vector
+      fastjet::PseudoJet fjParticle(parPx, parPy, parPz, parE);
+      fjParticle.set_user_index(parID);
+      particles.push_back(fjParticle);
+
+      // add particle to mc fastjet map
+      pair<int, pair<Jet::SRC, int>> jetPartPair(iCst, make_pair(Jet::SRC::PARTICLE, parID));
+      fjMap.insert(jetPartPair);
+
+      // fill QA histograms, increment sums and counters
+      m_hObjectQA[OBJECT::PART][INFO::PT]  -> Fill(fjParticle.perp());
+      m_hObjectQA[OBJECT::PART][INFO::ETA] -> Fill(fjParticle.pseudorapidity());
+      m_hObjectQA[OBJECT::PART][INFO::PHI] -> Fill(fjParticle.phi_std());
+      m_hObjectQA[OBJECT::PART][INFO::ENE] -> Fill(fjParticle.E());
+      eParSum += parE;
+      ++iCst;
+    }  // end particle loop
+  }  // end subevent loop
 
   // fill QA histograms
   m_hNumObject[OBJECT::PART]             -> Fill(nParAcc);

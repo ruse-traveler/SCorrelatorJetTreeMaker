@@ -22,6 +22,11 @@ using namespace findNode;
 
 void SCorrelatorJetTree::GetEventVariables(PHCompositeNode* topNode) {
 
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetEventVariables(PHCompositeNode*) Grabbing event info..." << endl;
+  }
+
   m_recoVtx     = GetRecoVtx(topNode);
   m_recoNumTrks = GetNumTrks(topNode);
   m_recoSumECal = GetSumECalEne(topNode);
@@ -43,9 +48,15 @@ void SCorrelatorJetTree::GetPartonInfo(PHCompositeNode* topNode) {
     cout << "SCorrelatorJetTree::GetPartonInfo(PHCompositeNode*) Grabbing parton info..." << endl;
   }
 
+  // pick out relevant sub-sevent to grab
+  int iPartonEvt = 1;
+  if (m_isEmbed) {
+    iPartonEvt = 2;
+  }
+
   // loop over particles
   unsigned int     iOutPart = 0;
-  HepMC::GenEvent* mcEvt    = GetMcEvent(topNode);
+  HepMC::GenEvent* mcEvt    = GetMcEvent(topNode, iPartonEvt);
   for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
     // check if outputing parton
@@ -108,20 +119,32 @@ long SCorrelatorJetTree::GetNumChrgPars(PHCompositeNode* topNode) {
     cout << "SCorrelatorJetTree::GetNumChrgPars(PHCompositeNode*) Calculating no. of charged particles..." << endl;
   }
 
-  // loop over particles
-  long             nPar  = 0;
-  HepMC::GenEvent* mcEvt = GetMcEvent(topNode);
-  for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
+  // determine what subevents to grab
+  vector<int> vecEvtsToGrab;
+  if (m_isEmbed) {
+    vecEvtsToGrab.push_back(2);
+  } else {
+    vecEvtsToGrab.push_back(1);
+  }
 
-    // check if particle is final state
-    const bool isFinalState = ((*itPar) -> status() == 1);
-    if (!isFinalState) continue;
+  // loop over subevents
+  long nPar = 0;
+  for (const int evtToGrab : vecEvtsToGrab) {
 
-    // if good, add to count
-    const bool isGoodPar = IsGoodParticle(*itPar);
-    if (isGoodPar) ++nPar;
+    // loop over particles
+    HepMC::GenEvent* mcEvt = GetMcEvent(topNode, evtToGrab);
+    for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
-  }  // end particle loop
+      // check if particle is final state
+      const bool isFinalState = ((*itPar) -> status() == 1);
+      if (!isFinalState) continue;
+
+      // if good, add to count
+      const bool isGoodPar = IsGoodParticle(*itPar);
+      if (isGoodPar) ++nPar;
+
+    }  // end particle loop
+  }  // end subevent loop
   return nPar;
 
 }  // end 'GetNumChrgPars(PHCompositeNode*)'
@@ -240,20 +263,31 @@ double SCorrelatorJetTree::GetSumParEne(PHCompositeNode* topNode) {
     cout << "SCorrelatorJetTree::GetSumParEne(PHComposite*) Calculating sum of particle energy..." << endl;
   }
 
-  // loop over particles
-  double           eSumPar = 0.;
-  HepMC::GenEvent* mcEvt   = GetMcEvent(topNode);
-  for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
+  // determine what subevents to grab
+  vector<int> vecEvtsToGrab;
+  if (m_isEmbed) {
+    vecEvtsToGrab.push_back(2);
+  } else {
+    vecEvtsToGrab.push_back(1);
+  }
 
-    // check if particle is final state
-    const bool isFinalState = ((*itPar) -> status() == 1);
-    if (!isFinalState) continue;
+  // loop over subevents
+  double eSumPar = 0.;
+  for (const int evtToGrab : vecEvtsToGrab) {
 
-    // if good, add to count
-    const bool isGoodPar = IsGoodParticle(*itPar, true);
-    if (isGoodPar) eSumPar += (*itPar) -> momentum().e();
+    HepMC::GenEvent* mcEvt = GetMcEvent(topNode, evtToGrab);
+    for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
 
-  }  // end particle loop
+      // check if particle is final state
+      const bool isFinalState = ((*itPar) -> status() == 1);
+      if (!isFinalState) continue;
+
+      // if good, add to count
+      const bool isGoodPar = IsGoodParticle(*itPar, true);
+      if (isGoodPar) eSumPar += (*itPar) -> momentum().e();
+
+    }  // end particle loop
+  }  // end subevent loop
   return eSumPar;
 
 }  // end 'GetSumParEne(PHCompositeNode*)'

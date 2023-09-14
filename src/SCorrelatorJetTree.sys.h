@@ -921,6 +921,36 @@ int SCorrelatorJetTree::CreateJetNode(PHCompositeNode* topNode) {
 
 
 
+int SCorrelatorJetTree::GetEmbedID(PHCompositeNode* topNode, const int iEvtToGrab) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::GetEmbedID(PHCompositeNode*) Grabbing embedding ID from MC subevent #" << iEvtToGrab << "..." << endl;
+  }
+
+  // grab mc event map
+  PHHepMCGenEventMap* mapMcEvts = findNode::getClass<PHHepMCGenEventMap>(topNode, "PHHepMCGenEventMap");
+  if (!mapMcEvts) {
+    cerr << PHWHERE
+         << "PANIC: HEPMC event map node is missing!"
+         << endl;
+    assert(mapMcEvts);
+  }
+
+  // grab mc event & return embedding id
+  PHHepMCGenEvent* mcEvtStart = mapMcEvts -> get(iEvtToGrab);
+  if (!mcEvtStart) {
+    cerr << PHWHERE
+         << "PANIC: Couldn't grab start of mc events!"
+         << endl;
+    assert(mcEvtStart);
+  }
+  return mcEvtStart -> get_embedding_id();
+
+}  // end 'GetEmbedID(PHCompositeNode*, int)'
+
+
+
 SvtxTrackMap* SCorrelatorJetTree::GetTrackMap(PHCompositeNode* topNode) {
 
   // print debug statement
@@ -975,11 +1005,11 @@ GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode* topNode) {
 
 
 
-HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode* topNode) {
+HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode* topNode, const int iEvtToGrab) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::GetMcEvent(PHCompositeNode*) Grabbing mc event..." << endl;
+    cout << "SCorrelatorJetTree::GetMcEvent(PHCompositeNode*, int) Grabbing mc subevent #" << iEvtToGrab << "..." << endl;
   }
 
   // grab mc event map
@@ -992,7 +1022,7 @@ HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode* topNode) {
   }
 
   // grab mc event & check if good
-  PHHepMCGenEvent* mcEvtStart = mapMcEvts -> get(2);
+  PHHepMCGenEvent* mcEvtStart = mapMcEvts -> get(iEvtToGrab);
   if (!mcEvtStart) {
     cerr << PHWHERE
          << "PANIC: Couldn't grab start of mc events!"
@@ -1009,7 +1039,7 @@ HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode* topNode) {
   }
   return mcEvt;
 
-}  // end 'GetMcEvent(PHCompositeNode*)'
+}  // end 'GetMcEvent(PHCompositeNode*, int)'
 
 
 

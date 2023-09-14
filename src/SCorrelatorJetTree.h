@@ -298,9 +298,10 @@ class SCorrelatorJetTree : public SubsysReco {
     void                          SaveOutput();
     void                          ResetVariables();
     int                           CreateJetNode(PHCompositeNode* topNode);
+    int                           GetEmbedID(PHCompositeNode* topNode, const int iEvtToGrab = 1);
     SvtxTrackMap*                 GetTrackMap(PHCompositeNode* topNode);
     GlobalVertex*                 GetGlobalVertex(PHCompositeNode* topNode);
-    HepMC::GenEvent*              GetMcEvent(PHCompositeNode* topNode);
+    HepMC::GenEvent*              GetMcEvent(PHCompositeNode* topNode, const int iEvtToGrab = 1);
     RawClusterContainer*          GetClusterStore(PHCompositeNode* topNode, const TString sNodeName);
     ParticleFlowElementContainer* GetFlowStore(PHCompositeNode* topNode);
 
