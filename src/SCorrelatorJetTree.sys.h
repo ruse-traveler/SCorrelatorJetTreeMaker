@@ -37,6 +37,7 @@ void SCorrelatorJetTree::InitVariables() {
   m_partonMom[0] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
   m_partonMom[1] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
   m_vecEvtsToGrab.clear();
+  m_mapCstToEmbedID.clear();
 
   // initialize truth (inclusive) tree address members
   m_trueVtx           = CLHEP::Hep3Vector(-9999., -9999., -9999.);
@@ -60,7 +61,7 @@ void SCorrelatorJetTree::InitVariables() {
   m_trueJetPhi.clear();
   m_trueJetArea.clear();
   m_trueCstID.clear();
-  m_trueCstIsBkgd.clear();
+  m_trueCstEmbedID.clear();
   m_trueCstZ.clear();
   m_trueCstDr.clear();
   m_trueCstE.clear();
@@ -304,7 +305,7 @@ void SCorrelatorJetTree::InitTrees() {
   m_trueTree -> Branch("JetPhi",         &m_trueJetPhi);
   m_trueTree -> Branch("JetArea",        &m_trueJetArea);
   m_trueTree -> Branch("CstID",          &m_trueCstID);
-  m_trueTree -> Branch("CstIsBkgd",      &m_trueCstIsBkgd);
+  m_trueTree -> Branch("CstEmbedID",     &m_trueCstEmbedID);
   m_trueTree -> Branch("CstZ",           &m_trueCstZ);
   m_trueTree -> Branch("CstDr",          &m_trueCstDr);
   m_trueTree -> Branch("CstEnergy",      &m_trueCstE);
@@ -383,7 +384,7 @@ void SCorrelatorJetTree::FillTrueTree() {
   m_trueJetPhi.clear();
   m_trueJetArea.clear();
   m_trueCstID.clear();
-  m_trueCstIsBkgd.clear();
+  m_trueCstEmbedID.clear();
   m_trueCstZ.clear();
   m_trueCstDr.clear();
   m_trueCstE.clear();
@@ -393,7 +394,7 @@ void SCorrelatorJetTree::FillTrueTree() {
 
   // declare vectors to storing constituents
   vector<int>    vecTruCstID;
-  vector<int>    vecTruCstIsBkgd;
+  vector<int>    vecTruCstEmbedID;
   vector<double> vecTruCstZ;
   vector<double> vecTruCstDr;
   vector<double> vecTruCstE;
@@ -428,7 +429,7 @@ void SCorrelatorJetTree::FillTrueTree() {
 
     // clear constituent vectors
     vecTruCstID.clear();
-    vecTruCstIsBkgd.clear();
+    vecTruCstEmbedID.clear();
     vecTruCstZ.clear();
     vecTruCstDr.clear();
     vecTruCstE.clear();
@@ -454,13 +455,13 @@ void SCorrelatorJetTree::FillTrueTree() {
       const double cstDh  = cstEta - jetEta;
       const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
 
-      // determine if constituent is background or not
-      const int  cstID     = trueCsts[iTruCst].user_index();
-      const bool cstIsBkgd = (cstID <= 0);
+      // get barcode and embedding ID
+      const int cstID   = trueCsts[iTruCst].user_index();
+      const int embedID = m_mapCstToEmbedID[cstID];
 
       // add csts to vectors
       vecTruCstID.push_back(abs(cstID));
-      vecTruCstIsBkgd.push_back(cstIsBkgd);
+      vecTruCstEmbedID.push_back(embedID);
       vecTruCstZ.push_back(cstZ);
       vecTruCstDr.push_back(cstDr);
       vecTruCstE.push_back(cstE);
@@ -485,7 +486,7 @@ void SCorrelatorJetTree::FillTrueTree() {
     m_trueJetPhi.push_back(jetPhi);
     m_trueJetArea.push_back(jetArea);
     m_trueCstID.push_back(vecTruCstID);
-    m_trueCstIsBkgd.push_back(vecTruCstIsBkgd);
+    m_trueCstEmbedID.push_back(vecTruCstEmbedID);
     m_trueCstZ.push_back(vecTruCstZ);
     m_trueCstDr.push_back(vecTruCstDr);
     m_trueCstE.push_back(vecTruCstE);
@@ -793,6 +794,8 @@ void SCorrelatorJetTree::ResetVariables() {
   m_partonID[1]  = -9999;
   m_partonMom[0] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
   m_partonMom[1] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_vecEvtsToGrab.clear();
+  m_mapCstToEmbedID.clear();
 
   // reset truth (inclusive) tree variables
   m_trueVtx           = CLHEP::Hep3Vector(-9999., -9999., -9999.);
@@ -812,10 +815,11 @@ void SCorrelatorJetTree::ResetVariables() {
   m_trueJetID.clear();
   m_trueJetE.clear();
   m_trueJetPt.clear();
-  m_trueJetEta.clear();
-    
+  m_trueJetEta.clear();    
   m_trueJetPhi.clear();
   m_trueJetArea.clear();
+  m_trueCstID.clear();
+  m_trueCstEmbedID.clear();
   m_trueCstZ.clear();
   m_trueCstDr.clear();
   m_trueCstE.clear();

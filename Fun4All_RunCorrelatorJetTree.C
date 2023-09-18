@@ -98,7 +98,7 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   // jet tree general parameters
   const bool isMC(true);
   const bool isEmbed(true);
-  const bool doDebug(true);
+  const bool doDebug(false);
   const bool saveDst(true);
   const bool doQuality(true);
   const bool requireSiSeeds(true);

@@ -18,6 +18,7 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 // standard c include
+#include <map>
 #include <string>
 #include <vector>
 #include <cassert>
@@ -334,17 +335,18 @@ class SCorrelatorJetTree : public SubsysReco {
     TH1D* m_hNumCstAccept[CONST::NCstType][CONST::NMoment];
 
     // system members
-    bool        m_doQualityPlots = true;
-    bool        m_requireSiSeeds = true;
-    bool        m_saveDST        = false;
-    bool        m_isMC           = true;
-    bool        m_isEmbed        = false;
-    bool        m_doDebug        = false;
-    bool        m_addTracks      = true;
-    bool        m_addFlow        = false;
-    bool        m_addECal        = false;
-    bool        m_addHCal        = false;
-    vector<int> m_vecEvtsToGrab;
+    bool          m_doQualityPlots = true;
+    bool          m_requireSiSeeds = true;
+    bool          m_saveDST        = false;
+    bool          m_isMC           = true;
+    bool          m_isEmbed        = false;
+    bool          m_doDebug        = false;
+    bool          m_addTracks      = true;
+    bool          m_addFlow        = false;
+    bool          m_addECal        = false;
+    bool          m_addHCal        = false;
+    vector<int>   m_vecEvtsToGrab;
+    map<int, int> m_mapCstToEmbedID;
 
     // particle acceptance parameters
     double m_parPtRange[CONST::NRange]  = {0.1,  9999.};
@@ -410,7 +412,7 @@ class SCorrelatorJetTree : public SubsysReco {
     vector<double>         m_trueJetArea;
     // output truth constituent variables
     vector<vector<int>>    m_trueCstID;
-    vector<vector<int>>    m_trueCstIsBkgd;
+    vector<vector<int>>    m_trueCstEmbedID;
     vector<vector<double>> m_trueCstZ;
     vector<vector<double>> m_trueCstDr;
     vector<vector<double>> m_trueCstE;

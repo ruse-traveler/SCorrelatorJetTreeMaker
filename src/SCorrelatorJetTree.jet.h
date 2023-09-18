@@ -98,7 +98,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet
 
     // check if background
     const int  embedID = GetEmbedID(topNode, evtToGrab);
-    const bool isBkgd  = (embedID <= 0);
+    //const bool isBkgd  = (embedID <= 0);
 
     // loop over particles in subevent
     for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
@@ -124,12 +124,10 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet
       const double parPy = (*itPar) -> momentum().py();
       const double parPz = (*itPar) -> momentum().pz();
       const double parE  = (*itPar) -> momentum().e();
+      const int    parID = (*itPar) -> barcode();
 
-      // make barcode negative to indicate if from background
-      int parID  = (*itPar) -> barcode();
-      if (isBkgd) {
-        parID *= -1.;
-      }
+      // map barcode onto relevant embeddingID
+      m_mapCstToEmbedID[parID] = embedID;
 
       // create pseudojet & add to constituent vector
       fastjet::PseudoJet fjParticle(parPx, parPy, parPz, parE);

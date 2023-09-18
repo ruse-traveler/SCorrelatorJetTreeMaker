@@ -122,14 +122,16 @@ int SCorrelatorJetTree::process_event(PHCompositeNode* topNode) {
     cout << "SCorrelatorJetTree::process_event(PHCompositeNode*) Processing Event..." << endl;
   }
 
+  // reset event-wise variables & members
+  ResetVariables();
+
   // initialize evaluator & determine subevts to grab for event
   if (m_isMC) {
     InitEvals(topNode);
     DetermineEvtsToGrab(topNode);
   }
 
-  // reset for event and get event-wise variables
-  ResetVariables();
+  // get event-wise variables
   GetEventVariables(topNode);
   if (m_isMC) {
     GetPartonInfo(topNode);
