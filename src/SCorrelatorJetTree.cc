@@ -122,9 +122,10 @@ int SCorrelatorJetTree::process_event(PHCompositeNode* topNode) {
     cout << "SCorrelatorJetTree::process_event(PHCompositeNode*) Processing Event..." << endl;
   }
 
-  // initialize evaluator for event
+  // initialize evaluator & determine subevts to grab for event
   if (m_isMC) {
     InitEvals(topNode);
+    DetermineEvtsToGrab(topNode);
   }
 
   // reset for event and get event-wise variables

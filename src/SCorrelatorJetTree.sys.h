@@ -31,11 +31,12 @@ void SCorrelatorJetTree::InitVariables() {
     cout << "SCorrelatorJetTree::InitVariables() Initializing class members..." << endl;
   }
 
-  // initialize parton variables
+  // initialize parton and other variables
   m_partonID[0]  = -9999;
   m_partonID[1]  = -9999;
   m_partonMom[0] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
   m_partonMom[1] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
+  m_vecEvtsToGrab.clear();
 
   // initialize truth (inclusive) tree address members
   m_trueVtx           = CLHEP::Hep3Vector(-9999., -9999., -9999.);
@@ -787,7 +788,7 @@ void SCorrelatorJetTree::ResetVariables() {
   m_trueClust  = NULL;
   m_recoClust  = NULL;
 
-  // reset parton variables
+  // reset parton and other variables
   m_partonID[0]  = -9999;
   m_partonID[1]  = -9999;
   m_partonMom[0] = CLHEP::Hep3Vector(-9999., -9999., -9999.);
@@ -812,6 +813,7 @@ void SCorrelatorJetTree::ResetVariables() {
   m_trueJetE.clear();
   m_trueJetPt.clear();
   m_trueJetEta.clear();
+    
   m_trueJetPhi.clear();
   m_trueJetArea.clear();
   m_trueCstZ.clear();
@@ -844,6 +846,31 @@ void SCorrelatorJetTree::ResetVariables() {
   return;
 
 }  // end 'ResetTreeVariables()
+
+
+void SCorrelatorJetTree::DetermineEvtsToGrab(PHCompositeNode* topNode) {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::DetermineEvtsToGrab() Determining which subevents to grab..." << endl;
+  }
+
+  // make sure vector is clear
+  m_vecEvtsToGrab.clear();
+
+  // if not embedding, grab signal event
+  // otherwise add all subevents
+  if (!m_isEmbed) {
+    m_vecEvtsToGrab.push_back(1);
+  } else {
+    PHHepMCGenEventMap* mapMcEvts = findNode::getClass<PHHepMCGenEventMap>(topNode, "PHHepMCGenEventMap");
+    for (PHHepMCGenEventMap::ConstIter itEvt = mapMcEvts -> begin(); itEvt != mapMcEvts -> end(); ++itEvt) {
+      m_vecEvtsToGrab.push_back(itEvt -> second -> get_embedding_id());
+    }
+  }
+  return;
+
+}  // end 'DetermineEvtsToGrab()'
 
 
 

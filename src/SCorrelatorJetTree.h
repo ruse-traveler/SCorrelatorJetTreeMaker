@@ -297,6 +297,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void                          FillRecoTree();
     void                          SaveOutput();
     void                          ResetVariables();
+    void                          DetermineEvtsToGrab(PHCompositeNode* topNode);
     int                           CreateJetNode(PHCompositeNode* topNode);
     int                           GetEmbedID(PHCompositeNode* topNode, const int iEvtToGrab = 1);
     SvtxTrackMap*                 GetTrackMap(PHCompositeNode* topNode);
@@ -333,16 +334,17 @@ class SCorrelatorJetTree : public SubsysReco {
     TH1D* m_hNumCstAccept[CONST::NCstType][CONST::NMoment];
 
     // system members
-    bool m_doQualityPlots = true;
-    bool m_requireSiSeeds = true;
-    bool m_saveDST        = false;
-    bool m_isMC           = true;
-    bool m_isEmbed        = false;
-    bool m_doDebug        = false;
-    bool m_addTracks      = true;
-    bool m_addFlow        = false;
-    bool m_addECal        = false;
-    bool m_addHCal        = false;
+    bool        m_doQualityPlots = true;
+    bool        m_requireSiSeeds = true;
+    bool        m_saveDST        = false;
+    bool        m_isMC           = true;
+    bool        m_isEmbed        = false;
+    bool        m_doDebug        = false;
+    bool        m_addTracks      = true;
+    bool        m_addFlow        = false;
+    bool        m_addECal        = false;
+    bool        m_addHCal        = false;
+    vector<int> m_vecEvtsToGrab;
 
     // particle acceptance parameters
     double m_parPtRange[CONST::NRange]  = {0.1,  9999.};

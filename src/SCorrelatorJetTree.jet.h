@@ -86,28 +86,19 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet
     cout << "SCorrelatorJetTree::AddParticles(PHComposite*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding MC particles..." << endl;
   }
 
-  // determine what subevents to grab
-  vector<int> vecEvtsToGrab;
-  if (m_isEmbed) {
-    vecEvtsToGrab.push_back(0);
-    vecEvtsToGrab.push_back(2);
-  } else {
-    vecEvtsToGrab.push_back(1);
-  }
-
   // loop over relevant subevents
   unsigned int iCst    = particles.size();
   unsigned int nParTot = 0;
   unsigned int nParAcc = 0;
   double       eParSum = 0.;
-  for (const int evtToGrab : vecEvtsToGrab) {
+  for (const int evtToGrab : m_vecEvtsToGrab) {
 
     // grab subevent
     HepMC::GenEvent* mcEvt = GetMcEvent(topNode, evtToGrab);
 
     // check if background
     const int  embedID = GetEmbedID(topNode, evtToGrab);
-    const bool isBkgd  = (embedID == 0);
+    const bool isBkgd  = (embedID <= 0);
 
     // loop over particles in subevent
     for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
@@ -138,7 +129,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet
       int parID  = (*itPar) -> barcode();
       if (isBkgd) {
         parID *= -1.;
-      } 
+      }
 
       // create pseudojet & add to constituent vector
       fastjet::PseudoJet fjParticle(parPx, parPy, parPz, parE);

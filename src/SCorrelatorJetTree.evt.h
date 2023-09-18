@@ -119,17 +119,9 @@ long SCorrelatorJetTree::GetNumChrgPars(PHCompositeNode* topNode) {
     cout << "SCorrelatorJetTree::GetNumChrgPars(PHCompositeNode*) Calculating no. of charged particles..." << endl;
   }
 
-  // determine what subevents to grab
-  vector<int> vecEvtsToGrab;
-  if (m_isEmbed) {
-    vecEvtsToGrab.push_back(2);
-  } else {
-    vecEvtsToGrab.push_back(1);
-  }
-
   // loop over subevents
   long nPar = 0;
-  for (const int evtToGrab : vecEvtsToGrab) {
+  for (const int evtToGrab : m_vecEvtsToGrab) {
 
     // loop over particles
     HepMC::GenEvent* mcEvt = GetMcEvent(topNode, evtToGrab);
@@ -263,17 +255,9 @@ double SCorrelatorJetTree::GetSumParEne(PHCompositeNode* topNode) {
     cout << "SCorrelatorJetTree::GetSumParEne(PHComposite*) Calculating sum of particle energy..." << endl;
   }
 
-  // determine what subevents to grab
-  vector<int> vecEvtsToGrab;
-  if (m_isEmbed) {
-    vecEvtsToGrab.push_back(2);
-  } else {
-    vecEvtsToGrab.push_back(1);
-  }
-
   // loop over subevents
   double eSumPar = 0.;
-  for (const int evtToGrab : vecEvtsToGrab) {
+  for (const int evtToGrab : m_vecEvtsToGrab) {
 
     HepMC::GenEvent* mcEvt = GetMcEvent(topNode, evtToGrab);
     for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
