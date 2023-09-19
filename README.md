@@ -6,7 +6,7 @@ Derived from code by Antonio Silva (thanks!!)
 
 ## Usage
 
-After copying the source files (in `src/`), compile the module in the usual manner:
+After copying the source files (in `src/`), compile the module using the `sphx-build` script in `src`:
 
 ```
 ./sphx-build
