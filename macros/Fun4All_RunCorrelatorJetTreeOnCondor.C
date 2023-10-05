@@ -59,7 +59,7 @@ using namespace std;
 
 // global constants
 static const string       SInListDefault   = "test.list";
-static const string       SOutDirDefault   = "/sphenix/user/danderson/eec/output/condor/";
+static const string       SOutDirDefault   = "/sphenix/user/danderson/eec/SCorrelatorJetTree/submit/ppJet10GeV/output";
 static const string       SRecoNameDefault = "CorrelatorJetTree";
 static const int          NEvtDefault      = 10;
 static const int          VerbDefault      = 0;
@@ -88,6 +88,7 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
 
   // jet tree general parameters
   const bool isMC(true);
+  const bool isEmbed(false);
   const bool doDebug(false);
   const bool saveDst(true);
   const bool doQuality(true);
@@ -108,15 +109,15 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   const pair<double, double> etaParRange = {-1.1, 1.1};
 
   // track acceptance
-  const pair<double, double> ptTrackRange      = {0.2,  100.};
-  const pair<double, double> etaTrackRange     = {-1.1, 1.1};
-  const pair<double, double> qualTrackRange    = {0.,   10.};
-  const pair<double, double> nMvtxTrackRange   = {2.,   100.};
-  const pair<double, double> nInttTrackRange   = {1.,   100.};
-  const pair<double, double> nTpcTrackRange    = {24.,  100.};
-  const pair<double, double> dcaTrackRangeXY   = {-5.,  5.};
-  const pair<double, double> dcaTrackRangeZ    = {-5.,  5.};
-  const pair<double, double> deltaPtTrackRange = {0., 0.5};
+  const pair<double, double> ptTrackRange      = {0.2,   100.};
+  const pair<double, double> etaTrackRange     = {-1.1,  1.1};
+  const pair<double, double> qualTrackRange    = {0.,    10.};
+  const pair<double, double> nMvtxTrackRange   = {2.,    100.};
+  const pair<double, double> nInttTrackRange   = {1.,    100.};
+  const pair<double, double> nTpcTrackRange    = {33.,   100.};
+  const pair<double, double> dcaTrackRangeXY   = {-0.06, 0.06};
+  const pair<double, double> dcaTrackRangeZ    = {-0.20, 0.20};
+  const pair<double, double> deltaPtTrackRange = {0.,    0.04};
 
   // particle flow acceptance
   const pair<double, double> ptFlowRange  = {0.2,  9999.};
@@ -245,7 +246,7 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   }
 
   // create correlator jet tree
-  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", outputRecoFile, isMC, doDebug);
+  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", outputRecoFile, isMC, isEmbed, doDebug);
   correlatorJetTree -> Verbosity(verbosity);
   correlatorJetTree -> SetDoQualityPlots(doQuality);
   correlatorJetTree -> SetAddTracks(addTracks);
