@@ -96,9 +96,8 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet
     // grab subevent
     HepMC::GenEvent* mcEvt = GetMcEvent(topNode, evtToGrab);
 
-    // check if background
-    const int  embedID = GetEmbedID(topNode, evtToGrab);
-    //const bool isBkgd  = (embedID <= 0);
+    // grab embedding ID
+    const int embedID = GetEmbedID(topNode, evtToGrab);
 
     // loop over particles in subevent
     for (HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin(); itPar != mcEvt -> particles_end(); ++itPar) {
@@ -134,7 +133,7 @@ void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet
       fjParticle.set_user_index(parID);
       particles.push_back(fjParticle);
 
-      // add particle to mc fastjet map
+      
       pair<int, pair<Jet::SRC, int>> jetPartPair(iCst, make_pair(Jet::SRC::PARTICLE, parID));
       fjMap.insert(jetPartPair);
 
@@ -223,8 +222,10 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& 
     const double trkDcaXY   = trkDcaPair.first;
     const double trkDcaZ    = trkDcaPair.second;
     const int    trkNumTpc  = GetNumLayer(track, SUBSYS::TPC);
+    const int    trkNumIntt = GetNumLayer(track, SUBSYS::INTT);
+    const int    trkNumMvtx = GetNumLayer(track, SUBSYS::MVTX);
 
-    // fill QA histograms, increment sums and counters
+    // fill QA histograms
     m_hObjectQA[OBJECT::TRACK][INFO::PT]      -> Fill(fjTrack.perp());
     m_hObjectQA[OBJECT::TRACK][INFO::ETA]     -> Fill(fjTrack.pseudorapidity());
     m_hObjectQA[OBJECT::TRACK][INFO::PHI]     -> Fill(fjTrack.phi_std());
@@ -234,8 +235,24 @@ void SCorrelatorJetTree::AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& 
     m_hObjectQA[OBJECT::TRACK][INFO::DCAZ]    -> Fill(trkDcaZ);
     m_hObjectQA[OBJECT::TRACK][INFO::DELTAPT] -> Fill(trkDeltaPt);
     m_hObjectQA[OBJECT::TRACK][INFO::NTPC]    -> Fill(trkNumTpc);
+
+    // fill QA tuple, increment sums and counters
+    m_ntTrkQA -> Fill(
+      (float) fjTrack.perp(),
+      (float) fjTrack.pseudorapidity(),
+      (float) fjTrack.phi_std(),
+      (float) fjTrack.E(),
+      (float) trkDcaXY,
+      (float) trkDcaZ,
+      (float) trkDeltaPt,
+      (float) trkQuality,
+      (float) trkNumMvtx,
+      (float) trkNumIntt,
+      (float) trkNumTpc
+    );
     eTrkSum += trkE;
     ++iCst;
+
   }  // end track loop
 
   // fill QA histograms

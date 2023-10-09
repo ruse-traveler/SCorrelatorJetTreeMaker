@@ -80,13 +80,13 @@
 #include <phhepmc/PHHepMCGenEvent.h>
 #include <phhepmc/PHHepMCGenEventMap.h>
 // root includes
-#include "TH1.h"
-#include "TH2.h"
-#include "TFile.h"
-#include "TTree.h"
-#include "TMath.h"
-#include "TNtuple.h"
-#include "TDirectory.h"
+#include <TH1.h>
+#include <TH2.h>
+#include <TFile.h>
+#include <TTree.h>
+#include <TMath.h>
+#include <TNtuple.h>
+#include <TDirectory.h>
 
 #pragma GCC diagnostic pop
 
@@ -292,6 +292,7 @@ class SCorrelatorJetTree : public SubsysReco {
     // system methods (*.sys.h)
     void                          InitVariables();
     void                          InitHists();
+    void                          InitTuples();
     void                          InitTrees();
     void                          InitEvals(PHCompositeNode* topNode);
     void                          FillTrueTree();
@@ -327,12 +328,15 @@ class SCorrelatorJetTree : public SubsysReco {
     bool isTpcLayerHit[CONST::NTpcLayer]   = {false};
 
     // QA members
-    TH1D* m_hJetArea[CONST::NJetType];
-    TH1D* m_hJetNumCst[CONST::NJetType];
-    TH1D* m_hNumObject[CONST::NObjType];
-    TH1D* m_hSumCstEne[CONST::NCstType];
-    TH1D* m_hObjectQA[CONST::NObjType][CONST::NInfoQA];
-    TH1D* m_hNumCstAccept[CONST::NCstType][CONST::NMoment];
+    // TODO factorize out QA-related operations
+    // TODO replace all QA histograms with tuples
+    TH1D*    m_hJetArea[CONST::NJetType];
+    TH1D*    m_hJetNumCst[CONST::NJetType];
+    TH1D*    m_hNumObject[CONST::NObjType];
+    TH1D*    m_hSumCstEne[CONST::NCstType];
+    TH1D*    m_hObjectQA[CONST::NObjType][CONST::NInfoQA];
+    TH1D*    m_hNumCstAccept[CONST::NCstType][CONST::NMoment];
+    TNtuple* m_ntTrkQA = NULL;
 
     // system members
     bool          m_doQualityPlots = true;

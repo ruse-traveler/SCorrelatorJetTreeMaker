@@ -274,6 +274,43 @@ void SCorrelatorJetTree::InitHists() {
 
 
 
+void SCorrelatorJetTree::InitTuples() {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::InitTuples() Initializing output tuples..." << endl;
+  }
+
+  // track QA leaves
+  const vector<string> vecTrkQALeaves = {
+    "pt",
+    "eta",
+    "phi",
+    "energy",
+    "dcaxy",
+    "dcaz",
+    "deltapt",
+    "quality",
+    "nmvtxlayer",
+    "ninttlayer",
+    "ntpclayer"
+  };
+
+  // flatten leaf list
+  string argTrkQALeaves("");
+  for (size_t iLeaf = 0; iLeaf < vecTrkQALeaves.size(); iLeaf++) {
+    argTrkQALeaves.append(vecTrkQALeaves[iLeaf]);
+    if ((iLeaf + 1) != vecTrkQALeaves.size()) {
+      argTrkQALeaves.append(":");
+    }
+  }
+
+  m_ntTrkQA = new TNtuple("ntTrkQA", "Track QA", argTrkQALeaves.data());
+  return;
+
+}  // end 'InitTuples()'
+
+
 void SCorrelatorJetTree::InitTrees() {
 
   // print debug statement
@@ -763,6 +800,10 @@ void SCorrelatorJetTree::SaveOutput() {
     m_hJetArea[1]   -> Write();
     m_hJetNumCst[1] -> Write();
   }
+
+  // save QA tuples
+  dQuality[0] -> cd();
+  m_ntTrkQA   -> Write();
 
   // save output trees
   m_outFile  -> cd();
