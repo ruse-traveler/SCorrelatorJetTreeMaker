@@ -19,6 +19,7 @@
 
 // standard c include
 #include <map>
+#include <array>
 #include <string>
 #include <vector>
 #include <cassert>
@@ -82,6 +83,7 @@
 // root includes
 #include <TH1.h>
 #include <TH2.h>
+#include <TF1.h>
 #include <TFile.h>
 #include <TTree.h>
 #include <TMath.h>
@@ -170,6 +172,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetTrackDcaRangeXY(const pair<double, double> dcaRangeXY);
     void SetTrackDcaRangeZ(const pair<double, double> dcaRangeZ);
     void SetTrackDeltaPtRange(const pair<double, double> deltaPtRange);
+    void SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, const pair<double, double> nSigma, const vector<double> paramDcaXY, const vector<double> paramDcaZ);
     void SetFlowPtRange(const pair<double, double> ptRange);
     void SetFlowEtaRange(const pair<double, double> etaRange);
     void SetECalPtRange(const pair<double, double> ptRange);
@@ -181,13 +184,17 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetJetParameters(const double rJet, const uint32_t jetType, const ALGO jetAlgo, const RECOMB recombScheme);
 
     // system getters
-    bool   GetAddFlow()        {return m_addFlow;}
-    bool   GetAddTracks()      {return m_addTracks;}
-    bool   GetAddECal()        {return m_addECal;}
-    bool   GetAddHCal()        {return m_addHCal;}
     bool   GetDoQualityPlots() {return m_doQualityPlots;}
+    bool   GetRequireSiSeeds() {return m_requireSiSeeds;}
+    bool   GetDoDcaSigmaCut()  {return m_doDcaSigmaCut;}
     bool   GetSaveDST()        {return m_saveDST;}
     bool   GetIsMC()           {return m_isMC;}
+    bool   GetIsEmbed()        {return m_isEmbed;}
+    bool   GetDoDebug()        {return m_doDebug;}
+    bool   GetAddTracks()      {return m_addTracks;}
+    bool   GetAddFlow()        {return m_addFlow;}
+    bool   GetAddECal()        {return m_addECal;}
+    bool   GetAddHCal()        {return m_addHCal;}
     string GetJetTreeName()    {return m_jetTreeName;}
 
     // acceptance getters
@@ -238,6 +245,7 @@ class SCorrelatorJetTree : public SubsysReco {
     enum CONST {
       NPart      = 2,
       NComp      = 3,
+      NParam     = 3,
       NRange     = 2,
       NMoment    = 2,
       NInfoQA    = 9,
@@ -294,6 +302,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void                          InitHists();
     void                          InitTuples();
     void                          InitTrees();
+    void                          InitFuncs();
     void                          InitEvals(PHCompositeNode* topNode);
     void                          FillTrueTree();
     void                          FillRecoTree();
@@ -341,6 +350,7 @@ class SCorrelatorJetTree : public SubsysReco {
     // system members
     bool          m_doQualityPlots = true;
     bool          m_requireSiSeeds = true;
+    bool          m_doDcaSigmaCut  = true;
     bool          m_saveDST        = false;
     bool          m_isMC           = true;
     bool          m_isEmbed        = false;
@@ -353,6 +363,7 @@ class SCorrelatorJetTree : public SubsysReco {
     map<int, int> m_mapCstToEmbedID;
 
     // particle acceptance parameters
+    // TODO convert most acceptances to pairs of structs
     double m_parPtRange[CONST::NRange]  = {0.1,  9999.};
     double m_parEtaRange[CONST::NRange] = {-1.1, 1.1};
 
@@ -376,6 +387,14 @@ class SCorrelatorJetTree : public SubsysReco {
     double m_ecalEtaRange[CONST::NRange] = {-1.1, 1.1};
     double m_hcalPtRange[CONST::NRange]  = {0.,   9999.};
     double m_hcalEtaRange[CONST::NRange] = {-1.1, 1.1};
+
+    // for pt-dependent dca cuts
+    TF1*                         m_fSigDcaXY   = NULL;
+    TF1*                         m_fSigDcaZ    = NULL;
+    double                       m_nSigCutXY   = 1.;
+    double                       m_nSigCutZ    = 1.;
+    array<double, CONST::NParam> m_parSigDcaXY = {1., 1., 1.};
+    array<double, CONST::NParam> m_parSigDcaZ  = {1., 1., 1.};
 
     // jet parameters
     double               m_jetR         = 0.4;

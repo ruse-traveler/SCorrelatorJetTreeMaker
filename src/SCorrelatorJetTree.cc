@@ -106,10 +106,11 @@ int SCorrelatorJetTree::Init(PHCompositeNode* topNode) {
     CreateJetNode(topNode);
   }
 
-  // initialize QA histograms, output trees, and evaluators (if needed)
+  // initialize QA histograms/tuples, output trees, and functions
   InitHists();
   InitTuples();
   InitTrees();
+  InitFuncs();
   return Fun4AllReturnCodes::EVENT_OK;
 
 }  // end 'Init(PHcompositeNode*)'

@@ -274,6 +274,29 @@ void SCorrelatorJetTree::InitHists() {
 
 
 
+void SCorrelatorJetTree::InitFuncs() {
+
+  // print debug statement
+  if (m_doDebug) {
+    cout << "SCorrelatorJetTree::InitFuncs() Initializing functions for internal calculations..." << endl;
+  }
+
+  // pt range of functions
+  const pair<float, float> ptRange = {0., 100.};
+
+  // initialize functions
+  m_fSigDcaXY = new TF1("fSigmaDcaXY", "[0]+[1]/x+[2]/(x*x)", ptRange.first, ptRange.second);
+  m_fSigDcaZ  = new TF1("fSigmaDcaZ",  "[0]+[1]/x+[2]/(x*x)", ptRange.first, ptRange.second);
+  for (uint8_t iParam = 0; iParam < CONST::NParam; iParam++) {
+    m_fSigDcaXY -> SetParameter(iParam, m_parSigDcaXY[iParam]);
+    m_fSigDcaZ  -> SetParameter(iParam, m_parSigDcaZ[iParam]);
+  }
+  return;
+
+}  // end 'InitFuncs()'
+
+
+
 void SCorrelatorJetTree::InitTuples() {
 
   // print debug statement

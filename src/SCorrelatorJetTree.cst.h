@@ -82,20 +82,29 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode)
   const double trkDcaXY = trkDca.first;
   const double trkDcaZ  = trkDca.second;
 
+  // check if dca is good
+  bool isInDcaRangeXY = false;
+  bool isInDcaRangeZ  = false;
+  if (m_doDcaSigmaCut) {
+    isInDcaRangeXY = (abs(trkDcaXY) < (m_nSigCutXY * (m_fSigDcaXY -> Eval(trkPt))));
+    isInDcaRangeZ  = (abs(trkDcaZ)  < (m_nSigCutZ  * (m_fSigDcaZ  -> Eval(trkPt))));
+  } else {
+    isInDcaRangeXY = ((trkDcaXY > m_trkDcaRangeXY[0]) && (trkDcaXY < m_trkDcaRangeXY[1]));
+    isInDcaRangeZ  = ((trkDcaZ  > m_trkDcaRangeZ[0])  && (trkDcaZ  < m_trkDcaRangeZ[1]));
+  }  
+
   // apply cuts
-  const bool   isSeedGood       = IsGoodTrackSeed(track);
-  const bool   isInPtRange      = ((trkPt      > m_trkPtRange[0])      && (trkPt      <  m_trkPtRange[1]));
-  const bool   isInEtaRange     = ((trkEta     > m_trkEtaRange[0])     && (trkEta     <  m_trkEtaRange[1]));
-  const bool   isInQualRange    = ((trkQual    > m_trkQualRange[0])    && (trkQual    <  m_trkQualRange[1]));
-  const bool   isInNMvtxRange   = ((trkNMvtx   > m_trkNMvtxRange[0])   && (trkNMvtx   <= m_trkNMvtxRange[1]));
-  const bool   isInNInttRange   = ((trkNIntt   > m_trkNInttRange[0])   && (trkNIntt   <= m_trkNInttRange[1]));
-  const bool   isInNTpcRange    = ((trkNTpc    > m_trkNTpcRange[0])    && (trkNTpc    <= m_trkNTpcRange[1]));
-  const bool   isInDcaRangeXY   = ((trkDcaXY   > m_trkDcaRangeXY[0])   && (trkDcaXY   <  m_trkDcaRangeXY[1]));
-  const bool   isInDcaRangeZ    = ((trkDcaZ    > m_trkDcaRangeZ[0])    && (trkDcaZ    <  m_trkDcaRangeZ[1]));
-  const bool   isInDeltaPtRange = ((trkDeltaPt > m_trkDeltaPtRange[0]) && (trkDeltaPt <  m_trkDeltaPtRange[1]));
-  const bool   isInNumRange     = (isInNMvtxRange && isInNInttRange && isInNTpcRange);
-  const bool   isInDcaRange     = (isInDcaRangeXY && isInDcaRangeZ);
-  const bool   isGoodTrack      = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange && isInDeltaPtRange);
+  const bool isSeedGood       = IsGoodTrackSeed(track);
+  const bool isInPtRange      = ((trkPt      > m_trkPtRange[0])      && (trkPt      <  m_trkPtRange[1]));
+  const bool isInEtaRange     = ((trkEta     > m_trkEtaRange[0])     && (trkEta     <  m_trkEtaRange[1]));
+  const bool isInQualRange    = ((trkQual    > m_trkQualRange[0])    && (trkQual    <  m_trkQualRange[1]));
+  const bool isInNMvtxRange   = ((trkNMvtx   > m_trkNMvtxRange[0])   && (trkNMvtx   <= m_trkNMvtxRange[1]));
+  const bool isInNInttRange   = ((trkNIntt   > m_trkNInttRange[0])   && (trkNIntt   <= m_trkNInttRange[1]));
+  const bool isInNTpcRange    = ((trkNTpc    > m_trkNTpcRange[0])    && (trkNTpc    <= m_trkNTpcRange[1]));
+  const bool isInDeltaPtRange = ((trkDeltaPt > m_trkDeltaPtRange[0]) && (trkDeltaPt <  m_trkDeltaPtRange[1]));
+  const bool isInNumRange     = (isInNMvtxRange && isInNInttRange && isInNTpcRange);
+  const bool isInDcaRange     = (isInDcaRangeXY && isInDcaRangeZ);
+  const bool isGoodTrack      = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange && isInDeltaPtRange);
   return isGoodTrack;
 
 }  // end 'IsGoodTrack(SvtxTrack*)'

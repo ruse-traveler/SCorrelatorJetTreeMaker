@@ -134,6 +134,41 @@ void SCorrelatorJetTree::SetTrackDeltaPtRange(const pair<double, double> deltaPt
 
 
 
+void SCorrelatorJetTree::SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, const pair<double, double> nSigma, const vector<double> paramDcaXY, const vector<double> paramDcaZ) {
+
+  m_doDcaSigmaCut = doDcaSigmaCut;
+  m_nSigCutXY     = nSigma.first;
+  m_nSigCutZ      = nSigma.second;
+  for (uint8_t iParam = 0; iParam < CONST::NParam; iParam++) {
+
+    // try to set dca xy values
+    try {
+      m_parSigDcaXY[iParam] = paramDcaXY.at(iParam);
+    } catch (std::out_of_range &out) {
+      cerr << "SCorrelatorJetTree::SetTrackDcaSigmaParameters: WARNING!\n"
+           << "  Tried to pass a vector of wrong size for sigma dca xy fit parameters!\n"
+           << "  Size of vector was " << paramDcaXY.size() << " but should've been " << CONST::NParam << "..."
+           << endl;
+      assert(paramDcaXY.size() == CONST::NParam);
+    }
+
+    // try to set dca z values
+    try {
+      m_parSigDcaZ[iParam] = paramDcaZ.at(iParam);
+    } catch (std::out_of_range &out) {
+      cerr << "SCorrelatorJetTree::SetTrackDcaSigmaParameters: WARNING!\n"
+           << "  Tried to pass a vector of wrong size for sigma dca z fit parameters!\n"
+           << "  Size of vector was " << paramDcaZ.size() << " but should've been " << CONST::NParam << "..."
+           << endl;
+      assert(paramDcaZ.size() == CONST::NParam);
+    }
+  }  // end parameter loop
+  return;
+
+}  // end 'SetTrackDcaSigmaParameters(bool, pair<double, double>, vector<double>, vector<double>)'
+
+
+
 void SCorrelatorJetTree::SetFlowPtRange(const pair<double, double> ptRange) {
 
   m_flowPtRange[0] = ptRange.first;
