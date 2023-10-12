@@ -93,6 +93,7 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   const bool saveDst(true);
   const bool doQuality(true);
   const bool requireSiSeeds(true);
+  const bool doDcaSigmaCut(true);
   const bool addTracks(true);
   const bool addECal(false);
   const bool addHCal(false);
@@ -118,6 +119,11 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
   const pair<double, double> dcaTrackRangeXY   = {-0.06, 0.06};
   const pair<double, double> dcaTrackRangeZ    = {-0.20, 0.20};
   const pair<double, double> deltaPtTrackRange = {0.,    0.04};
+
+  // for pt dependent dca cuts
+  const pair<double, double> nDcaSigmaTrack   = {3., 3.};
+  const vector<double>       dcaSigmaParamsXY = {-0.0095, 0.091, -0.029};
+  const vector<double>       dcaSigmaParamsZ  = {1.73,    26.1,  -9.45};
 
   // particle flow acceptance
   const pair<double, double> ptFlowRange  = {0.2,  9999.};
@@ -268,6 +274,9 @@ void Fun4All_RunCorrelatorJetTreeOnCondor(vector<string> sInputLists = {SInListD
     correlatorJetTree -> SetTrackDcaRangeXY(dcaTrackRangeXY);
     correlatorJetTree -> SetTrackDcaRangeZ(dcaTrackRangeZ);
     correlatorJetTree -> SetTrackDeltaPtRange(deltaPtTrackRange);
+    if (doDcaSigmaCut) {
+      correlatorJetTree -> SetTrackDcaSigmaParameters(doDcaSigmaCut, nDcaSigmaTrack, dcaSigmaParamsXY, dcaSigmaParamsZ);
+    }
   }
   if (addParticleFlow) {
     correlatorJetTree -> SetFlowPtRange(ptFlowRange);
