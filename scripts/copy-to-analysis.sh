@@ -44,7 +44,7 @@ files_to_copy[23]="src/sphx-build"
 files_to_copy[24]="scripts/HAddFilesFromList.rb"
 files_to_copy[25]="scripts/HAddFilesFromPattern.rb"
 files_to_copy[26]="scripts/MergeFilesFromList.rb"
-files_to_copy[27]="SplitFileLists.rb"
+files_to_copy[27]="scripts/SplitFileLists.rb"
 
 # do copying
 # TODO: automate detection/creation of sub-directories
