@@ -312,7 +312,10 @@ namespace SColdQcdCorrelatorAnalysis {
       "quality",
       "nmvtxlayer",
       "ninttlayer",
-      "ntpclayer"
+      "ntpclayer",
+      "vtxx",
+      "vtxy",
+      "vtxz"
     };
 
     // flatten leaf list
@@ -1065,27 +1068,25 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode* topNode) {
+  GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode* topNode, const int iVtxToGrab) {
 
     // print debug statement
     if (m_doDebug) {
       cout << "SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode*) Getting global vertex..." << endl;
     }
 
-    // get vertex map & check if good
-    GlobalVertexMap* mapVtx = findNode::getClass<GlobalVertexMap>(topNode, "GlobalVertexMap");
+    // get vertex map
+    GlobalVertexMap* mapVtx = GetVertexMap(topNode);
 
-    const bool isVtxMapGood = (mapVtx && !(mapVtx -> empty()));
-    if (!isVtxMapGood) {
-      cerr << PHWHERE
-           << "PANIC: GlobalVertexMap node is missing or empty!\n"
-           << "       Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
-           << endl;
-      assert(isVtxMapGood);
+    // get specified vertex
+    GlobalVertex* vtx = NULL;
+    if (iVtxToGrab < 0) {
+      vtx = mapVtx -> begin() -> second;
+    } else {
+      vtx = mapVtx -> get(iVtxToGrab);
     }
 
-    // grab vertex
-    GlobalVertex* vtx = mapVtx -> begin() -> second;
+    // check if good
     if (!vtx) {
       cerr << PHWHERE
            << "PANIC: no vertex!"
@@ -1096,6 +1097,31 @@ namespace SColdQcdCorrelatorAnalysis {
 
   }  // end 'GetGlobalVertex(PHCompositeNode*, int)'
 
+
+
+  GlobalVertexMap* SCorrelatorJetTree::GetVertexMap(PHCompositeNode* topNode) {
+
+    // print debug statement
+    if (m_doDebug) {
+      cout << "SCorrelatorJetTree::GetVertexMap(PHCompositeNode*) Getting global vertex map..." << endl;
+    }
+
+    // get vertex map
+    GlobalVertexMap* mapVtx = findNode::getClass<GlobalVertexMap>(topNode, "GlobalVertexMap");
+
+    // check if good
+    const bool isVtxMapGood = (mapVtx && !(mapVtx -> empty()));
+    if (!isVtxMapGood) {
+      cerr << PHWHERE
+           << "PANIC: GlobalVertexMap node is missing or empty!\n"
+           << "       Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
+           << endl;
+      assert(isVtxMapGood);
+    }
+    return mapVtx;
+
+  }  // end 'GetVertexMap(PHCompositeNode*)'
+  
 
 
   HepMC::GenEvent* SCorrelatorJetTree::GetMcEvent(PHCompositeNode* topNode, const int iEvtToGrab) {

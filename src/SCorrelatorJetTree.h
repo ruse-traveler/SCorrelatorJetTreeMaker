@@ -275,7 +275,7 @@ namespace SColdQcdCorrelatorAnalysis {
       enum INFO     {PT, ETA, PHI, ENE, QUAL, DCAXY, DCAZ, DELTAPT, NTPC};
 
       // event methods (*.evt.h)
-      bool              IsGoodEvent(const CLHEP::Hep3Vector vtx);
+      bool              IsGoodVertex(const CLHEP::Hep3Vector vtx);
       void              GetEventVariables(PHCompositeNode* topNode);
       void              GetPartonInfo(PHCompositeNode* topNode);
       long              GetNumTrks(PHCompositeNode* topNode);
@@ -302,8 +302,9 @@ namespace SColdQcdCorrelatorAnalysis {
       bool                 IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
       bool                 IsGoodTrackSeed(SvtxTrack* track);
       bool                 IsOutgoingParton(HepMC::GenParticle* par);
-      pair<double, double> GetTrackDcaPair(SvtxTrack *track, PHCompositeNode* topNode);
-      double               GetTrackDeltaPt(SvtxTrack *track);
+      pair<double, double> GetTrackDcaPair(SvtxTrack* track, PHCompositeNode* topNode);
+      CLHEP::Hep3Vector    GetTrackVertex(SvtxTrack* track, PHCompositeNode* topNode);
+      double               GetTrackDeltaPt(SvtxTrack* track);
       float                GetParticleCharge(const int pid);
       int                  GetNumLayer(SvtxTrack* track, const uint8_t subsys = 0);
       int                  GetMatchID(SvtxTrack* track);
@@ -323,7 +324,8 @@ namespace SColdQcdCorrelatorAnalysis {
       int                           CreateJetNode(PHCompositeNode* topNode);
       int                           GetEmbedID(PHCompositeNode* topNode, const int iEvtToGrab = 1);
       SvtxTrackMap*                 GetTrackMap(PHCompositeNode* topNode);
-      GlobalVertex*                 GetGlobalVertex(PHCompositeNode* topNode);
+      GlobalVertex*                 GetGlobalVertex(PHCompositeNode* topNode, const int iVtxToGrab = -1);
+      GlobalVertexMap*              GetVertexMap(PHCompositeNode* topNode);
       HepMC::GenEvent*              GetMcEvent(PHCompositeNode* topNode, const int iEvtToGrab = 1);
       RawClusterContainer*          GetClusterStore(PHCompositeNode* topNode, const TString sNodeName);
       ParticleFlowElementContainer* GetFlowStore(PHCompositeNode* topNode);

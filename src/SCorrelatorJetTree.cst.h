@@ -76,14 +76,15 @@ namespace SColdQcdCorrelatorAnalysis {
     const double trkDcaXY = trkDca.first;
     const double trkDcaZ  = trkDca.second;
 
+
     // if above max pt used to fit dca width,
     // use value of fit at max pt
     double ptEvalXY = (trkPt > m_dcaPtFitMaxXY) ? m_dcaPtFitMaxXY : trkPt;
     double ptEvalZ  = (trkPt > m_dcaPtFitMaxZ)  ? m_dcaPtFitMaxZ  : trkPt;
 
     // check if dca is good
-    bool   isInDcaRangeXY = false;
-    bool   isInDcaRangeZ  = false;
+    bool isInDcaRangeXY = false;
+    bool isInDcaRangeZ  = false;
     if (m_doDcaSigmaCut) {
       isInDcaRangeXY = (abs(trkDcaXY) < (m_nSigCutXY * (m_fSigDcaXY -> Eval(ptEvalXY))));
       isInDcaRangeZ  = (abs(trkDcaZ)  < (m_nSigCutZ  * (m_fSigDcaZ  -> Eval(ptEvalZ))));
@@ -91,6 +92,14 @@ namespace SColdQcdCorrelatorAnalysis {
       isInDcaRangeXY = ((trkDcaXY > m_trkDcaRangeXY[0]) && (trkDcaXY < m_trkDcaRangeXY[1]));
       isInDcaRangeZ  = ((trkDcaZ  > m_trkDcaRangeZ[0])  && (trkDcaZ  < m_trkDcaRangeZ[1]));
     }  
+
+    // if applying vertex cuts, grab track
+    // vertex and check if good
+    bool isInVtxRange = true;
+    if (m_doVtxCut) {
+      CLHEP::Hep3Vector trkVtx = GetTrackVertex(track, topNode);
+      isInVtxRange = IsGoodVertex(trkVtx);
+    }
 
     // apply cuts
     const bool isSeedGood       = IsGoodTrackSeed(track);
@@ -103,7 +112,7 @@ namespace SColdQcdCorrelatorAnalysis {
     const bool isInDeltaPtRange = ((trkDeltaPt > m_trkDeltaPtRange[0]) && (trkDeltaPt <  m_trkDeltaPtRange[1]));
     const bool isInNumRange     = (isInNMvtxRange && isInNInttRange && isInNTpcRange);
     const bool isInDcaRange     = (isInDcaRangeXY && isInDcaRangeZ);
-    const bool isGoodTrack      = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange && isInDeltaPtRange);
+    const bool isGoodTrack      = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange && isInDeltaPtRange && isInVtxRange);
     return isGoodTrack;
 
   }  // end 'IsGoodTrack(SvtxTrack*)'
@@ -211,7 +220,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  pair<double, double> SCorrelatorJetTree::GetTrackDcaPair(SvtxTrack *track, PHCompositeNode* topNode) {
+  pair<double, double> SCorrelatorJetTree::GetTrackDcaPair(SvtxTrack* track, PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug) {
@@ -227,6 +236,25 @@ namespace SColdQcdCorrelatorAnalysis {
     return make_pair(dcaAndErr.first.first, dcaAndErr.second.first);
 
   }  // end 'GetTrackDcaPair(SvtxTrack*, PHCompositeNode*)'
+
+
+
+  CLHEP::Hep3Vector SCorrelatorJetTree::GetTrackVertex(SvtxTrack* track, PHCompositeNode* topNode) {
+
+    // print debug statement
+    if (m_doDebug) {
+      cout << "SCorrelatorJetTree::GetTrackVertex(SvtxTrack*, PHCompositeNode*) Getting track vertex..." << endl;
+    }
+
+    // get vertex associated with track
+    const int     vtxID = (int) track -> get_vertex_id();
+    GlobalVertex* vtx   = GetGlobalVertex(topNode, vtxID);
+
+    // return vertex 3-vector
+    CLHEP::Hep3Vector hepVecVtx = CLHEP::Hep3Vector(vtx -> get_x(), vtx -> get_y(), vtx -> get_z());
+    return hepVecVtx;
+
+  }  // end 'GetTrackVertex(SvtxTrack*, PHCompositeNode*)'
 
 
 

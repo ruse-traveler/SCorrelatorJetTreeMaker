@@ -210,8 +210,9 @@ namespace SColdQcdCorrelatorAnalysis {
       pair<int, pair<Jet::SRC, int>> jetTrkPair(iCst, make_pair(Jet::SRC::TRACK, trkID));
       fjMap.insert(jetTrkPair);
 
-      // grab track dca
+      // grab track dca and vertex
       pair<double, double> trkDcaPair = GetTrackDcaPair(track, topNode);
+      CLHEP::Hep3Vector    trkVtx     = GetTrackVertex(track, topNode);
 
       // grab remaining track info
       const double trkQuality = track -> get_quality();
@@ -245,7 +246,10 @@ namespace SColdQcdCorrelatorAnalysis {
         (float) trkQuality,
         (float) trkNumMvtx,
         (float) trkNumIntt,
-        (float) trkNumTpc
+        (float) trkNumTpc,
+        (float) trkVtx.x(),
+        (float) trkVtx.y(),
+        (float) trkVtx.z()
       );
       eTrkSum += trkE;
       ++iCst;
