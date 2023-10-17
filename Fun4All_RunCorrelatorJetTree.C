@@ -56,6 +56,7 @@ R__LOAD_LIBRARY(libparticleflow.so)
 R__LOAD_LIBRARY(/sphenix/user/danderson/install/lib/libscorrelatorjettree.so)
 
 using namespace std;
+using namespace SColdQcdCorrelatorAnalysis;
 
 // global constants
 static const int            NEvtDefault = 10;
