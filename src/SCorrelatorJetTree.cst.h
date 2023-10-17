@@ -82,12 +82,17 @@ bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode)
   const double trkDcaXY = trkDca.first;
   const double trkDcaZ  = trkDca.second;
 
+  // if above max pt used to fit dca width,
+  // use value of fit at max pt
+  double ptEvalXY = (trkPt > m_dcaPtFitMaxXY) ? m_dcaPtFitMaxXY : trkPt;
+  double ptEvalZ  = (trkPt > m_dcaPtFitMaxZ)  ? m_dcaPtFitMaxZ  : trkPt;
+
   // check if dca is good
-  bool isInDcaRangeXY = false;
-  bool isInDcaRangeZ  = false;
+  bool   isInDcaRangeXY = false;
+  bool   isInDcaRangeZ  = false;
   if (m_doDcaSigmaCut) {
-    isInDcaRangeXY = (abs(trkDcaXY) < (m_nSigCutXY * (m_fSigDcaXY -> Eval(trkPt))));
-    isInDcaRangeZ  = (abs(trkDcaZ)  < (m_nSigCutZ  * (m_fSigDcaZ  -> Eval(trkPt))));
+    isInDcaRangeXY = (abs(trkDcaXY) < (m_nSigCutXY * (m_fSigDcaXY -> Eval(ptEvalXY))));
+    isInDcaRangeZ  = (abs(trkDcaZ)  < (m_nSigCutZ  * (m_fSigDcaZ  -> Eval(ptEvalZ))));
   } else {
     isInDcaRangeXY = ((trkDcaXY > m_trkDcaRangeXY[0]) && (trkDcaXY < m_trkDcaRangeXY[1]));
     isInDcaRangeZ  = ((trkDcaZ  > m_trkDcaRangeZ[0])  && (trkDcaZ  < m_trkDcaRangeZ[1]));

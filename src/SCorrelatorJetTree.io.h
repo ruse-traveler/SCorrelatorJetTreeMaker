@@ -154,9 +154,11 @@ void SCorrelatorJetTree::SetTrackDeltaPtRange(const pair<double, double> deltaPt
 
 
 
-void SCorrelatorJetTree::SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, const pair<double, double> nSigma, const vector<double> paramDcaXY, const vector<double> paramDcaZ) {
+void SCorrelatorJetTree::SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, const pair<double, double> ptFitMax, const pair<double, double> nSigma, const vector<double> paramDcaXY, const vector<double> paramDcaZ) {
 
   m_doDcaSigmaCut = doDcaSigmaCut;
+  m_dcaPtFitMaxXY = ptFitMax.first;
+  m_dcaPtFitMaxZ  = ptFitMax.second;
   m_nSigCutXY     = nSigma.first;
   m_nSigCutZ      = nSigma.second;
   for (uint8_t iParam = 0; iParam < CONST::NParam; iParam++) {
@@ -185,7 +187,7 @@ void SCorrelatorJetTree::SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, co
   }  // end parameter loop
   return;
 
-}  // end 'SetTrackDcaSigmaParameters(bool, pair<double, double>, vector<double>, vector<double>)'
+}  // end 'SetTrackDcaSigmaParameters(bool, pair<double, double>, pair<double, double>, vector<double>, vector<double>)'
 
 
 

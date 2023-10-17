@@ -176,7 +176,7 @@ class SCorrelatorJetTree : public SubsysReco {
     void SetTrackDcaRangeXY(const pair<double, double> dcaRangeXY);
     void SetTrackDcaRangeZ(const pair<double, double> dcaRangeZ);
     void SetTrackDeltaPtRange(const pair<double, double> deltaPtRange);
-    void SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, const pair<double, double> nSigma, const vector<double> paramDcaXY, const vector<double> paramDcaZ);
+    void SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, const pair<double, double> ptFitMax, const pair<double, double> nSigma, const vector<double> paramDcaXY, const vector<double> paramDcaZ);
     void SetFlowPtRange(const pair<double, double> ptRange);
     void SetFlowEtaRange(const pair<double, double> etaRange);
     void SetECalPtRange(const pair<double, double> ptRange);
@@ -254,7 +254,7 @@ class SCorrelatorJetTree : public SubsysReco {
     enum CONST {
       NPart      = 2,
       NComp      = 3,
-      NParam     = 3,
+      NParam     = 4,
       NRange     = 2,
       NMoment    = 2,
       NInfoQA    = 9,
@@ -274,7 +274,7 @@ class SCorrelatorJetTree : public SubsysReco {
     enum INFO     {PT, ETA, PHI, ENE, QUAL, DCAXY, DCAZ, DELTAPT, NTPC};
 
     // event methods (*.evt.h)
-    bool              IsGoodEvent(const double vx, const double vy, const double vz);
+    bool              IsGoodEvent(const CLHEP::Hep3Vector vtx);
     void              GetEventVariables(PHCompositeNode* topNode);
     void              GetPartonInfo(PHCompositeNode* topNode);
     long              GetNumTrks(PHCompositeNode* topNode);
@@ -404,12 +404,14 @@ class SCorrelatorJetTree : public SubsysReco {
     double m_hcalEtaRange[CONST::NRange] = {-1.1, 1.1};
 
     // for pt-dependent dca cuts
-    TF1*                         m_fSigDcaXY   = NULL;
-    TF1*                         m_fSigDcaZ    = NULL;
-    double                       m_nSigCutXY   = 1.;
-    double                       m_nSigCutZ    = 1.;
-    array<double, CONST::NParam> m_parSigDcaXY = {1., 1., 1.};
-    array<double, CONST::NParam> m_parSigDcaZ  = {1., 1., 1.};
+    TF1*                         m_fSigDcaXY     = NULL;
+    TF1*                         m_fSigDcaZ      = NULL;
+    double                       m_dcaPtFitMaxXY = 15.;
+    double                       m_dcaPtFitMaxZ  = 15.;
+    double                       m_nSigCutXY     = 1.;
+    double                       m_nSigCutZ      = 1.;
+    array<double, CONST::NParam> m_parSigDcaXY   = {1., 1., 1., 1.};
+    array<double, CONST::NParam> m_parSigDcaZ    = {1., 1., 1., 1.};
 
     // jet parameters
     double               m_jetR         = 0.4;

@@ -20,23 +20,23 @@ using namespace findNode;
 
 // event methods --------------------------------------------------------------
 
-bool SCorrelatorJetTree::IsGoodEvent(const double vx, const double vy, const double vz) {
+bool SCorrelatorJetTree::IsGoodEvent(const CLHEP::Hep3Vector vtx) {
 
   // print debug statement
   if (m_doDebug) {
-    cout << "SCorrelatorJetTree::IsGoodEvent(double, double, double) Checking if event is good..." << endl;
+    cout << "SCorrelatorJetTree::IsGoodEvent(CLHEP::Hep3Vector) Checking if event is good..." << endl;
   }
 
   // calculate vr
-  const double vr = sqrt((vx * vx) + (vy * vy));
+  const double vr = sqrt((vtx.x() * vtx.x()) + (vtx.y() * vtx.y()));
 
   // check if event is good
-  const bool isInEvtVzRange = ((vz      > m_evtVzRange[0]) && (vz      < m_evtVzRange[1]));
+  const bool isInEvtVzRange = ((vtx.z() > m_evtVzRange[0]) && (vtx.z() < m_evtVzRange[1]));
   const bool isInEvtVrRange = ((abs(vr) > m_evtVrRange[0]) && (abs(vr) < m_evtVrRange[1]));
   const bool isGoodEvent    = (isInEvtVzRange && isInEvtVrRange);
   return isGoodEvent;
 
-}  // end 'IsGoodEvent(double, double, double)'
+}  // end 'IsGoodEvent(CLHEP::Hep3Vector)'
 
 
 

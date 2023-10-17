@@ -140,10 +140,13 @@ int SCorrelatorJetTree::process_event(PHCompositeNode* topNode) {
   }
 
   // check if reconstructed vertex is in in acceptance
-  const bool isGoodEvt = IsGoodEvent(m_recoVtxX, m_recoVtxY, m_recoVtxZ);
+  bool isGoodEvt = true;
+  if (m_doVtxCut) {
+    isGoodEvt = IsGoodEvent(m_recoVtx);
+  }
 
   // set event status
-  int eventStatus;
+  int eventStatus = Fun4AllReturnCodes::EVENT_OK;
   if (m_doVtxCut && !isGoodEvt) {
     eventStatus = Fun4AllReturnCodes::DISCARDEVENT;
   } else {
