@@ -101,6 +101,15 @@ namespace SColdQcdCorrelatorAnalysis {
       isInVtxRange = IsGoodVertex(trkVtx);
     }
 
+    // if using only primary vertex,
+    // ignore tracks from other vertices
+    if (m_useOnlyPrimVtx) {
+      const bool isFromPrimVtx = IsFromPrimaryVtx(track, topNode);
+      if (!isFromPrimVtx) {
+        isInVtxRange = false;
+      }
+    }
+
     // apply cuts
     const bool isSeedGood       = IsGoodTrackSeed(track);
     const bool isInPtRange      = ((trkPt      > m_trkPtRange[0])      && (trkPt      <  m_trkPtRange[1]));
@@ -217,6 +226,28 @@ namespace SColdQcdCorrelatorAnalysis {
     return isOutgoingParton;
 
   }  // end 'IsOutgoingParton(HepMC::GenParticle*)'
+
+
+
+  bool SCorrelatorJetTree::IsFromPrimaryVtx(SvtxTrack* track, PHCompositeNode* topNode) {
+
+    // print debug statement
+    if (m_doDebug) {
+      cout << "SCorrelatorJetTree::IsFromPrimaryVtx(SvtxTrack*, PHCompositeNode*) Checking if track is from primary vertex..." << endl;
+    }
+
+    // get id of vertex associated with track
+    const int vtxID = (int) track -> get_vertex_id();
+
+    // get id of primary vertex
+    GlobalVertex* primVtx   = GetGlobalVertex(topNode);
+    const int     primVtxID = primVtx -> get_id();
+
+    // check if from vertex and return
+    const bool isFromPrimVtx = (vtxID == primVtxID);
+    return isFromPrimVtx;
+
+  }  // end 'IsFromPrimaryVtx(SvtTrack*, PHCompsiteNode*)'
 
 
 

@@ -155,6 +155,7 @@ namespace SColdQcdCorrelatorAnalysis {
       void SetDoVertexCut(const bool doVtx)      {m_doVtxCut       = doVtx;}
       void SetDoQualityPlots(const bool doQA)    {m_doQualityPlots = doQA;}
       void SetRequireSiSeeds(const bool require) {m_requireSiSeeds = require;}
+      void SetUseOnlyPrimVtx(const bool primary) {m_useOnlyPrimVtx = primary;}
       void SetSaveDST(const bool doSave)         {m_saveDST        = doSave;}
       void SetIsMC(const bool isMC)              {m_isMC           = isMC;}
       void SetIsEmbed(const bool isEmbed)        {m_isEmbed        = isEmbed;}
@@ -192,6 +193,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool   GetDoVtxCut()       {return m_doVtxCut;}
       bool   GetDoQualityPlots() {return m_doQualityPlots;}
       bool   GetRequireSiSeeds() {return m_requireSiSeeds;}
+      bool   GetUseOnlyPrimVtx() {return m_useOnlyPrimVtx;}
       bool   GetDoDcaSigmaCut()  {return m_doDcaSigmaCut;}
       bool   GetSaveDST()        {return m_saveDST;}
       bool   GetIsMC()           {return m_isMC;}
@@ -301,6 +303,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool                 IsGoodECal(CLHEP::Hep3Vector& hepVecECal);
       bool                 IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
       bool                 IsGoodTrackSeed(SvtxTrack* track);
+      bool                 IsFromPrimaryVtx(SvtxTrack* track, PHCompositeNode* topNode);
       bool                 IsOutgoingParton(HepMC::GenParticle* par);
       pair<double, double> GetTrackDcaPair(SvtxTrack* track, PHCompositeNode* topNode);
       CLHEP::Hep3Vector    GetTrackVertex(SvtxTrack* track, PHCompositeNode* topNode);
@@ -364,6 +367,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool          m_doVtxCut       = false;
       bool          m_doQualityPlots = true;
       bool          m_requireSiSeeds = true;
+      bool          m_useOnlyPrimVtx = true;
       bool          m_doDcaSigmaCut  = false;
       bool          m_saveDST        = false;
       bool          m_isMC           = true;

@@ -104,6 +104,7 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   const bool doVtxCut(false);
   const bool doQuality(true);
   const bool requireSiSeeds(true);
+  const bool useOnlyPrimVtx(true);
   const bool doDcaSigmaCut(false);
   const bool addTracks(true);
   const bool addECal(false);
@@ -257,6 +258,7 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   }
   if (addTracks) {
     correlatorJetTree -> SetRequireSiSeeds(requireSiSeeds);
+    correlatorJetTree -> SetUseOnlyPrimVtx(useOnlyPrimVtx);
     correlatorJetTree -> SetTrackPtRange(ptTrackRange);
     correlatorJetTree -> SetTrackEtaRange(etaTrackRange);
     correlatorJetTree -> SetTrackQualityRange(qualTrackRange);
