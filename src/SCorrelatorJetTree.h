@@ -156,6 +156,7 @@ namespace SColdQcdCorrelatorAnalysis {
       void SetDoQualityPlots(const bool doQA)    {m_doQualityPlots = doQA;}
       void SetRequireSiSeeds(const bool require) {m_requireSiSeeds = require;}
       void SetUseOnlyPrimVtx(const bool primary) {m_useOnlyPrimVtx = primary;}
+      void SetMaskTpcSectors(const bool mask)    {m_maskTpcSectors = mask;}
       void SetSaveDST(const bool doSave)         {m_saveDST        = doSave;}
       void SetIsMC(const bool isMC)              {m_isMC           = isMC;}
       void SetIsEmbed(const bool isEmbed)        {m_isEmbed        = isEmbed;}
@@ -195,6 +196,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool   GetRequireSiSeeds() {return m_requireSiSeeds;}
       bool   GetUseOnlyPrimVtx() {return m_useOnlyPrimVtx;}
       bool   GetDoDcaSigmaCut()  {return m_doDcaSigmaCut;}
+      bool   GetMaskTpcSectors() {return m_maskTpcSectors;}
       bool   GetSaveDST()        {return m_saveDST;}
       bool   GetIsMC()           {return m_isMC;}
       bool   GetIsEmbed()        {return m_isEmbed;}
@@ -267,7 +269,8 @@ namespace SColdQcdCorrelatorAnalysis {
         NDirectory = 6,
         NMvtxLayer = 3,
         NInttLayer = 8,
-        NTpcLayer  = 48
+        NTpcLayer  = 48,
+        NTpcSector = 12
       };
 
       // qa info & tracking subsystems
@@ -303,6 +306,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool                 IsGoodECal(CLHEP::Hep3Vector& hepVecECal);
       bool                 IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
       bool                 IsGoodTrackSeed(SvtxTrack* track);
+      bool                 IsGoodTrackPhi(SvtxTrack* track, const float phiMaskSize = 0.01);  // FIXME make user configurable
       bool                 IsFromPrimaryVtx(SvtxTrack* track, PHCompositeNode* topNode);
       bool                 IsOutgoingParton(HepMC::GenParticle* par);
       pair<double, double> GetTrackDcaPair(SvtxTrack* track, PHCompositeNode* topNode);
@@ -369,6 +373,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool          m_requireSiSeeds = true;
       bool          m_useOnlyPrimVtx = true;
       bool          m_doDcaSigmaCut  = false;
+      bool          m_maskTpcSectors = false;
       bool          m_saveDST        = false;
       bool          m_isMC           = true;
       bool          m_isEmbed        = false;

@@ -110,6 +110,13 @@ namespace SColdQcdCorrelatorAnalysis {
       }
     }
 
+    // if masking tpc sector boundaries,
+    // ignore tracks near boundaries
+    bool isGoodPhi = true;
+    if (m_maskTpcSectors) {
+      isGoodPhi = IsGoodTrackPhi(track);
+    }
+
     // apply cuts
     const bool isSeedGood       = IsGoodTrackSeed(track);
     const bool isInPtRange      = ((trkPt      > m_trkPtRange[0])      && (trkPt      <  m_trkPtRange[1]));
@@ -121,7 +128,7 @@ namespace SColdQcdCorrelatorAnalysis {
     const bool isInDeltaPtRange = ((trkDeltaPt > m_trkDeltaPtRange[0]) && (trkDeltaPt <  m_trkDeltaPtRange[1]));
     const bool isInNumRange     = (isInNMvtxRange && isInNInttRange && isInNTpcRange);
     const bool isInDcaRange     = (isInDcaRangeXY && isInDcaRangeZ);
-    const bool isGoodTrack      = (isSeedGood && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange && isInDeltaPtRange && isInVtxRange);
+    const bool isGoodTrack      = (isSeedGood && isGoodPhi && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange && isInDeltaPtRange && isInVtxRange);
     return isGoodTrack;
 
   }  // end 'IsGoodTrack(SvtxTrack*)'
@@ -201,6 +208,50 @@ namespace SColdQcdCorrelatorAnalysis {
     return isSeedGood;
 
   }  // end 'IsGoodSeed(SvtxTrack*)'
+
+
+
+  bool SCorrelatorJetTree::IsGoodTrackPhi(SvtxTrack* track, const float phiMaskSize) {
+
+    // print debug statement
+    if (m_doDebug && (Verbosity() > 2)) {
+      cout << "SCorrelatorJetTree::IsGoodTrackPhi(SvtxTrack*) Checking if track phi is good..." << endl;
+    }
+
+    // TPC sector boundaries:
+    //   12 sectors --> ~0.523 rad/sector,
+    //   assumed to be symmetric about phi = 0
+    // FIXME move to constant in utilities namespace
+    const array<float, NTpcSector> phiSectorBoundaries = {
+      -2.877,
+      -2.354,
+      -1.831,
+      -1.308,
+      -0.785,
+      -0.262,
+      0.262,
+      0.785,
+      1.308,
+      1.831,
+      2.354,
+      2.877
+    };
+
+    // flag phi as bad if within boundary +- (phiMaskSize / 2)
+    const double halfMaskSize = phiMaskSize / 2.;
+    const double trkPhi       = track -> get_phi();
+
+    // loop over sector boundaries and check phi
+    bool isGoodPhi = true;
+    for (const float boundary : phiSectorBoundaries) {
+      if ((trkPhi > (boundary - halfMaskSize)) && (trkPhi < (boundary + halfMaskSize))) {
+        isGoodPhi = false;
+        break;
+      }
+    }
+    return isGoodPhi;
+
+  }  // end 'IsGoodTrackPhi(SvtxTrack*, float)'
 
 
 
