@@ -27,7 +27,6 @@
 #include <cstdlib>
 #include <utility>
 // f4a/sphenix includes
-#include <QA.C>
 #include <FROG.h>
 #include <G4_Magnet.C>
 #include <fun4all/Fun4AllDstInputManager.h>
