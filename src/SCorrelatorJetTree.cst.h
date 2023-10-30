@@ -642,6 +642,86 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  int SCorrelatorJetTree::GetNumClust(SvtxTrack* track, const uint8_t subsys) {
+
+    // issue warning if subsys is not set correctly
+    const bool isSubsysWrong = (subsys > 2);
+    if (isSubsysWrong && m_doDebug && (Verbosity() > 3)) {
+      cerr << "SCorrelatorJetTree::GetNumLClust(SvtxTrack*, uint8_t) PANIC: trying to determine no. of clusters for an unknown subsystem (subsys = " << subsys << ")! Aborting!" << endl;
+      assert(subsys <= 2);
+    }
+
+    // check if seed is good
+    const bool isSeedGood = IsGoodTrackSeed(track);
+    if (!isSeedGood && m_doDebug && (Verbosity() > 3)) {
+      cerr << "SCorrelatorJetTree::GetNumLayer(SvtxTrack*, uint8_t) PANIC: track seed(s) is (are) no good! Aborting!" << endl;
+      assert(isSeedGood);
+    }
+
+    // get both track seeds
+    TrackSeed* trkSiSeed  = track -> get_silicon_seed();
+    TrackSeed* trkTpcSeed = track -> get_tpc_seed();
+
+    // select relevant seed
+    const bool hasBothSeeds   = (trkSiSeed  && trkTpcSeed);
+    const bool hasOnlyTpcSeed = (!trkSiSeed && trkTpcSeed);
+
+    TrackSeed* seed = NULL;
+    switch (subsys) {
+      case SUBSYS::MVTX:
+        if (hasBothSeeds)   seed = trkSiSeed;
+        if (hasOnlyTpcSeed) seed = trkTpcSeed;
+        break;
+      case SUBSYS::INTT:
+        if (hasBothSeeds)   seed = trkSiSeed;
+        if (hasOnlyTpcSeed) seed = trkTpcSeed;
+        break;
+      case SUBSYS::TPC:
+        seed = trkTpcSeed;
+        break;
+    }
+    if (!seed && m_doDebug && (Verbosity() > 3)) {
+      cerr << "SCorrelatorJetTree::GetNumClust(SvtxTrack*, uint8_t) PANIC: couldn't set seed! Aborting!" << endl;
+      assert(seed);
+    }
+
+    // set min no. of layers
+    const int minInttLayer = CONST::NMvtxLayer;
+    const int minTpcLayer  = CONST::NMvtxLayer + CONST::NInttLayer;
+
+    // determine no. of clusters for a given layer
+    unsigned int layer    = 0;
+    unsigned int nCluster = 0;
+    for (auto itClustKey = (seed -> begin_cluster_keys()); itClustKey != (seed -> end_cluster_keys()); ++itClustKey) {
+
+      // grab layer number
+      layer = TrkrDefs::getLayer(*itClustKey);
+
+      // increment accordingly
+      switch (subsys) {
+        case SUBSYS::MVTX:
+          if (layer < CONST::NMvtxLayer) {
+            ++nCluster;
+          }
+          break;
+        case SUBSYS::INTT:
+          if ((layer >= minInttLayer) && (layer < minTpcLayer)) {
+            ++nCluster;
+          }
+          break;
+        case SUBSYS::TPC:
+          if (layer >= minTpcLayer) {
+            ++nCluster;
+          }
+          break;
+      }
+    }  // end cluster loop
+    return nCluster;
+
+  }  // end 'GetNumClust(SvtxTrack*, uint8_t)'
+
+
+
   int SCorrelatorJetTree::GetMatchID(SvtxTrack* track) {
 
     // print debug statement
