@@ -157,7 +157,7 @@ namespace SColdQcdCorrelatorAnalysis {
       void SetRequireSiSeeds(const bool require) {m_requireSiSeeds = require;}
       void SetUseOnlyPrimVtx(const bool primary) {m_useOnlyPrimVtx = primary;}
       void SetMaskTpcSectors(const bool mask)    {m_maskTpcSectors = mask;}
-      void SetCheckWeirdTrks(const bool chec)    {m_checkWeirdTrks = check;}
+      void SetCheckWeirdTrks(const bool check)   {m_checkWeirdTrks = check;}
       void SetSaveDST(const bool doSave)         {m_saveDST        = doSave;}
       void SetIsMC(const bool isMC)              {m_isMC           = isMC;}
       void SetIsEmbed(const bool isEmbed)        {m_isEmbed        = isEmbed;}
