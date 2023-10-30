@@ -157,6 +157,7 @@ namespace SColdQcdCorrelatorAnalysis {
       void SetRequireSiSeeds(const bool require) {m_requireSiSeeds = require;}
       void SetUseOnlyPrimVtx(const bool primary) {m_useOnlyPrimVtx = primary;}
       void SetMaskTpcSectors(const bool mask)    {m_maskTpcSectors = mask;}
+      void SetCheckWeirdTrks(const bool chec)    {m_checkWeirdTrks = check;}
       void SetSaveDST(const bool doSave)         {m_saveDST        = doSave;}
       void SetIsMC(const bool isMC)              {m_isMC           = isMC;}
       void SetIsEmbed(const bool isEmbed)        {m_isEmbed        = isEmbed;}
@@ -165,7 +166,7 @@ namespace SColdQcdCorrelatorAnalysis {
       void SetJetTreeName(const string name)     {m_jetTreeName    = name;}
 
       // setters (*.io.h)
-      // TODO consolidate parameters into less emthods
+      // TODO consolidate parameters into less methods
       void SetEvtVzRange(const pair<double, double> vzRange);
       void SetEvtVrRange(const pair<double, double> vrRange);
       void SetParPtRange(const pair<double, double> ptRange);
@@ -197,6 +198,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool   GetUseOnlyPrimVtx() {return m_useOnlyPrimVtx;}
       bool   GetDoDcaSigmaCut()  {return m_doDcaSigmaCut;}
       bool   GetMaskTpcSectors() {return m_maskTpcSectors;}
+      bool   GetCheckWeirdTrks() {return m_checkWeirdTrks;}
       bool   GetSaveDST()        {return m_saveDST;}
       bool   GetIsMC()           {return m_isMC;}
       bool   GetIsEmbed()        {return m_isEmbed;}
@@ -314,6 +316,7 @@ namespace SColdQcdCorrelatorAnalysis {
       double               GetTrackDeltaPt(SvtxTrack* track);
       float                GetParticleCharge(const int pid);
       int                  GetNumLayer(SvtxTrack* track, const uint8_t subsys = 0);
+      int                  GetNumClust(SvtxTrack* track, const uint8_t subsys = 0);
       int                  GetMatchID(SvtxTrack* track);
 
       // system methods (*.sys.h)
@@ -365,7 +368,8 @@ namespace SColdQcdCorrelatorAnalysis {
       TH1D*    m_hSumCstEne[CONST::NCstType];
       TH1D*    m_hObjectQA[CONST::NObjType][CONST::NInfoQA];
       TH1D*    m_hNumCstAccept[CONST::NCstType][CONST::NMoment];
-      TNtuple* m_ntTrkQA = NULL;
+      TNtuple* m_ntTrkQA       = NULL;
+      TNtuple* m_ntWeirdTracks = NULL;
 
       // system members
       bool          m_doVtxCut       = false;
@@ -378,6 +382,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool          m_isMC           = true;
       bool          m_isEmbed        = false;
       bool          m_doDebug        = false;
+      bool          m_checkWeirdTrks = false;
       bool          m_addTracks      = true;
       bool          m_addFlow        = false;
       bool          m_addECal        = false;
