@@ -51,9 +51,7 @@
 #include <globalvertex/GlobalVertexMap.h>
 // tracking includes
 #include <trackbase_historic/SvtxTrack.h>
-#include <trackbase_historic/SvtxVertex.h>
 #include <trackbase_historic/SvtxTrackMap.h>
-#include <trackbase_historic/SvtxVertexMap.h>
 #include <trackbase_historic/TrackAnalysisUtils.h>
 // calo includes
 #include <calobase/RawCluster.h>
