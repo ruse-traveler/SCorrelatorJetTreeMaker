@@ -471,7 +471,7 @@ namespace SColdQcdCorrelatorAnalysis {
       vector<vector<double>> m_trueCstZ;
       vector<vector<double>> m_trueCstDr;
       vector<vector<double>> m_trueCstE;
-      vector<vector<double>> m_trueCstJt;
+      vector<vector<double>> m_trueCstPt;
       vector<vector<double>> m_trueCstEta;
       vector<vector<double>> m_trueCstPhi;
 
@@ -496,7 +496,7 @@ namespace SColdQcdCorrelatorAnalysis {
       vector<vector<double>> m_recoCstZ;
       vector<vector<double>> m_recoCstDr;
       vector<vector<double>> m_recoCstE;
-      vector<vector<double>> m_recoCstJt;
+      vector<vector<double>> m_recoCstPt;
       vector<vector<double>> m_recoCstEta;
       vector<vector<double>> m_recoCstPhi;
 

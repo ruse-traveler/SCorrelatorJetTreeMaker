@@ -61,7 +61,7 @@ namespace SColdQcdCorrelatorAnalysis {
     m_trueCstZ.clear();
     m_trueCstDr.clear();
     m_trueCstE.clear();
-    m_trueCstJt.clear();
+    m_trueCstPt.clear();
     m_trueCstEta.clear();
     m_trueCstPhi.clear();
 
@@ -89,7 +89,7 @@ namespace SColdQcdCorrelatorAnalysis {
     m_recoCstZ.clear();
     m_recoCstDr.clear();
     m_recoCstE.clear();
-    m_recoCstJt.clear();
+    m_recoCstPt.clear();
     m_recoCstEta.clear();
     m_recoCstPhi.clear();
     return;
@@ -421,7 +421,7 @@ namespace SColdQcdCorrelatorAnalysis {
     m_trueTree -> Branch("CstZ",           &m_trueCstZ);
     m_trueTree -> Branch("CstDr",          &m_trueCstDr);
     m_trueTree -> Branch("CstEnergy",      &m_trueCstE);
-    m_trueTree -> Branch("CstJt",          &m_trueCstJt);
+    m_trueTree -> Branch("CstPt",          &m_trueCstPt);
     m_trueTree -> Branch("CstEta",         &m_trueCstEta);
     m_trueTree -> Branch("CstPhi",         &m_trueCstPhi);
 
@@ -445,7 +445,7 @@ namespace SColdQcdCorrelatorAnalysis {
     m_recoTree -> Branch("CstZ",          &m_recoCstZ);
     m_recoTree -> Branch("CstDr",         &m_recoCstDr);
     m_recoTree -> Branch("CstEnergy",     &m_recoCstE);
-    m_recoTree -> Branch("CstJt",         &m_recoCstJt);
+    m_recoTree -> Branch("CstPt",         &m_recoCstPt);
     m_recoTree -> Branch("CstEta",        &m_recoCstEta);
     m_recoTree -> Branch("CstPhi",        &m_recoCstPhi);
     return;
@@ -500,7 +500,7 @@ namespace SColdQcdCorrelatorAnalysis {
     m_trueCstZ.clear();
     m_trueCstDr.clear();
     m_trueCstE.clear();
-    m_trueCstJt.clear();
+    m_trueCstPt.clear();
     m_trueCstEta.clear();
     m_trueCstPhi.clear();
 
@@ -510,14 +510,14 @@ namespace SColdQcdCorrelatorAnalysis {
     vector<double> vecTruCstZ;
     vector<double> vecTruCstDr;
     vector<double> vecTruCstE;
-    vector<double> vecTruCstJt;
+    vector<double> vecTruCstPt;
     vector<double> vecTruCstEta;
     vector<double> vecTruCstPhi;
     vecTruCstID.clear();
     vecTruCstZ.clear();
     vecTruCstDr.clear();
     vecTruCstE.clear();
-    vecTruCstJt.clear();
+    vecTruCstPt.clear();
     vecTruCstEta.clear();
     vecTruCstPhi.clear();
 
@@ -545,7 +545,7 @@ namespace SColdQcdCorrelatorAnalysis {
       vecTruCstZ.clear();
       vecTruCstDr.clear();
       vecTruCstE.clear();
-      vecTruCstJt.clear();
+      vecTruCstPt.clear();
       vecTruCstEta.clear();
       vecTruCstPhi.clear();
 
@@ -557,12 +557,12 @@ namespace SColdQcdCorrelatorAnalysis {
         const double cstPhi = trueCsts[iTruCst].phi_std();
         const double cstEta = trueCsts[iTruCst].pseudorapidity();
         const double cstE   = trueCsts[iTruCst].E();
-        const double cstJt  = trueCsts[iTruCst].perp();
-        const double cstJx  = trueCsts[iTruCst].px();
-        const double cstJy  = trueCsts[iTruCst].py();
-        const double cstJz  = trueCsts[iTruCst].pz();
-        const double cstJ   = ((cstJx * cstJx) + (cstJy * cstJy) + (cstJz * cstJz));
-        const double cstZ   = cstJ / jetP;
+        const double cstPt  = trueCsts[iTruCst].perp();
+        const double cstPx  = trueCsts[iTruCst].px();
+        const double cstPy  = trueCsts[iTruCst].py();
+        const double cstPz  = trueCsts[iTruCst].pz();
+        const double cstP   = ((cstPx * cstPx) + (cstPy * cstPy) + (cstPz * cstPz));
+        const double cstZ   = cstP / jetP;
         const double cstDf  = cstPhi - jetPhi;
         const double cstDh  = cstEta - jetEta;
         const double cstDr  = sqrt((cstDf * cstDf) + (cstDh * cstDh));
@@ -577,12 +577,12 @@ namespace SColdQcdCorrelatorAnalysis {
         vecTruCstZ.push_back(cstZ);
         vecTruCstDr.push_back(cstDr);
         vecTruCstE.push_back(cstE);
-        vecTruCstJt.push_back(cstJt);
+        vecTruCstPt.push_back(cstPt);
         vecTruCstEta.push_back(cstEta);
         vecTruCstPhi.push_back(cstPhi);
 
         // fill QA histograms and increment counters
-        m_hObjectQA[OBJECT::TCST][INFO::PT]  -> Fill(cstJt);
+        m_hObjectQA[OBJECT::TCST][INFO::PT]  -> Fill(cstPt);
         m_hObjectQA[OBJECT::TCST][INFO::ETA] -> Fill(cstEta);
         m_hObjectQA[OBJECT::TCST][INFO::PHI] -> Fill(cstPhi);
         m_hObjectQA[OBJECT::TCST][INFO::ENE] -> Fill(cstE);
@@ -602,7 +602,7 @@ namespace SColdQcdCorrelatorAnalysis {
       m_trueCstZ.push_back(vecTruCstZ);
       m_trueCstDr.push_back(vecTruCstDr);
       m_trueCstE.push_back(vecTruCstE);
-      m_trueCstJt.push_back(vecTruCstJt);
+      m_trueCstPt.push_back(vecTruCstPt);
       m_trueCstEta.push_back(vecTruCstEta);
       m_trueCstPhi.push_back(vecTruCstPhi);
 
@@ -661,7 +661,7 @@ namespace SColdQcdCorrelatorAnalysis {
     m_recoCstZ.clear();
     m_recoCstDr.clear();
     m_recoCstE.clear();
-    m_recoCstJt.clear();
+    m_recoCstPt.clear();
     m_recoCstEta.clear();
     m_recoCstPhi.clear();
 
@@ -670,14 +670,14 @@ namespace SColdQcdCorrelatorAnalysis {
     vector<double> vecRecCstZ;
     vector<double> vecRecCstDr;
     vector<double> vecRecCstE;
-    vector<double> vecRecCstJt;
+    vector<double> vecRecCstPt;
     vector<double> vecRecCstEta;
     vector<double> vecRecCstPhi;
     vecRecCstMatchID.clear();
     vecRecCstZ.clear();
     vecRecCstDr.clear();
     vecRecCstE.clear();
-    vecRecCstJt.clear();
+    vecRecCstPt.clear();
     vecRecCstEta.clear();
     vecRecCstPhi.clear();
 
@@ -704,7 +704,7 @@ namespace SColdQcdCorrelatorAnalysis {
       vecRecCstZ.clear();
       vecRecCstDr.clear();
       vecRecCstE.clear();
-      vecRecCstJt.clear();
+      vecRecCstPt.clear();
       vecRecCstEta.clear();
       vecRecCstPhi.clear();
 
@@ -717,12 +717,12 @@ namespace SColdQcdCorrelatorAnalysis {
         const double cstPhi     = recoCsts[iCst].phi_std();
         const double cstEta     = recoCsts[iCst].pseudorapidity();
         const double cstE       = recoCsts[iCst].E();
-        const double cstJt      = recoCsts[iCst].perp();
-        const double cstJx      = recoCsts[iCst].px();
-        const double cstJy      = recoCsts[iCst].py();
-        const double cstJz      = recoCsts[iCst].pz();
-        const double cstJ       = ((cstJx * cstJx) + (cstJy * cstJy) + (cstJz * cstJz));
-        const double cstZ       = cstJ / jetP;
+        const double cstPt      = recoCsts[iCst].perp();
+        const double cstPx      = recoCsts[iCst].px();
+        const double cstPy      = recoCsts[iCst].py();
+        const double cstPz      = recoCsts[iCst].pz();
+        const double cstP       = ((cstPx * cstPx) + (cstPy * cstPy) + (cstPz * cstPz));
+        const double cstZ       = cstP / jetP;
         const double cstDf      = cstPhi - jetPhi;
         const double cstDh      = cstEta - jetEta;
         const double cstDr      = sqrt((cstDf * cstDf) + (cstDh * cstDh));
@@ -732,12 +732,12 @@ namespace SColdQcdCorrelatorAnalysis {
         vecRecCstZ.push_back(cstZ);
         vecRecCstDr.push_back(cstDr);
         vecRecCstE.push_back(cstE);
-        vecRecCstJt.push_back(cstJt);
+        vecRecCstPt.push_back(cstPt);
         vecRecCstEta.push_back(cstEta);
         vecRecCstPhi.push_back(cstPhi);
 
         // fill QA histograms and increment counters
-        m_hObjectQA[OBJECT::RCST][INFO::PT]  -> Fill(cstJt);
+        m_hObjectQA[OBJECT::RCST][INFO::PT]  -> Fill(cstPt);
         m_hObjectQA[OBJECT::RCST][INFO::ETA] -> Fill(cstEta);
         m_hObjectQA[OBJECT::RCST][INFO::PHI] -> Fill(cstPhi);
         m_hObjectQA[OBJECT::RCST][INFO::ENE] -> Fill(cstE);
@@ -756,7 +756,7 @@ namespace SColdQcdCorrelatorAnalysis {
       m_recoCstZ.push_back(vecRecCstZ);
       m_recoCstDr.push_back(vecRecCstDr);
       m_recoCstE.push_back(vecRecCstE);
-      m_recoCstJt.push_back(vecRecCstJt);
+      m_recoCstPt.push_back(vecRecCstPt);
       m_recoCstEta.push_back(vecRecCstEta);
       m_recoCstPhi.push_back(vecRecCstPhi);
 
@@ -942,7 +942,7 @@ namespace SColdQcdCorrelatorAnalysis {
     m_trueCstZ.clear();
     m_trueCstDr.clear();
     m_trueCstE.clear();
-    m_trueCstJt.clear();
+    m_trueCstPt.clear();
     m_trueCstEta.clear();
     m_trueCstPhi.clear();
 
@@ -963,7 +963,7 @@ namespace SColdQcdCorrelatorAnalysis {
     m_recoCstZ.clear();
     m_recoCstDr.clear();
     m_recoCstE.clear();
-    m_recoCstJt.clear();
+    m_recoCstPt.clear();
     m_recoCstEta.clear();
     m_recoCstPhi.clear();
     return;
