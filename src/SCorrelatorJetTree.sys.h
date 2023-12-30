@@ -327,59 +327,6 @@ namespace SColdQcdCorrelatorAnalysis {
       }
     }
     m_ntTrkQA = new TNtuple("ntTrkQA", "Track QA", argTrkQALeaves.data());
-
-    // leaves for weird track check
-    const vector<string> vecWeirdTrkLeaves = {
-      "trkid_a",
-      "trkid_b",
-      "pt_a",
-      "pt_b",
-      "eta_a",
-      "eta_b",
-      "phi_a",
-      "phi_b",
-      "ene_a",
-      "ene_b",
-      "dcaxy_a",
-      "dcaxy_b",
-      "dcaz_a",
-      "dcaz_b",
-      "vtxx_a",
-      "vtxx_b",
-      "vtxy_a",
-      "vtxy_b",
-      "vtxz_a",
-      "vtxz_b",
-      "quality_a",
-      "quality_b",
-      "deltapt_a",
-      "deltapt_b",
-      "nmvtxlayers_a",
-      "nmvtxlayers_b",
-      "ninttlayers_a",
-      "ninttlayers_b",
-      "ntpclayers_a",
-      "ntpclayers_b",
-      "nmvtxclusts_a",
-      "nmvtxclusts_b",
-      "ninttclusts_a",
-      "ninttclusts_b",
-      "ntpcclusts_a",
-      "ntpcclusts_b",
-      "nclustkey_a",
-      "nclustkey_b",
-      "nsameclustkey",
-      "deltartrack"
-    };
-
-    string argWeirdTrkLeaves("");
-    for (size_t iLeaf = 0; iLeaf < vecWeirdTrkLeaves.size(); iLeaf++) {
-      argWeirdTrkLeaves.append(vecWeirdTrkLeaves[iLeaf]);
-      if ((iLeaf + 1) != vecWeirdTrkLeaves.size()) {
-        argWeirdTrkLeaves.append(":");
-      }
-    }
-    m_ntWeirdTracks = new TNtuple("ntWeirdTracks", "Weird Tracks",   argWeirdTrkLeaves.data());
     return;
 
   }  // end 'InitTuples()'
@@ -879,9 +826,6 @@ namespace SColdQcdCorrelatorAnalysis {
     // save QA tuples
     dQuality[0] -> cd();
     m_ntTrkQA   -> Write();
-    if (m_checkWeirdTrks) {
-      m_ntWeirdTracks -> Write();
-    }
 
     // save output trees
     m_outFile  -> cd();
