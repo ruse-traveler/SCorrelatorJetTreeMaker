@@ -278,15 +278,8 @@ namespace SColdQcdCorrelatorAnalysis {
       enum INFO     {PT, ETA, PHI, ENE, QUAL, DCAXY, DCAZ, DELTAPT, NTPC};
 
       // event methods (*.evt.h)
-      bool              IsGoodVertex(const CLHEP::Hep3Vector vtx);
-      void              GetEventVariables(PHCompositeNode* topNode);
-      void              GetPartonInfo(PHCompositeNode* topNode);
-      long              GetNumTrks(PHCompositeNode* topNode);
-      long              GetNumChrgPars(PHCompositeNode* topNode);
-      double            GetSumECalEne(PHCompositeNode* topNode);
-      double            GetSumHCalEne(PHCompositeNode* topNode);
-      double            GetSumParEne(PHCompositeNode* topNode);
-      CLHEP::Hep3Vector GetRecoVtx(PHCompositeNode* topNode);
+      bool IsGoodVertex(const CLHEP::Hep3Vector vtx);
+      void GetEventVariables(PHCompositeNode* topNode);
 
       // jet methods (*.jet.h)
       void FindTrueJets(PHCompositeNode* topNode);
@@ -298,42 +291,26 @@ namespace SColdQcdCorrelatorAnalysis {
       void AddHCal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
 
       // constituent methods (*.cst.h)
-      bool                 IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge = false);
-      bool                 IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode);
-      bool                 IsGoodFlow(ParticleFlowElement* flow);
-      bool                 IsGoodECal(CLHEP::Hep3Vector& hepVecECal);
-      bool                 IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
-      bool                 IsGoodTrackSeed(SvtxTrack* track);
-      bool                 IsGoodTrackPhi(SvtxTrack* track, const float phiMaskSize = 0.01);  // FIXME make user configurable
-      bool                 IsFromPrimaryVtx(SvtxTrack* track, PHCompositeNode* topNode);
-      bool                 IsOutgoingParton(HepMC::GenParticle* par);
-      pair<double, double> GetTrackDcaPair(SvtxTrack* track, PHCompositeNode* topNode);
-      CLHEP::Hep3Vector    GetTrackVertex(SvtxTrack* track, PHCompositeNode* topNode);
-      double               GetTrackDeltaPt(SvtxTrack* track);
-      float                GetParticleCharge(const int pid);
-      int                  GetNumLayer(SvtxTrack* track, const uint8_t subsys = 0);
-      int                  GetNumClust(SvtxTrack* track, const uint8_t subsys = 0);
-      int                  GetMatchID(SvtxTrack* track);
+      bool IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge = false);
+      bool IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode);
+      bool IsGoodFlow(ParticleFlowElement* flow);
+      bool IsGoodECal(CLHEP::Hep3Vector& hepVecECal);
+      bool IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
+      bool IsGoodTrackSeed(SvtxTrack* track);
+      bool IsGoodTrackPhi(SvtxTrack* track, const float phiMaskSize = 0.01);  // FIXME make user configurable
 
       // system methods (*.sys.h)
-      void                          InitVariables();
-      void                          InitHists();
-      void                          InitTrees();
-      void                          InitFuncs();
-      void                          InitEvals(PHCompositeNode* topNode);
-      void                          FillTrueTree();
-      void                          FillRecoTree();
-      void                          SaveOutput();
-      void                          ResetVariables();
-      void                          DetermineEvtsToGrab(PHCompositeNode* topNode);
-      int                           CreateJetNode(PHCompositeNode* topNode);
-      int                           GetEmbedID(PHCompositeNode* topNode, const int iEvtToGrab = 1);
-      SvtxTrackMap*                 GetTrackMap(PHCompositeNode* topNode);
-      GlobalVertex*                 GetGlobalVertex(PHCompositeNode* topNode, const int iVtxToGrab = -1);
-      GlobalVertexMap*              GetVertexMap(PHCompositeNode* topNode);
-      HepMC::GenEvent*              GetMcEvent(PHCompositeNode* topNode, const int iEvtToGrab = 1);
-      RawClusterContainer*          GetClusterStore(PHCompositeNode* topNode, const TString sNodeName);
-      ParticleFlowElementContainer* GetFlowStore(PHCompositeNode* topNode);
+      void InitVariables();
+      void InitHists();
+      void InitTrees();
+      void InitFuncs();
+      void InitEvals(PHCompositeNode* topNode);
+      void FillTrueTree();
+      void FillRecoTree();
+      void SaveOutput();
+      void ResetVariables();
+      void DetermineEvtsToGrab(PHCompositeNode* topNode);
+      int  CreateJetNode(PHCompositeNode* topNode);
 
       // F4A/utility members
       Fun4AllHistoManager* m_histMan   = NULL;
