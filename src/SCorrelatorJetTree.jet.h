@@ -164,9 +164,6 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // loop over tracks
     unsigned int  iCst    = particles.size();
-    unsigned int  nTrkTot = 0;
-    unsigned int  nTrkAcc = 0;
-    double        eTrkSum = 0.;
     SvtxTrack*    track   = NULL;
     SvtxTrackMap* mapTrks = GetTrackMap(topNode);
     for (SvtxTrackMap::Iter itTrk = mapTrks -> begin(); itTrk != mapTrks -> end(); ++itTrk) {
@@ -175,16 +172,12 @@ namespace SColdQcdCorrelatorAnalysis {
       track = itTrk -> second;
       if (!track) {
         continue;
-      } else {
-        ++nTrkTot;
       }
 
       // check if good
       const bool isGoodTrack = IsGoodTrack(track, topNode);
       if (!isGoodTrack) {
         continue;
-      } else {
-        ++nTrkAcc;
       }
 
       // create pseudojet and add to constituent vector
@@ -222,45 +215,9 @@ namespace SColdQcdCorrelatorAnalysis {
       const int    trkNumTpc  = GetNumLayer(track, SUBSYS::TPC);
       const int    trkNumIntt = GetNumLayer(track, SUBSYS::INTT);
       const int    trkNumMvtx = GetNumLayer(track, SUBSYS::MVTX);
-
-      // fill QA histograms
-      m_hObjectQA[OBJECT::TRACK][INFO::PT]      -> Fill(fjTrack.perp());
-      m_hObjectQA[OBJECT::TRACK][INFO::ETA]     -> Fill(fjTrack.pseudorapidity());
-      m_hObjectQA[OBJECT::TRACK][INFO::PHI]     -> Fill(fjTrack.phi_std());
-      m_hObjectQA[OBJECT::TRACK][INFO::ENE]     -> Fill(fjTrack.E());
-      m_hObjectQA[OBJECT::TRACK][INFO::QUAL]    -> Fill(trkQuality);
-      m_hObjectQA[OBJECT::TRACK][INFO::DCAXY]   -> Fill(trkDcaXY);
-      m_hObjectQA[OBJECT::TRACK][INFO::DCAZ]    -> Fill(trkDcaZ);
-      m_hObjectQA[OBJECT::TRACK][INFO::DELTAPT] -> Fill(trkDeltaPt);
-      m_hObjectQA[OBJECT::TRACK][INFO::NTPC]    -> Fill(trkNumTpc);
-
-      // fill QA tuple, increment sums and counters
-      m_ntTrkQA -> Fill(
-        (float) fjTrack.perp(),
-        (float) fjTrack.pseudorapidity(),
-        (float) fjTrack.phi_std(),
-        (float) fjTrack.E(),
-        (float) trkDcaXY,
-        (float) trkDcaZ,
-        (float) trkDeltaPt,
-        (float) trkQuality,
-        (float) trkNumMvtx,
-        (float) trkNumIntt,
-        (float) trkNumTpc,
-        (float) trkVtx.x(),
-        (float) trkVtx.y(),
-        (float) trkVtx.z()
-      );
-      eTrkSum += trkE;
       ++iCst;
 
     }  // end track loop
-
-    // fill QA histograms
-    m_hNumObject[OBJECT::TRACK]             -> Fill(nTrkAcc);
-    m_hNumCstAccept[CST_TYPE::TRACK_CST][0] -> Fill(nTrkTot);
-    m_hNumCstAccept[CST_TYPE::TRACK_CST][1] -> Fill(nTrkAcc);
-    m_hSumCstEne[CST_TYPE::TRACK_CST]       -> Fill(eTrkSum);
     return;
 
   }  // end 'AddTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'

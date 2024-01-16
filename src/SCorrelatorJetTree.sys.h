@@ -139,7 +139,6 @@ namespace SColdQcdCorrelatorAnalysis {
     // sum of cst. energies
     m_hSumCstEne[CST_TYPE::PART_CST]  = new TH1D("hSumPartEne",  "#SigmaE (cst. par.s)", nEneBins, rEneBins[0], rEneBins[1]);
     m_hSumCstEne[CST_TYPE::FLOW_CST]  = new TH1D("hSumFlowEne",  "#SigmaE (cst. flow)",  nEneBins, rEneBins[0], rEneBins[1]);
-    m_hSumCstEne[CST_TYPE::TRACK_CST] = new TH1D("hSumTrackEne", "#SigmaE (cst. track)", nEneBins, rEneBins[0], rEneBins[1]);
     m_hSumCstEne[CST_TYPE::ECAL_CST]  = new TH1D("hSumECalEne",  "#SigmaE (cst. ecal)",  nEneBins, rEneBins[0], rEneBins[1]);
     m_hSumCstEne[CST_TYPE::HCAL_CST]  = new TH1D("hSumHCalEne",  "#SigmaE (cst. hcal)",  nEneBins, rEneBins[0], rEneBins[1]);
     // particle QA
@@ -152,16 +151,6 @@ namespace SColdQcdCorrelatorAnalysis {
     m_hObjectQA[OBJECT::PART][INFO::DCAZ]    = new TH1D("hPartDcaZ",    "DCA_{z} (par.s, N/A)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
     m_hObjectQA[OBJECT::PART][INFO::DELTAPT] = new TH1D("hPartDeltaPt", "#deltap_{T}/p_{T} (par.s, N/A)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
     m_hObjectQA[OBJECT::PART][INFO::NTPC]    = new TH1D("hPartNumTpc",  "N_{clust}^{tpc} (par.s, N/A)",   nNumBins,   rNumBins[0],   rNumBins[1]);
-    // track QA
-    m_hObjectQA[OBJECT::TRACK][INFO::PT]      = new TH1D("hTrackPt",      "p_{T} (tracks)",             nPtBins,    rPtBins[0],    rPtBins[1]);
-    m_hObjectQA[OBJECT::TRACK][INFO::ETA]     = new TH1D("hTrackEta",     "#eta (tracks)",              nEtaBins,   rEtaBins[0],   rEtaBins[1]);
-    m_hObjectQA[OBJECT::TRACK][INFO::PHI]     = new TH1D("hTrackPhi",     "#phi (tracks)",              nPhiBins,   rPhiBins[0],   rPhiBins[1]);
-    m_hObjectQA[OBJECT::TRACK][INFO::ENE]     = new TH1D("hTrackEne",     "E (tracks)",                 nEneBins,   rEneBins[0],   rEneBins[1]);
-    m_hObjectQA[OBJECT::TRACK][INFO::QUAL]    = new TH1D("hTrackQuality", "Quality (tracks)",           nQualBins,  rQualBins[0],  rQualBins[1]);
-    m_hObjectQA[OBJECT::TRACK][INFO::DCAXY]   = new TH1D("hTrackDcaXY",   "DCA_{xy} (tracks)",          nDcaBins,   rDcaBins[0],   rDcaBins[1]);
-    m_hObjectQA[OBJECT::TRACK][INFO::DCAZ]    = new TH1D("hTrackDcaZ",    "DCA_{z} (tracks)",           nDcaBins,   rDcaBins[0],   rDcaBins[1]);
-    m_hObjectQA[OBJECT::TRACK][INFO::DELTAPT] = new TH1D("hTrackDeltaPt", "#deltap_{T}/p_{T} (tracks)", nDeltaBins, rDeltaBins[0], rDeltaBins[1]);
-    m_hObjectQA[OBJECT::TRACK][INFO::NTPC]    = new TH1D("hTrackNumTpc",  "N_{clust}^{tpc} (tracks)",   nNumBins,   rNumBins[0],   rNumBins[1]);
     // particle flow QA
     m_hObjectQA[OBJECT::FLOW][INFO::PT]      = new TH1D("hFlowPt",      "p_{T} (flow)",                  nPtBins,    rPtBins[0],    rPtBins[1]);
     m_hObjectQA[OBJECT::FLOW][INFO::ETA]     = new TH1D("hFlowEta",     "#eta (flow)",                   nEtaBins,   rEtaBins[0],   rEtaBins[1]);
@@ -239,8 +228,6 @@ namespace SColdQcdCorrelatorAnalysis {
     // no. of cst.s
     m_hNumCstAccept[CST_TYPE::PART_CST][0]  = new TH1D("hNumPartCstTot", "N_{cst}^{par} total",      nNumBins, rNumBins[0], rNumBins[1]);
     m_hNumCstAccept[CST_TYPE::PART_CST][1]  = new TH1D("hNumPartCstAcc", "N_{cst}^{par} accepted",   nNumBins, rNumBins[0], rNumBins[1]);
-    m_hNumCstAccept[CST_TYPE::TRACK_CST][0] = new TH1D("hNumTrkCstTot",  "N_{cst}^{trk} total",      nNumBins, rNumBins[0], rNumBins[1]);
-    m_hNumCstAccept[CST_TYPE::TRACK_CST][1] = new TH1D("hNumTrkCstAcc",  "N_{cst}^{trk} accepted",   nNumBins, rNumBins[0], rNumBins[1]);
     m_hNumCstAccept[CST_TYPE::FLOW_CST][0]  = new TH1D("hNumFlowCstTot", "N_{cst}^{flow} total",     nNumBins, rNumBins[0], rNumBins[1]);
     m_hNumCstAccept[CST_TYPE::FLOW_CST][1]  = new TH1D("hNumFlowCstAcc", "N_{cst}^{flow} accepted",  nNumBins, rNumBins[0], rNumBins[1]);
     m_hNumCstAccept[CST_TYPE::ECAL_CST][0]  = new TH1D("hNumECalCstTot", "N_{cst}^{clust} total",    nNumBins, rNumBins[0], rNumBins[1]);
@@ -290,46 +277,6 @@ namespace SColdQcdCorrelatorAnalysis {
     return;
 
   }  // end 'InitFuncs()'
-
-
-
-  void SCorrelatorJetTree::InitTuples() {
-
-    // print debug statement
-    if (m_doDebug) {
-      cout << "SCorrelatorJetTree::InitTuples() Initializing output tuples..." << endl;
-    }
-
-    // track QA leaves
-    const vector<string> vecTrkQALeaves = {
-      "pt",
-      "eta",
-      "phi",
-      "energy",
-      "dcaxy",
-      "dcaz",
-      "deltapt",
-      "quality",
-      "nmvtxlayer",
-      "ninttlayer",
-      "ntpclayer",
-      "vtxx",
-      "vtxy",
-      "vtxz"
-    };
-
-    // flatten leaf list
-    string argTrkQALeaves("");
-    for (size_t iLeaf = 0; iLeaf < vecTrkQALeaves.size(); iLeaf++) {
-      argTrkQALeaves.append(vecTrkQALeaves[iLeaf]);
-      if ((iLeaf + 1) != vecTrkQALeaves.size()) {
-        argTrkQALeaves.append(":");
-      }
-    }
-    m_ntTrkQA = new TNtuple("ntTrkQA", "Track QA", argTrkQALeaves.data());
-    return;
-
-  }  // end 'InitTuples()'
 
 
 
@@ -756,9 +703,6 @@ namespace SColdQcdCorrelatorAnalysis {
       // save object-specific QA hists
       for (size_t iObj = OBJECT::TRACK; iObj < CONST::NObjType; iObj++) {
         switch (iObj) {
-          case OBJECT::TRACK:
-            dQuality[0] -> cd();
-            break;
           case OBJECT::HCLUST:
             dQuality[1] -> cd();
             break;
@@ -783,6 +727,9 @@ namespace SColdQcdCorrelatorAnalysis {
           case OBJECT::RCST:
             dQuality[5] -> cd();
             break;
+          default:
+            /* do nothing */
+            break;
         }
         m_hNumObject[iObj] -> Write();
         for (size_t iInfo = INFO::PT; iInfo < CONST::NInfoQA; iInfo++) {
@@ -793,9 +740,6 @@ namespace SColdQcdCorrelatorAnalysis {
       // save cst-specific histograms
       for (size_t iCst = CST_TYPE::TRACK_CST; iCst < CONST::NCstType; iCst++) {
         switch (iCst) {
-          case CST_TYPE::TRACK_CST:
-            dQuality[0] -> cd();
-            break;
           case CST_TYPE::ECAL_CST:
             dQuality[1] -> cd();
             break;
@@ -807,6 +751,9 @@ namespace SColdQcdCorrelatorAnalysis {
             break;
           case CST_TYPE::PART_CST:
             dQuality[3] -> cd();
+            break;
+          default:
+            /* do nothing */
             break;
         }
         m_hNumCstAccept[iCst][0] -> Write();
@@ -1043,83 +990,6 @@ namespace SColdQcdCorrelatorAnalysis {
     return mcEvtStart -> get_embedding_id();
 
   }  // end 'GetEmbedID(PHCompositeNode*, int)'
-
-
-
-  SvtxTrackMap* SCorrelatorJetTree::GetTrackMap(PHCompositeNode* topNode) {
-
-    // print debug statement
-    if (m_doDebug) {
-      cout << "SCorrelatorJetTree::GetTrackMap(PHCompositeNode*) Grabbing track map..." << endl;
-    }
-
-    // grab track map
-    SvtxTrackMap* mapTrks = findNode::getClass<SvtxTrackMap>(topNode, "SvtxTrackMap");
-    if (!mapTrks) {
-      cerr << PHWHERE
-           << "PANIC: SvtxTrackMap node is missing!"
-           << endl;
-      assert(mapTrks);
-    }
-    return mapTrks;
-
-  }  // end 'GetTrackMap(PHCompositeNode*)'
-
-
-
-  GlobalVertex* SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode* topNode, const int iVtxToGrab) {
-
-    // print debug statement
-    if (m_doDebug) {
-      cout << "SCorrelatorJetTree::GetGlobalVertex(PHCompositeNode*) Getting global vertex..." << endl;
-    }
-
-    // get vertex map
-    GlobalVertexMap* mapVtx = GetVertexMap(topNode);
-
-    // get specified vertex
-    GlobalVertex* vtx = NULL;
-    if (iVtxToGrab < 0) {
-      vtx = mapVtx -> begin() -> second;
-    } else {
-      vtx = mapVtx -> get(iVtxToGrab);
-    }
-
-    // check if good
-    if (!vtx) {
-      cerr << PHWHERE
-           << "PANIC: no vertex!"
-           << endl;
-      assert(vtx);
-    }
-    return vtx;
-
-  }  // end 'GetGlobalVertex(PHCompositeNode*, int)'
-
-
-
-  GlobalVertexMap* SCorrelatorJetTree::GetVertexMap(PHCompositeNode* topNode) {
-
-    // print debug statement
-    if (m_doDebug) {
-      cout << "SCorrelatorJetTree::GetVertexMap(PHCompositeNode*) Getting global vertex map..." << endl;
-    }
-
-    // get vertex map
-    GlobalVertexMap* mapVtx = findNode::getClass<GlobalVertexMap>(topNode, "GlobalVertexMap");
-
-    // check if good
-    const bool isVtxMapGood = (mapVtx && !(mapVtx -> empty()));
-    if (!isVtxMapGood) {
-      cerr << PHWHERE
-           << "PANIC: GlobalVertexMap node is missing or empty!\n"
-           << "       Please turn on the do_global flag in the main macro in order to reconstruct the global vertex!"
-           << endl;
-      assert(isVtxMapGood);
-    }
-    return mapVtx;
-
-  }  // end 'GetVertexMap(PHCompositeNode*)'
   
 
 
@@ -1158,48 +1028,6 @@ namespace SColdQcdCorrelatorAnalysis {
     return mcEvt;
 
   }  // end 'GetMcEvent(PHCompositeNode*, int)'
-
-
-
-  RawClusterContainer* SCorrelatorJetTree::GetClusterStore(PHCompositeNode* topNode, const TString sNodeName) {
-
-    // print debug statement
-    if (m_doDebug) {
-      cout << "SCorrelatorJetTree::GetClusterStore(PHCompositeNode*, TString) Grabbing calorimeter cluster container..." << endl;
-    }
-
-    // grab clusters
-    RawClusterContainer *clustStore = findNode::getClass<RawClusterContainer>(topNode, sNodeName.Data());
-    if (!clustStore) {
-      cout << PHWHERE
-           << "PANIC: " << sNodeName.Data() << " node is missing!"
-           << endl;
-      assert(clustStore);
-    }
-    return clustStore;
-
-  }  // end 'GetClusterStore(PHCompositeNode*, TString)'
-
-
-
-  ParticleFlowElementContainer* SCorrelatorJetTree::GetFlowStore(PHCompositeNode* topNode) {
-
-    // print debug statement
-    if (m_doDebug) {
-      cout << "SCorrelatorJetTree::GetFlowStore(PHCompositeNode*) Grabbing particle flow container..." << endl;
-    }
-
-    // declare pf  objects
-    ParticleFlowElementContainer* flowStore = findNode::getClass<ParticleFlowElementContainer>(topNode, "ParticleFlowElements");
-    if (!flowStore) {
-      cerr << PHWHERE
-           << "PANIC: Couldn't grab particle flow container!"
-           << endl;
-      assert(flowStore);
-    }
-    return flowStore;
-
-  }  // end 'GetFlowStore(PHCompositeNode*)'
 
 }  // end SColdQcdCorrelatorAnalysis namespace
 

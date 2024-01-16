@@ -105,7 +105,6 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // initialize QA histograms/tuples, output trees, and functions
     InitHists();
-    InitTuples();
     InitTrees();
     InitFuncs();
     return Fun4AllReturnCodes::EVENT_OK;

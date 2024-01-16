@@ -318,7 +318,6 @@ namespace SColdQcdCorrelatorAnalysis {
       // system methods (*.sys.h)
       void                          InitVariables();
       void                          InitHists();
-      void                          InitTuples();
       void                          InitTrees();
       void                          InitFuncs();
       void                          InitEvals(PHCompositeNode* topNode);
@@ -364,7 +363,6 @@ namespace SColdQcdCorrelatorAnalysis {
       TH1D*    m_hSumCstEne[CONST::NCstType];
       TH1D*    m_hObjectQA[CONST::NObjType][CONST::NInfoQA];
       TH1D*    m_hNumCstAccept[CONST::NCstType][CONST::NMoment];
-      TNtuple* m_ntTrkQA       = NULL;
 
       // system members
       bool          m_doVtxCut       = false;
