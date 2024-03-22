@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.io.h'
+// 'SCorrelatorJetTreeMaker.io.h'
 // Derek Anderson
 // 12.04.2022
 //
@@ -20,7 +20,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // i/o methods -------------------------------------------------------------
 
-  void SCorrelatorJetTree::SetEvtVzRange(const pair<double, double> vzRange) {
+  void SCorrelatorJetTreeMaker::SetEvtVzRange(const pair<double, double> vzRange) {
 
     m_evtVzRange[0] = vzRange.first;
     m_evtVzRange[1] = vzRange.second;
@@ -30,7 +30,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetEvtVrRange(const pair<double, double> vrRange) {
+  void SCorrelatorJetTreeMaker::SetEvtVrRange(const pair<double, double> vrRange) {
 
     m_evtVrRange[0] = vrRange.first;
     m_evtVrRange[1] = vrRange.second;
@@ -40,7 +40,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetParPtRange(const pair<double, double> ptRange) {
+  void SCorrelatorJetTreeMaker::SetParPtRange(const pair<double, double> ptRange) {
 
     m_parPtRange[0] = ptRange.first;
     m_parPtRange[1] = ptRange.second;
@@ -50,7 +50,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetParEtaRange(const pair<double, double> etaRange) {
+  void SCorrelatorJetTreeMaker::SetParEtaRange(const pair<double, double> etaRange) {
 
     m_parEtaRange[0] = etaRange.first;
     m_parEtaRange[1] = etaRange.second;
@@ -60,7 +60,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackPtRange(const pair<double, double> ptRange) {
+  void SCorrelatorJetTreeMaker::SetTrackPtRange(const pair<double, double> ptRange) {
 
     m_trkPtRange[0] = ptRange.first;
     m_trkPtRange[1] = ptRange.second;
@@ -70,7 +70,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackEtaRange(const pair<double, double> etaRange) {
+  void SCorrelatorJetTreeMaker::SetTrackEtaRange(const pair<double, double> etaRange) {
 
     m_trkEtaRange[0] = etaRange.first;
     m_trkEtaRange[1] = etaRange.second;
@@ -80,7 +80,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackQualityRange(const pair<double, double> qualRange) {
+  void SCorrelatorJetTreeMaker::SetTrackQualityRange(const pair<double, double> qualRange) {
 
     m_trkQualRange[0] = qualRange.first;
     m_trkQualRange[1] = qualRange.second;
@@ -90,7 +90,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackNMvtxRange(const pair<double, double> nMvtxRange) {
+  void SCorrelatorJetTreeMaker::SetTrackNMvtxRange(const pair<double, double> nMvtxRange) {
 
     m_trkNMvtxRange[0] = nMvtxRange.first;
     m_trkNMvtxRange[1] = nMvtxRange.second;
@@ -100,7 +100,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackNInttRange(const pair<double, double> nInttRange) {
+  void SCorrelatorJetTreeMaker::SetTrackNInttRange(const pair<double, double> nInttRange) {
 
     m_trkNInttRange[0] = nInttRange.first;
     m_trkNInttRange[1] = nInttRange.second;
@@ -110,7 +110,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackNTpcRange(const pair<double, double> nTpcRange) {
+  void SCorrelatorJetTreeMaker::SetTrackNTpcRange(const pair<double, double> nTpcRange) {
 
     m_trkNTpcRange[0] = nTpcRange.first;
     m_trkNTpcRange[1] = nTpcRange.second;
@@ -120,7 +120,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackDcaRangeXY(const pair<double, double> dcaRangeXY) {
+  void SCorrelatorJetTreeMaker::SetTrackDcaRangeXY(const pair<double, double> dcaRangeXY) {
 
     m_trkDcaRangeXY[0] = dcaRangeXY.first;
     m_trkDcaRangeXY[1] = dcaRangeXY.second;
@@ -130,7 +130,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackDcaRangeZ(const pair<double, double> dcaRangeZ) {
+  void SCorrelatorJetTreeMaker::SetTrackDcaRangeZ(const pair<double, double> dcaRangeZ) {
 
     m_trkDcaRangeZ[0] = dcaRangeZ.first;
     m_trkDcaRangeZ[1] = dcaRangeZ.second;
@@ -140,7 +140,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackDeltaPtRange(const pair<double, double> deltaPtRange) {
+  void SCorrelatorJetTreeMaker::SetTrackDeltaPtRange(const pair<double, double> deltaPtRange) {
 
     m_trkDeltaPtRange[0] = deltaPtRange.first;
     m_trkDeltaPtRange[1] = deltaPtRange.second;
@@ -150,7 +150,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, const pair<double, double> ptFitMax, const pair<double, double> nSigma, const vector<double> paramDcaXY, const vector<double> paramDcaZ) {
+  void SCorrelatorJetTreeMaker::SetTrackDcaSigmaParameters(const bool doDcaSigmaCut, const pair<double, double> ptFitMax, const pair<double, double> nSigma, const vector<double> paramDcaXY, const vector<double> paramDcaZ) {
 
     m_doDcaSigmaCut = doDcaSigmaCut;
     m_dcaPtFitMaxXY = ptFitMax.first;
@@ -163,7 +163,7 @@ namespace SColdQcdCorrelatorAnalysis {
       try {
         m_parSigDcaXY[iParam] = paramDcaXY.at(iParam);
       } catch (std::out_of_range &out) {
-        cerr << "SCorrelatorJetTree::SetTrackDcaSigmaParameters: WARNING!\n"
+        cerr << "SCorrelatorJetTreeMaker::SetTrackDcaSigmaParameters: WARNING!\n"
              << "  Tried to pass a vector of wrong size for sigma dca xy fit parameters!\n"
              << "  Size of vector was " << paramDcaXY.size() << " but should've been " << CONST::NParam << "..."
              << endl;
@@ -174,7 +174,7 @@ namespace SColdQcdCorrelatorAnalysis {
       try {
         m_parSigDcaZ[iParam] = paramDcaZ.at(iParam);
       } catch (std::out_of_range &out) {
-        cerr << "SCorrelatorJetTree::SetTrackDcaSigmaParameters: WARNING!\n"
+        cerr << "SCorrelatorJetTreeMaker::SetTrackDcaSigmaParameters: WARNING!\n"
              << "  Tried to pass a vector of wrong size for sigma dca z fit parameters!\n"
              << "  Size of vector was " << paramDcaZ.size() << " but should've been " << CONST::NParam << "..."
              << endl;
@@ -187,7 +187,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetFlowPtRange(const pair<double, double> ptRange) {
+  void SCorrelatorJetTreeMaker::SetFlowPtRange(const pair<double, double> ptRange) {
 
     m_flowPtRange[0] = ptRange.first;
     m_flowPtRange[1] = ptRange.second;
@@ -197,7 +197,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetFlowEtaRange(const pair<double, double> etaRange) {
+  void SCorrelatorJetTreeMaker::SetFlowEtaRange(const pair<double, double> etaRange) {
 
     m_flowEtaRange[0] = etaRange.first;
     m_flowEtaRange[1] = etaRange.second;
@@ -207,7 +207,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetECalPtRange(const pair<double, double> ptRange) {
+  void SCorrelatorJetTreeMaker::SetECalPtRange(const pair<double, double> ptRange) {
 
     m_ecalPtRange[0] = ptRange.first;
     m_ecalPtRange[1] = ptRange.second;
@@ -217,7 +217,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetECalEtaRange(const pair<double, double> etaRange) {
+  void SCorrelatorJetTreeMaker::SetECalEtaRange(const pair<double, double> etaRange) {
 
     m_ecalEtaRange[0] = etaRange.first;
     m_ecalEtaRange[1] = etaRange.second;
@@ -227,7 +227,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetHCalPtRange(const pair<double, double> ptRange) {
+  void SCorrelatorJetTreeMaker::SetHCalPtRange(const pair<double, double> ptRange) {
 
     m_hcalPtRange[0] = ptRange.first;
     m_hcalPtRange[1] = ptRange.second;
@@ -237,7 +237,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetHCalEtaRange(const pair<double, double> etaRange) {
+  void SCorrelatorJetTreeMaker::SetHCalEtaRange(const pair<double, double> etaRange) {
 
     m_hcalEtaRange[0] = etaRange.first;
     m_hcalEtaRange[1] = etaRange.second;
@@ -247,7 +247,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetJetAlgo(const ALGO jetAlgo) {
+  void SCorrelatorJetTreeMaker::SetJetAlgo(const ALGO jetAlgo) {
 
     switch (jetAlgo) {
       case ALGO::ANTIKT:
@@ -269,7 +269,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetRecombScheme(const RECOMB recombScheme) {
+  void SCorrelatorJetTreeMaker::SetRecombScheme(const RECOMB recombScheme) {
 
     switch(recombScheme) {
       case RECOMB::E_SCHEME:
@@ -297,7 +297,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SetJetParameters(const double rJet, uint32_t jetType, const ALGO jetAlgo, const RECOMB recombScheme) {
+  void SCorrelatorJetTreeMaker::SetJetParameters(const double rJet, uint32_t jetType, const ALGO jetAlgo, const RECOMB recombScheme) {
 
     SetJetR(rJet);
     SetJetType(jetType);

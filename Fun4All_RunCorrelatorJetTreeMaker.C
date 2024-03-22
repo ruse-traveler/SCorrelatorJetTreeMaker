@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------------
-// 'Fun4All_RunCorrelatorJetTree.C'
+// 'Fun4All_RunCorrelatorJetTreeMaker.C'
 // Derek Anderson
 // 12.11.2022
 //
-// Use this to run the SCorrelatorJetTree
+// Use this to run the SCorrelatorJetTreeMaker
 // class.
 //
 // Derived from code by Cameron Dean and
@@ -45,7 +45,7 @@
 #include <caloreco/RawClusterBuilderTopo.h>
 #include <particleflowreco/ParticleFlowReco.h>
 // user includes
-#include "/sphenix/user/danderson/install/include/scorrelatorjettree/SCorrelatorJetTree.h"
+#include "/sphenix/user/danderson/install/include/scorrelatorjettree/SCorrelatorJetTreeMaker.h"
 
 // load libraries
 R__LOAD_LIBRARY(libg4eval.so)
@@ -113,8 +113,8 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   // jet tree jet parameters
   const double       jetRes  = 0.4;
   const unsigned int jetType = 0;
-  const auto         jetAlgo = SCorrelatorJetTree::ALGO::ANTIKT;
-  const auto         jetReco = SCorrelatorJetTree::RECOMB::PT_SCHEME;
+  const auto         jetAlgo = SCorrelatorJetTreeMaker::ALGO::ANTIKT;
+  const auto         jetReco = SCorrelatorJetTreeMaker::RECOMB::PT_SCHEME;
 
   // event acceptance
   const pair<double, double> vzEvtRange = {-10., 10.};
@@ -241,7 +241,7 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   }
 
   // create correlator jet tree
-  SCorrelatorJetTree *correlatorJetTree = new SCorrelatorJetTree("SCorrelatorJetTree", sOutput, isMC, isEmbed, doDebug);
+  SCorrelatorJetTreeMaker *correlatorJetTree = new SCorrelatorJetTreeMaker("SCorrelatorJetTreeMaker", sOutput, isMC, isEmbed, doDebug);
   correlatorJetTree -> Verbosity(verbosity);
   correlatorJetTree -> SetDoVertexCut(doVtxCut);
   correlatorJetTree -> SetDoQualityPlots(doQuality);

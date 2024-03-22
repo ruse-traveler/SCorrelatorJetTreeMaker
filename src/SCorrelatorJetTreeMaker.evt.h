@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.evt.h'
+// 'SCorrelatorJetTreeMaker.evt.h'
 // Derek Anderson
 // 03.28.2023
 //
@@ -20,11 +20,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // event methods ------------------------------------------------------------
 
-  bool SCorrelatorJetTree::IsGoodVertex(const CLHEP::Hep3Vector vtx) {
+  bool SCorrelatorJetTreeMaker::IsGoodVertex(const CLHEP::Hep3Vector vtx) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::IsGoodVertex(CLHEP::Hep3Vector) Checking if event is good..." << endl;
+      cout << "SCorrelatorJetTreeMaker::IsGoodVertex(CLHEP::Hep3Vector) Checking if event is good..." << endl;
     }
 
     // calculate vr
@@ -40,11 +40,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::GetEventVariables(PHCompositeNode* topNode) {
+  void SCorrelatorJetTreeMaker::GetEventVariables(PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::GetEventVariables(PHCompositeNode*) Grabbing event info..." << endl;
+      cout << "SCorrelatorJetTreeMaker::GetEventVariables(PHCompositeNode*) Grabbing event info..." << endl;
     }
 
     m_recoVtx     = GetRecoVtx(topNode);

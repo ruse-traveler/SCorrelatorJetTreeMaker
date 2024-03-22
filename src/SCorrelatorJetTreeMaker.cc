@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.cc'
+// 'SCorrelatorJetTreeMaker.cc'
 // Derek Anderson
 // 12.04.2022
 //
@@ -12,12 +12,12 @@
 #define SCORRELATORJETTREE_CC
 
 // user includes
-#include "SCorrelatorJetTree.h"
-#include "SCorrelatorJetTree.io.h"
-#include "SCorrelatorJetTree.evt.h"
-#include "SCorrelatorJetTree.jet.h"
-#include "SCorrelatorJetTree.cst.h"
-#include "SCorrelatorJetTree.sys.h"
+#include "SCorrelatorJetTreeMaker.h"
+#include "SCorrelatorJetTreeMaker.io.h"
+#include "SCorrelatorJetTreeMaker.evt.h"
+#include "SCorrelatorJetTreeMaker.jet.h"
+#include "SCorrelatorJetTreeMaker.cst.h"
+#include "SCorrelatorJetTreeMaker.sys.h"
 
 using namespace std;
 using namespace fastjet;
@@ -29,14 +29,14 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // ctor/dtor ----------------------------------------------------------------
 
-  SCorrelatorJetTree::SCorrelatorJetTree(const string& name, const string& outFile, const bool isMC, const bool isEmbed, const bool debug) : SubsysReco(name) {
+  SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(const string& name, const string& outFile, const bool isMC, const bool isEmbed, const bool debug) : SubsysReco(name) {
 
     // print debug statement
     m_isMC    = isMC;
     m_isEmbed = isEmbed;
     m_doDebug = debug;
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::SCorrelatorJetTree(string, string, bool, bool, bool) Calling ctor" << endl;
+      cout << "SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(string, string, bool, bool, bool) Calling ctor" << endl;
     }
     m_outFileName = outFile;
     InitVariables();
@@ -45,11 +45,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  SCorrelatorJetTree::~SCorrelatorJetTree() {
+  SCorrelatorJetTreeMaker::~SCorrelatorJetTreeMaker() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::~SCorrelatorJetTree() Calling dtor" << endl;
+      cout << "SCorrelatorJetTreeMaker::~SCorrelatorJetTreeMaker() Calling dtor" << endl;
     }
 
     // clean up dangling pointers
@@ -85,17 +85,17 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // F4A methods --------------------------------------------------------------
 
-  int SCorrelatorJetTree::Init(PHCompositeNode* topNode) {
+  int SCorrelatorJetTreeMaker::Init(PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug || (Verbosity() > 1)) {
-      cout << "SCorrelatorJetTree::Init(PHCompositeNode*) Initializing..." << endl;
+      cout << "SCorrelatorJetTreeMaker::Init(PHCompositeNode*) Initializing..." << endl;
     }
 
     // intitialize output file
     m_outFile = new TFile(m_outFileName.c_str(), "RECREATE");
     if (!m_outFile) {
-      cerr << "PANIC: couldn't open SCorrelatorJetTree output file!" << endl;
+      cerr << "PANIC: couldn't open SCorrelatorJetTreeMaker output file!" << endl;
     }
 
     // create node for jet-tree
@@ -113,11 +113,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  int SCorrelatorJetTree::process_event(PHCompositeNode* topNode) {
+  int SCorrelatorJetTreeMaker::process_event(PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug || (Verbosity() > 1)) {
-      cout << "SCorrelatorJetTree::process_event(PHCompositeNode*) Processing Event..." << endl;
+      cout << "SCorrelatorJetTreeMaker::process_event(PHCompositeNode*) Processing Event..." << endl;
     }
 
     // reset event-wise variables & members
@@ -170,11 +170,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  int SCorrelatorJetTree::End(PHCompositeNode* topNode) {
+  int SCorrelatorJetTreeMaker::End(PHCompositeNode* topNode) {
 
     // print debug statements
     if (m_doDebug || (Verbosity() > 1)) {
-      cout << "SCorrelatorJetTree::End(PHCompositeNode*) This is the End..." << endl;
+      cout << "SCorrelatorJetTreeMaker::End(PHCompositeNode*) This is the End..." << endl;
     }
 
     // save output and close

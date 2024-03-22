@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.csts.h'
+// 'SCorrelatorJetTreeMaker.csts.h'
 // Derek Anderson
 // 01.18.2023
 //
@@ -20,11 +20,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // constituent methods ------------------------------------------------------
 
-  bool SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge) {
+  bool SCorrelatorJetTreeMaker::IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge) {
 
     // print debug statement
     if (m_doDebug && (Verbosity() > 1)) {
-      cout << "SCorrelatorJetTree::IsGoodParticle(HepMC::GenParticle*) Checking if MC particle is good..." << endl;
+      cout << "SCorrelatorJetTreeMaker::IsGoodParticle(HepMC::GenParticle*) Checking if MC particle is good..." << endl;
     }
 
     // check charge if needed
@@ -55,11 +55,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  bool SCorrelatorJetTree::IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode) {
+  bool SCorrelatorJetTreeMaker::IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug && (Verbosity() > 1)) {
-      cout << "SCorrelatorJetTree::IsGoodTrack(SvtxTrack*) Checking if track is good..." << endl;
+      cout << "SCorrelatorJetTreeMaker::IsGoodTrack(SvtxTrack*) Checking if track is good..." << endl;
     }
 
     // grab track info
@@ -135,11 +135,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  bool SCorrelatorJetTree::IsGoodFlow(ParticleFlowElement* flow) {
+  bool SCorrelatorJetTreeMaker::IsGoodFlow(ParticleFlowElement* flow) {
 
     // print debug statement
     if (m_doDebug && (Verbosity() > 1)) {
-      cout << "SCorrelatorJetTree::IsGoodFlow(ParticleFlowElement*) Checking if particle flow element is good..." << endl;
+      cout << "SCorrelatorJetTreeMaker::IsGoodFlow(ParticleFlowElement*) Checking if particle flow element is good..." << endl;
     }
 
     // TODO: explore particle flow cuts
@@ -152,11 +152,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  bool SCorrelatorJetTree::IsGoodECal(CLHEP::Hep3Vector& hepVecECal) {
+  bool SCorrelatorJetTreeMaker::IsGoodECal(CLHEP::Hep3Vector& hepVecECal) {
 
     // print debug statement
     if (m_doDebug && (Verbosity() > 1)) {
-      cout << "SCorrelatorJetTree::IsGoodECal(CLHEP::Hep3Vector&) Checking if ECal cluster is good..." << endl;
+      cout << "SCorrelatorJetTreeMaker::IsGoodECal(CLHEP::Hep3Vector&) Checking if ECal cluster is good..." << endl;
     }
 
     const double clustPt      = hepVecECal.perp();
@@ -170,11 +170,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  bool SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal) {
+  bool SCorrelatorJetTreeMaker::IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal) {
 
     // print debug statement
     if (m_doDebug && (Verbosity() > 1)) {
-      cout << "SCorrelatorJetTree::IsGoodHCal(CLHEP::Hep3Vector&) Checking if HCal cluster is good..." << endl;
+      cout << "SCorrelatorJetTreeMaker::IsGoodHCal(CLHEP::Hep3Vector&) Checking if HCal cluster is good..." << endl;
     }
 
     // TODO: explore particle cuts. These should vary with particle charge/species.
@@ -189,11 +189,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  bool SCorrelatorJetTree::IsGoodTrackSeed(SvtxTrack* track) {
+  bool SCorrelatorJetTreeMaker::IsGoodTrackSeed(SvtxTrack* track) {
 
     // print debug statement
     if (m_doDebug && (Verbosity() > 2)) {
-      cout << "SCorrelatorJetTree::IsGoodSeedTrack(SvtxTrack*) Checking if track seed is good..." << endl;
+      cout << "SCorrelatorJetTreeMaker::IsGoodSeedTrack(SvtxTrack*) Checking if track seed is good..." << endl;
     }
 
     // get track seeds
@@ -211,11 +211,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  bool SCorrelatorJetTree::IsGoodTrackPhi(SvtxTrack* track, const float phiMaskSize) {
+  bool SCorrelatorJetTreeMaker::IsGoodTrackPhi(SvtxTrack* track, const float phiMaskSize) {
 
     // print debug statement
     if (m_doDebug && (Verbosity() > 2)) {
-      cout << "SCorrelatorJetTree::IsGoodTrackPhi(SvtxTrack*) Checking if track phi is good..." << endl;
+      cout << "SCorrelatorJetTreeMaker::IsGoodTrackPhi(SvtxTrack*) Checking if track phi is good..." << endl;
     }
 
     // TPC sector boundaries:

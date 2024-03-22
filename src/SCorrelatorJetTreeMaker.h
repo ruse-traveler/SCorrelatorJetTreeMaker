@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.h'
+// 'SCorrelatorJetTreeMaker.h'
 // Derek Anderson
 // 12.04.2022
 //
@@ -9,8 +9,8 @@
 // Derived from code by Antonio Silva (thanks!!)
 // ----------------------------------------------------------------------------
 
-#ifndef SCORRELATORJETTREE_H
-#define SCORRELATORJETTREE_H
+#ifndef SCORRELATORJETTREEMAKER_H
+#define SCORRELATORJETTREEMAKER_H
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -116,9 +116,9 @@ class ParticleFlowElement;
 
 namespace SColdQcdCorrelatorAnalysis {
 
-  // SCorrelatorJetTree definition --------------------------------------------
+  // SCorrelatorJetTreeMaker definition --------------------------------------------
 
-  class SCorrelatorJetTree : public SubsysReco {
+  class SCorrelatorJetTreeMaker : public SubsysReco {
 
     public:
 
@@ -137,8 +137,8 @@ namespace SColdQcdCorrelatorAnalysis {
       };
 
       // ctor/dtor
-      SCorrelatorJetTree(const string& name = "SCorrelatorJetTree", const string& outFile = "correlator_jet_tree.root", const bool isMC = false, const bool isEmbed = false, const bool debug = false);
-      ~SCorrelatorJetTree() override;
+      SCorrelatorJetTreeMaker(const string& name = "SCorrelatorJetTreeMaker", const string& outFile = "correlator_jet_tree.root", const bool isMC = false, const bool isEmbed = false, const bool debug = false);
+      ~SCorrelatorJetTreeMaker() override;
 
       // F4A methods
       int Init(PHCompositeNode*)          override;

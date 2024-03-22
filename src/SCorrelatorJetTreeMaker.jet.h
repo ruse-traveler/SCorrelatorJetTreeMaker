@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.jets.h'
+// 'SCorrelatorJetTreeMaker.jets.h'
 // Derek Anderson
 // 01.18.2023
 //
@@ -21,11 +21,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // jet methods --------------------------------------------------------------
 
-  void SCorrelatorJetTree::FindTrueJets(PHCompositeNode* topNode) {
+  void SCorrelatorJetTreeMaker::FindTrueJets(PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::FindTrueJets(PHCompositeNode*) Finding truth (inclusive) jets..." << endl;
+      cout << "SCorrelatorJetTreeMaker::FindTrueJets(PHCompositeNode*) Finding truth (inclusive) jets..." << endl;
     }
 
     // define jets
@@ -47,11 +47,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::FindRecoJets(PHCompositeNode* topNode) {
+  void SCorrelatorJetTreeMaker::FindRecoJets(PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::FindRecoJets(PHCompositeNode*) Finding jets..." << endl;
+      cout << "SCorrelatorJetTreeMaker::FindRecoJets(PHCompositeNode*) Finding jets..." << endl;
     }
 
     // define jets
@@ -76,11 +76,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
+  void SCorrelatorJetTreeMaker::AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::AddParticles(PHComposite*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding MC particles..." << endl;
+      cout << "SCorrelatorJetTreeMaker::AddParticles(PHComposite*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding MC particles..." << endl;
     }
 
     // loop over relevant subevents
@@ -155,11 +155,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
+  void SCorrelatorJetTreeMaker::AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::AddTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding tracks..." << endl;
+      cout << "SCorrelatorJetTreeMaker::AddTracks(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding tracks..." << endl;
     }
 
     // loop over tracks
@@ -224,16 +224,16 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::AddFlow(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
+  void SCorrelatorJetTreeMaker::AddFlow(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::AddFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding particle flow elements..." << endl;
+      cout << "SCorrelatorJetTreeMaker::AddFlow(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding particle flow elements..." << endl;
     }
 
     // warn if jets should be charged
     if (m_doDebug && (m_jetType != 1)) {
-      cerr << "SCorrelatorJetTree::AddFlow - Warning - trying to add particle flow elements to charged jets!" << endl;
+      cerr << "SCorrelatorJetTreeMaker::AddFlow - Warning - trying to add particle flow elements to charged jets!" << endl;
     }
 
     // loop over pf elements
@@ -297,16 +297,16 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::AddECal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
+  void SCorrelatorJetTreeMaker::AddECal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::AddECal(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding ECal clusters..." << endl;
+      cout << "SCorrelatorJetTreeMaker::AddECal(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding ECal clusters..." << endl;
     }
 
     // warn if jets should be charged
     if (m_doDebug && (m_jetType != 1)) {
-      cerr << "SCorrelatorJetTree::AddECal - Warning - trying to add calorimeter clusters to charged jets!" << endl;
+      cerr << "SCorrelatorJetTreeMaker::AddECal - Warning - trying to add calorimeter clusters to charged jets!" << endl;
     }
 
     // grab vertex and clusters
@@ -387,16 +387,16 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::AddHCal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
+  void SCorrelatorJetTreeMaker::AddHCal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::AddHCal(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding HCal clusters..." << endl;
+      cout << "SCorrelatorJetTreeMaker::AddHCal(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding HCal clusters..." << endl;
     }
 
     // warn if jets should be charged
     if (m_doDebug && (m_jetType != 1)) {
-      cerr << "SCorrelatorJetTree::AddHCal - Warning - trying to add calorimeter clusters to charged jets!" << endl;
+      cerr << "SCorrelatorJetTreeMaker::AddHCal - Warning - trying to add calorimeter clusters to charged jets!" << endl;
     }
 
     // grab vertex and clusters

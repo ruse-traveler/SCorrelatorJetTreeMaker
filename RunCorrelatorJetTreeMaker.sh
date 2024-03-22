@@ -1,6 +1,6 @@
 #!/bin/bash
 # -----------------------------------------------------------------------------
-# 'RunCorrelatorJetTree.sh'
+# 'RunCorrelatorJetTreeMaker.sh'
 # Derek Anderson
 # 01.03.2022
 #

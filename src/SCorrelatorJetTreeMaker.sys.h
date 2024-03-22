@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.system.h'
+// 'SCorrelatorJetTreeMaker.system.h'
 // Derek Anderson
 // 01.18.2023
 //
@@ -20,11 +20,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // system methods -----------------------------------------------------------
 
-  void SCorrelatorJetTree::InitVariables() {
+  void SCorrelatorJetTreeMaker::InitVariables() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::InitVariables() Initializing class members..." << endl;
+      cout << "SCorrelatorJetTreeMaker::InitVariables() Initializing class members..." << endl;
     }
 
     // initialize parton and other variables
@@ -98,11 +98,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::InitHists() {
+  void SCorrelatorJetTreeMaker::InitHists() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::InitHists() Initializing QA histograms..." << endl;
+      cout << "SCorrelatorJetTreeMaker::InitHists() Initializing QA histograms..." << endl;
     }
 
     // binning
@@ -257,11 +257,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::InitFuncs() {
+  void SCorrelatorJetTreeMaker::InitFuncs() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::InitFuncs() Initializing functions for internal calculations..." << endl;
+      cout << "SCorrelatorJetTreeMaker::InitFuncs() Initializing functions for internal calculations..." << endl;
     }
 
     // pt range of functions
@@ -280,11 +280,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::InitTrees() {
+  void SCorrelatorJetTreeMaker::InitTrees() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::InitTrees() Initializing output trees..." << endl;
+      cout << "SCorrelatorJetTreeMaker::InitTrees() Initializing output trees..." << endl;
     }
 
     // initialize true (inclusive) jet tree
@@ -348,16 +348,16 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::InitEvals(PHCompositeNode* topNode) {
+  void SCorrelatorJetTreeMaker::InitEvals(PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) Initializing evaluators..." << endl;
+      cout << "SCorrelatorJetTreeMaker::InitEvals(PHCompositeNode*) Initializing evaluators..." << endl;
     }
 
     m_evalStack = new SvtxEvalStack(topNode);
     if (!m_evalStack) {
-      cerr << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) PANIC: couldn't grab SvtxEvalStack! Aborting!" << endl;
+      cerr << "SCorrelatorJetTreeMaker::InitEvals(PHCompositeNode*) PANIC: couldn't grab SvtxEvalStack! Aborting!" << endl;
       assert(m_evalStack);
     } else {
       m_evalStack -> next_event(topNode);
@@ -365,7 +365,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
     m_trackEval = m_evalStack -> get_track_eval();
     if (!m_trackEval) {
-      cerr << "SCorrelatorJetTree::InitEvals(PHCompositeNode*) PANIC: couldn't grab track evaluator! Aborting!" << endl;
+      cerr << "SCorrelatorJetTreeMaker::InitEvals(PHCompositeNode*) PANIC: couldn't grab track evaluator! Aborting!" << endl;
       assert(m_trackEval);
     }
     return;
@@ -374,11 +374,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::FillTrueTree() {
+  void SCorrelatorJetTreeMaker::FillTrueTree() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::FillTrueTree() Filling truth jet tree..." << endl;
+      cout << "SCorrelatorJetTreeMaker::FillTrueTree() Filling truth jet tree..." << endl;
     }
 
     // prepare vectors for filling
@@ -536,11 +536,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::FillRecoTree() {
+  void SCorrelatorJetTreeMaker::FillRecoTree() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::FillRecoTree() Filling reco jet tree..." << endl;
+      cout << "SCorrelatorJetTreeMaker::FillRecoTree() Filling reco jet tree..." << endl;
     }
 
     // prepare vectors for filling
@@ -682,11 +682,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::SaveOutput() {
+  void SCorrelatorJetTreeMaker::SaveOutput() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::SaveOutput() Saving output trees and histograms..." << endl;
+      cout << "SCorrelatorJetTreeMaker::SaveOutput() Saving output trees and histograms..." << endl;
     }
 
     // save QA histograms if need be
@@ -786,11 +786,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::ResetVariables() {
+  void SCorrelatorJetTreeMaker::ResetVariables() {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::ResetTreeVariables() Resetting tree variables..." << endl;
+      cout << "SCorrelatorJetTreeMaker::ResetTreeVariables() Resetting tree variables..." << endl;
     }
 
     // reset fastjet members
@@ -863,11 +863,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  void SCorrelatorJetTree::DetermineEvtsToGrab(PHCompositeNode* topNode) {
+  void SCorrelatorJetTreeMaker::DetermineEvtsToGrab(PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::DetermineEvtsToGrab() Determining which subevents to grab..." << endl;
+      cout << "SCorrelatorJetTreeMaker::DetermineEvtsToGrab() Determining which subevents to grab..." << endl;
     }
 
     // make sure vector is clear
@@ -889,11 +889,11 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  int SCorrelatorJetTree::CreateJetNode(PHCompositeNode* topNode) {
+  int SCorrelatorJetTreeMaker::CreateJetNode(PHCompositeNode* topNode) {
 
     // print debug statement
     if (m_doDebug) {
-      cout << "SCorrelatorJetTree::CreateJetNode(PHCompositeNode*) Creating jet node..." << endl;
+      cout << "SCorrelatorJetTreeMaker::CreateJetNode(PHCompositeNode*) Creating jet node..." << endl;
     }
 
     // create iterator & DST node
