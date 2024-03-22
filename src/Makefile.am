@@ -14,7 +14,9 @@ AM_CPPFLAGS = \
   -I$(ROOTSYS)/include
 
 pkginclude_HEADERS = \
-  SCorrelatorJetTreeMaker.h
+  SCorrelatorJetTreeMaker.h \
+  SCorrelatorJetTreeMakerConfig.h \
+  SCorrelatorJetTreeMakerOutput.h
 
 if ! MAKEROOT6
   ROOT5_DICTS = \

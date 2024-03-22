@@ -11,11 +11,13 @@ src/*
 !src/SCorrelatorJetTreeMaker.h
 !src/SCorrelatorJetTreeMaker.cc
 !src/SCorrelatorJetTreeMaker.io.h
+!src/SCorrelatorJetTreeMaker.cst.h
 !src/SCorrelatorJetTreeMaker.evt.h
 !src/SCorrelatorJetTreeMaker.jet.h
 !src/SCorrelatorJetTreeMaker.sys.h
+!src/SCorrelatorJetTreeMakerConfig.h
+!src/SCorrelatorJetTreeMakerOutput.h
 !src/SCorrelatorJetTreeMakerLinkDef.h
-!src/SCorrelatorJetTreeMaker.cst.h
 !src/autogen.sh
 !src/configure.ac
 !src/Makefile.am

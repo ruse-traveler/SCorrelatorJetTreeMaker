@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTree.cc'
+// 'SCorrelatorJetTreeMakerLinkDef'
 // Derek Anderson
 // 12.21.2022
 //
@@ -11,7 +11,8 @@
 
 #ifdef __CINT__
 
-#pragma link C++ class SCorrelatorJetTree-!;
+#pragma link C++ class SCorrelatorJetTreeMaker-!;
+#pragma link C++ class SCorrelatorJetTreeMakerOutput+;
 
 #endif
 
