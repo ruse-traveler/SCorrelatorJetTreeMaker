@@ -6,13 +6,14 @@
 // A module to produce a tree of jets for the sPHENIX
 // Cold QCD Energy-Energy Correlator analysis.
 //
-// Derived from code by Antonio Silva (thanks!!)
+// Initially derived from code by Antonio Silva (thanks!!)
 // ----------------------------------------------------------------------------
 
 #ifdef __CINT__
 
 #pragma link C++ class SCorrelatorJetTreeMaker-!;
-#pragma link C++ class SCorrelatorJetTreeMakerOutput+;
+#pragma link C++ class SCorrelatorJetTreeMakerTruthOutput+;
+#pragma link C++ class SCorrelatorJetTreeMakerRecoOutput+;
 
 #endif
 
