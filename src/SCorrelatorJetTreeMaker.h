@@ -17,11 +17,9 @@
 
 // c++ utilities
 #include <map>
-#include <array>
 #include <string>
 #include <vector>
 #include <cassert>
-#include <sstream>
 #include <cstdlib>
 #include <utility>
 // root libraries
@@ -29,7 +27,6 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TMath.h>
-#include <TDirectory.h>
 // fastjet libraries
 #include <fastjet/PseudoJet.hh>
 #include <fastjet/JetDefinition.hh>
@@ -82,10 +79,10 @@
 #include <globalvertex/GlobalVertex.h>
 #include <globalvertex/GlobalVertexMap.h>
 // analysis utilities
-#include "/sphenix/user/danderson/install/include/scorrelatorutilities/Tools.h"
-#include "/sphenix/user/danderson/install/include/scorrelatorutilities/Types.h"
-#include "/sphenix/user/danderson/install/include/scorrelatorutilities/Constants.h"
-#include "/sphenix/user/danderson/install/include/scorrelatorutilities/Interfaces.h"
+#include <scorrelatorutilities/Tools.h>
+#include <scorrelatorutilities/Types.h>
+#include <scorrelatorutilities/Constants.h>
+#include <scorrelatorutilities/Interfaces.h>
 // analysis definitions
 #include "SCorrelatorJetTreeMakerConfig.h"
 #include "SCorrelatorJetTreeMakerOutput.h"
@@ -106,22 +103,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
     public:
 
-      // public enums
-      enum ALGO {
-        ANTIKT    = 0,
-        KT        = 1,
-        CAMBRIDGE = 2
-      };
-      enum RECOMB {
-        E_SCHEME   = 0,
-        PT_SCHEME  = 1,
-        PT2_SCHEME = 2,
-        ET_SCHEME  = 3,
-        ET2_SCHEME = 4
-      };
-
       // ctor/dtor
-      SCorrelatorJetTreeMaker(const string& name = "SCorrelatorJetTreeMaker", const string& outFile = "correlator_jet_tree.root", const bool isMC = false, const bool isEmbed = false, const bool debug = false);
+      SCorrelatorJetTreeMaker(const string& name = "SCorrelatorJetTreeMaker", const bool debug = false);
+      SCorrelatorJetTreeMaker(SCorrelatorJetTreeMakerConfig& config);
       ~SCorrelatorJetTreeMaker() override;
 
       // F4A methods
@@ -129,35 +113,48 @@ namespace SColdQcdCorrelatorAnalysis {
       int process_event(PHCompositeNode*) override;
       int End(PHCompositeNode*)           override;
 
+      // setters
+      void SetConfig(const SCorrelatorJetTreeMakerConfig& config) {m_config = config;}
+
+      // getters
+      SCorrelatorJetTreeMakerConfig GetConfig() const {return m_config;}
+
     private:
 
-      // constants
-      enum CONST {
-        NPart      = 2,
-        NComp      = 3,
-        NParam     = 4,
-        NRange     = 2,
-        NMoment    = 2,
-        NInfoQA    = 9,
-        NJetType   = 2,
-        NCstType   = 5,
-        NObjType   = 9,
-        NDirectory = 6,
-        NMvtxLayer = 3,
-        NInttLayer = 8,
-        NTpcLayer  = 48,
-        NTpcSector = 12
-      };
+      // io members
+      TFile*    m_outFile     = NULL;
+      TTree*    m_recoTree    = NULL;
+      TTree*    m_trueTree    = NULL;
+      JetMapv1* m_recoJetMap  = NULL;
+      JetMapv1* m_trueJetMap  = NULL;
 
-      // qa info & tracking subsystems
-      enum SUBSYS   {MVTX, INTT, TPC};
-      enum CST_TYPE {PART_CST, TRACK_CST, FLOW_CST, ECAL_CST, HCAL_CST};
-      enum OBJECT   {TRACK, ECLUST, HCLUST, FLOW, PART, TJET, RJET, TCST, RCST};
-      enum INFO     {PT, ETA, PHI, ENE, QUAL, DCAXY, DCAZ, DELTAPT, NTPC};
+      // track evaluator members
+      SvtxEvalStack* m_evalStack = NULL;
+      SvtxTrackEval* m_trackEval = NULL;
+
+      // system members
+      vector<int>   m_vecEvtsToGrab;
+      map<int, int> m_mapCstToEmbedID;
+
+      // jet parameters
+      double               m_jetR         = 0.4;
+      uint32_t             m_jetType      = 0;
+      unique_ptr<JetDefinition>   m_trueJetDef;
+      unique_ptr<JetDefinition>   m_recoJetDef;
+      unique_ptr<ClusterSequence> m_trueClust    = NULL;
+      ClusterSequence*     m_recoClust    = NULL;
+      RecombinationScheme  m_recombScheme = pt_scheme;
+
+      // event, jet members
+      long long         m_partonID[CONST::NPart];
+      CLHEP::Hep3Vector m_partonMom[CONST::NPart];
+      CLHEP::Hep3Vector m_trueVtx;
+      CLHEP::Hep3Vector m_recoVtx;
+      vector<PseudoJet> m_trueJets;
+      vector<PseudoJet> m_recoJets;
 
       // event methods (*.evt.h)
       bool IsGoodVertex(const CLHEP::Hep3Vector vtx);
-      void GetEventVariables(PHCompositeNode* topNode);
 
       // jet methods (*.jet.h)
       void FindTrueJets(PHCompositeNode* topNode);
@@ -169,13 +166,10 @@ namespace SColdQcdCorrelatorAnalysis {
       void AddHCal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
 
       // constituent methods (*.cst.h)
-      bool IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge = false);
-      bool IsGoodTrack(SvtxTrack* track, PHCompositeNode* topNode);
-      bool IsGoodFlow(ParticleFlowElement* flow);
-      bool IsGoodECal(CLHEP::Hep3Vector& hepVecECal);
-      bool IsGoodHCal(CLHEP::Hep3Vector& hepVecHCal);
-      bool IsGoodTrackSeed(SvtxTrack* track);
-      bool IsGoodTrackPhi(SvtxTrack* track, const float phiMaskSize = 0.01);  // FIXME make user configurable
+      bool IsGoodParticle(Types::ParInfo& par);
+      bool IsGoodTrack(Types::TrkInfo& trk);
+      bool IsGoodFlow(Types::FlowInfo& flow);
+      bool IsGoodClust(Types::ClustInfo& clust, const int subsys);
 
       // system methods (*.sys.h)
       void InitVariables();
@@ -189,40 +183,6 @@ namespace SColdQcdCorrelatorAnalysis {
       void ResetVariables();
       void DetermineEvtsToGrab(PHCompositeNode* topNode);
       int  CreateJetNode(PHCompositeNode* topNode);
-
-      // F4A/utility members
-      Fun4AllHistoManager* m_histMan   = NULL;
-      SvtxEvalStack*       m_evalStack = NULL;
-      SvtxTrackEval*       m_trackEval = NULL;
-
-      // io members
-      TFile*    m_outFile     = NULL;
-      TTree*    m_recoTree    = NULL;
-      TTree*    m_trueTree    = NULL;
-      JetMapv1* m_recoJetMap  = NULL;
-      JetMapv1* m_trueJetMap  = NULL;
-
-      // system members
-      vector<int>   m_vecEvtsToGrab;
-      map<int, int> m_mapCstToEmbedID;
-
-      // jet parameters
-      double               m_jetR         = 0.4;
-      uint32_t             m_jetType      = 0;
-      JetAlgorithm         m_jetAlgo      = antikt_algorithm;
-      JetDefinition*       m_trueJetDef   = NULL;
-      JetDefinition*       m_recoJetDef   = NULL;
-      ClusterSequence*     m_trueClust    = NULL;
-      ClusterSequence*     m_recoClust    = NULL;
-      RecombinationScheme  m_recombScheme = pt_scheme;
-
-      // event, jet members
-      long long         m_partonID[CONST::NPart];
-      CLHEP::Hep3Vector m_partonMom[CONST::NPart];
-      CLHEP::Hep3Vector m_trueVtx;
-      CLHEP::Hep3Vector m_recoVtx;
-      vector<PseudoJet> m_trueJets;
-      vector<PseudoJet> m_recoJets;
 
   };
 

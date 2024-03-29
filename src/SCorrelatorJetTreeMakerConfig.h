@@ -12,6 +12,9 @@
 #ifndef SCORRELATORJETTREEMAKERCONFIG_H
 #define SCORRELATORJETTREEMAKERCONFIG_H
 
+// make common namespaces implicit
+using namespace std;
+
 
 
 namespace SColdQcdCorrelatorAnalysis {
@@ -20,63 +23,47 @@ namespace SColdQcdCorrelatorAnalysis {
 
   struct SCorrelatorJetTreeMakerConfig {
 
-    string m_outFileName = "";
-    string m_jetTreeName = "";
+    // system options
+    int    verbosity       {0};
+    bool   isDebugOn       {false};
+    bool   saveDST         {false};
+    bool   isSimulation    {true};
+    bool   isEmbed         {false};
+    string moduleName      {""};
+    string outFileName     {""};
+    string trueJetTreeName {""};
+    string recoJetTreeName {""};
 
-    bool m_doVtxCut       = false;
-    bool m_doQualityPlots = true;
-    bool m_requireSiSeeds = true;
-    bool m_useOnlyPrimVtx = true;
-    bool m_doDcaSigmaCut  = false;
-    bool m_maskTpcSectors = false;
-    bool m_saveDST        = false;
-    bool m_isMC           = true;
-    bool m_isEmbed        = false;
-    bool m_doDebug        = false;
-    bool m_addTracks      = true;
-    bool m_addFlow        = false;
-    bool m_addECal        = false;
-    bool m_addHCal        = false;
+    // system parameters
 
-    // event acceptance parameters
-    // TODO convert most acceptances to pairs/pairs of structs
-    double m_evtVzRange[CONST::NRange] = {-10., 10.};
-    double m_evtVrRange[CONST::NRange] = {0.0,  0.418};
+    // jet options
+    bool   addTracks {true};
+    bool   addFlow   {false};
+    bool   addECal   {false};
+    bool   addHCal   {false};
+    float  rJet      {0.4};
+    string jetAlgo   {"antikt"};
+    string jetRecomb {"pt"};
+    string jetArea   {"active"};
 
-    // particle acceptance parameters
-    double m_parPtRange[CONST::NRange]  = {0.1,  9999.};
-    double m_parEtaRange[CONST::NRange] = {-1.1, 1.1};
+    // cut options
+    bool doVtxCut       {false};
+    bool doDcaSigmaCut  {false};
+    bool requireSiSeeds {true};
+    bool useOnlyPrimVtx {true};
+    bool maskTpcSectors {false};
 
-    // track acceptance parameters
-    double m_trkPtRange[CONST::NRange]      = {0.1,  100.};
-    double m_trkEtaRange[CONST::NRange]     = {-1.1, 1.1};
-    double m_trkQualRange[CONST::NRange]    = {-1.,  10.};
-    double m_trkNMvtxRange[CONST::NRange]   = {2.,   100.};
-    double m_trkNInttRange[CONST::NRange]   = {1.,   100.};
-    double m_trkNTpcRange[CONST::NRange]    = {25.,  100.};
-    double m_trkDcaRangeXY[CONST::NRange]   = {-5.,  5.};
-    double m_trkDcaRangeZ[CONST::NRange]    = {-5.,  5.};
-    double m_trkDeltaPtRange[CONST::NRange] = {0., 0.5};
-
-    // particle flow acceptance parameters
-    double m_flowPtRange[CONST::NRange]  = {0.,   9999.};
-    double m_flowEtaRange[CONST::NRange] = {-1.1, 1.1};
-
-    // calorimeter acceptance parameters
-    double m_ecalPtRange[CONST::NRange]  = {0.,   9999.};
-    double m_ecalEtaRange[CONST::NRange] = {-1.1, 1.1};
-    double m_hcalPtRange[CONST::NRange]  = {0.,   9999.};
-    double m_hcalEtaRange[CONST::NRange] = {-1.1, 1.1};
+    // constituent cuts
+    pair<Types::ParInfo,   Types::ParInfo>   parAccept;
+    pair<Types::TrkInfo,   Types::TrkInfo>   trkAccept;
+    pair<Types::FlowInfo,  Types::FlowInfo>  flowAccept;
+    pair<Types::ClustInfo, Types::ClustInfo> ecalAccept;
+    pair<Types::ClustInfo, Types::ClustInfo> hcalAccept;
 
     // for pt-dependent dca cuts
-    TF1*                         m_fSigDcaXY     = NULL;
-    TF1*                         m_fSigDcaZ      = NULL;
-    double                       m_dcaPtFitMaxXY = 15.;
-    double                       m_dcaPtFitMaxZ  = 15.;
-    double                       m_nSigCutXY     = 1.;
-    double                       m_nSigCutZ      = 1.;
-    array<double, CONST::NParam> m_parSigDcaXY   = {1., 1., 1., 1.};
-    array<double, CONST::NParam> m_parSigDcaZ    = {1., 1., 1., 1.};
+    pair<float, float> nSigCut;
+    pair<float, float> ptFitMax;
+    pair<TF1*,  TF1*>  fSigDca;
 
   };  // end SCorrelatorJetTreeMakerConfig
 

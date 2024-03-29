@@ -29,30 +29,37 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // ctor/dtor ----------------------------------------------------------------
 
-  SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(const string& name, const string& outFile, const bool isMC, const bool isEmbed, const bool debug) : SubsysReco(name) {
+  SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(const string& name, const bool debug) : SubsysReco(name) {
 
-    // print debug statement
-    m_isMC    = isMC;
-    m_isEmbed = isEmbed;
-    m_doDebug = debug;
-    if (m_doDebug) {
-      cout << "SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(string, string, bool, bool, bool) Calling ctor" << endl;
+    if (debug) {
+      cout << "SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(string&, bool) Calling ctor" << endl;
     }
-    m_outFileName = outFile;
-    InitVariables();
+    InitVariables();  // TODO remove
 
-  }  // end ctor(string&, string&, bool, bool, bool)
+  }  // end ctor(string&, bool)
 
+
+
+  SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(SCorrelatorJetTreeMaker& config) : SubsysReco(config.moduleName) {
+
+    m_config = config;
+    if (m_config.isDebugOn) {
+      cout << "SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(SCorrelatorJetTreeMakerConfig&) Calling ctor" << endl;
+    }
+    InitVariables();  // TODO remove
+
+  }  // end ctor(SCorrelatorJetTreeMakerConfig&)
 
 
   SCorrelatorJetTreeMaker::~SCorrelatorJetTreeMaker() {
 
     // print debug statement
-    if (m_doDebug) {
+    if (m_config.isDebugOn) {
       cout << "SCorrelatorJetTreeMaker::~SCorrelatorJetTreeMaker() Calling dtor" << endl;
     }
 
     // clean up dangling pointers
+    //   - FIXME use smart pointers instead
     if (m_histMan) {
       delete m_histMan;
       m_histMan = NULL;
@@ -88,12 +95,12 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::Init(PHCompositeNode* topNode) {
 
     // print debug statement
-    if (m_doDebug || (Verbosity() > 1)) {
+    if (m_config.isDebugOn || (Verbosity() > 1)) {
       cout << "SCorrelatorJetTreeMaker::Init(PHCompositeNode*) Initializing..." << endl;
     }
 
     // intitialize output file
-    m_outFile = new TFile(m_outFileName.c_str(), "RECREATE");
+    m_outFile = new TFile(m_config.outFileName.c_str(), "RECREATE");
     if (!m_outFile) {
       cerr << "PANIC: couldn't open SCorrelatorJetTreeMaker output file!" << endl;
     }
@@ -116,7 +123,7 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::process_event(PHCompositeNode* topNode) {
 
     // print debug statement
-    if (m_doDebug || (Verbosity() > 1)) {
+    if (m_config.isDebugOn || (Verbosity() > 1)) {
       cout << "SCorrelatorJetTreeMaker::process_event(PHCompositeNode*) Processing Event..." << endl;
     }
 
@@ -124,26 +131,26 @@ namespace SColdQcdCorrelatorAnalysis {
     ResetVariables();
 
     // initialize evaluator & determine subevts to grab for event
-    if (m_isMC) {
+    if (m_config.isMC) {
       InitEvals(topNode);
       DetermineEvtsToGrab(topNode);
     }
 
     // get event-wise variables
     GetEventVariables(topNode);
-    if (m_isMC) {
+    if (m_config.isMC) {
       GetPartonInfo(topNode);
     }
 
     // check if reconstructed vertex is in in acceptance
     bool isGoodEvt = true;
-    if (m_doVtxCut) {
+    if (m_config.doVtxCut) {
       isGoodEvt = IsGoodVertex(m_recoVtx);
     }
 
     // set event status
     int eventStatus = Fun4AllReturnCodes::EVENT_OK;
-    if (m_doVtxCut && !isGoodEvt) {
+    if (m_config.doVtxCut && !isGoodEvt) {
       eventStatus = Fun4AllReturnCodes::DISCARDEVENT;
     } else {
       eventStatus = Fun4AllReturnCodes::EVENT_OK;
@@ -154,13 +161,13 @@ namespace SColdQcdCorrelatorAnalysis {
 
       // find jets
       FindRecoJets(topNode);
-      if (m_isMC) {
+      if (m_config.isMC) {
         FindTrueJets(topNode);
       }
 
       // fill output trees
       FillRecoTree();
-      if (m_isMC) {
+      if (m_config.isMC) {
         FillTrueTree();
       }
     }
@@ -173,7 +180,7 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::End(PHCompositeNode* topNode) {
 
     // print debug statements
-    if (m_doDebug || (Verbosity() > 1)) {
+    if (m_config.isDebugOn || (Verbosity() > 1)) {
       cout << "SCorrelatorJetTreeMaker::End(PHCompositeNode*) This is the End..." << endl;
     }
 
