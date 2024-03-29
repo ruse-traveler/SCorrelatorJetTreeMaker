@@ -6,7 +6,7 @@
 // A module to produce a tree of jets for the sPHENIX
 // Cold QCD Energy-Energy Correlator analysis.
 //
-// Derived from code by Antonio Silva (thanks!!)
+// Initially derived from code by Antonio Silva (thanks!!)
 // ----------------------------------------------------------------------------
 
 #ifndef SCORRELATORJETTREEMAKERCONFIG_H
