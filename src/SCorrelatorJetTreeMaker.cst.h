@@ -23,12 +23,12 @@ namespace SColdQcdCorrelatorAnalysis {
   bool SCorrelatorJetTreeMaker::IsGoodParticle(HepMC::GenParticle* par, const bool ignoreCharge) {
 
     // print debug statement
-    if (m_doDebug && (Verbosity() > 1)) {
+    if (m_config.doDebug && (Verbosity() > 1)) {
       cout << "SCorrelatorJetTreeMaker::IsGoodParticle(HepMC::GenParticle*) Checking if MC particle is good..." << endl;
     }
 
     // check charge if needed
-    const bool isJetCharged  = (m_jetType != 1);
+    const bool isJetCharged  = (m_config.jetType != 1);
     const bool doChargeCheck = (isJetCharged && !ignoreCharge);
 
     int   parID;
@@ -79,31 +79,31 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // if above max pt used to fit dca width,
     // use value of fit at max pt
-    double ptEvalXY = (trkPt > m_dcaPtFitMaxXY) ? m_dcaPtFitMaxXY : trkPt;
-    double ptEvalZ  = (trkPt > m_dcaPtFitMaxZ)  ? m_dcaPtFitMaxZ  : trkPt;
+    double ptEvalXY = (trkPt > m_config.dcaPtFitMaxXY) ? m_config.dcaPtFitMaxXY : trkPt;
+    double ptEvalZ  = (trkPt > m_config.dcaPtFitMaxZ)  ? m_config.dcaPtFitMaxZ  : trkPt;
 
     // check if dca is good
     bool isInDcaRangeXY = false;
     bool isInDcaRangeZ  = false;
-    if (m_doDcaSigmaCut) {
-      isInDcaRangeXY = (abs(trkDcaXY) < (m_nSigCutXY * (m_fSigDcaXY -> Eval(ptEvalXY))));
-      isInDcaRangeZ  = (abs(trkDcaZ)  < (m_nSigCutZ  * (m_fSigDcaZ  -> Eval(ptEvalZ))));
+    if (m_config.doDcaSigmaCut) {
+      isInDcaRangeXY = (abs(trkDcaXY) < (m_config.nSigCutXY * (m_config.fSigDcaXY -> Eval(ptEvalXY))));
+      isInDcaRangeZ  = (abs(trkDcaZ)  < (m_config.nSigCutZ  * (m_config.fSigDcaZ  -> Eval(ptEvalZ))));
     } else {
-      isInDcaRangeXY = ((trkDcaXY > m_trkDcaRangeXY[0]) && (trkDcaXY < m_trkDcaRangeXY[1]));
-      isInDcaRangeZ  = ((trkDcaZ  > m_trkDcaRangeZ[0])  && (trkDcaZ  < m_trkDcaRangeZ[1]));
+      isInDcaRangeXY = ((trkDcaXY > m_config.trkDcaRangeXY[0]) && (trkDcaXY < m_config.trkDcaRangeXY[1]));
+      isInDcaRangeZ  = ((trkDcaZ  > m_config.trkDcaRangeZ[0])  && (trkDcaZ  < m_config.trkDcaRangeZ[1]));
     }  
 
     // if applying vertex cuts, grab track
     // vertex and check if good
     bool isInVtxRange = true;
-    if (m_doVtxCut) {
+    if (m_config.doVtxCut) {
       CLHEP::Hep3Vector trkVtx = GetTrackVertex(track, topNode);
       isInVtxRange = IsGoodVertex(trkVtx);
     }
 
     // if using only primary vertex,
     // ignore tracks from other vertices
-    if (m_useOnlyPrimVtx) {
+    if (m_config.useOnlyPrimVtx) {
       const bool isFromPrimVtx = IsFromPrimaryVtx(track, topNode);
       if (!isFromPrimVtx) {
         isInVtxRange = false;
@@ -113,19 +113,19 @@ namespace SColdQcdCorrelatorAnalysis {
     // if masking tpc sector boundaries,
     // ignore tracks near boundaries
     bool isGoodPhi = true;
-    if (m_maskTpcSectors) {
+    if (m_config.maskTpcSectors) {
       isGoodPhi = IsGoodTrackPhi(track);
     }
 
     // apply cuts
     const bool isSeedGood       = IsGoodTrackSeed(track);
-    const bool isInPtRange      = ((trkPt      > m_trkPtRange[0])      && (trkPt      <  m_trkPtRange[1]));
-    const bool isInEtaRange     = ((trkEta     > m_trkEtaRange[0])     && (trkEta     <  m_trkEtaRange[1]));
-    const bool isInQualRange    = ((trkQual    > m_trkQualRange[0])    && (trkQual    <  m_trkQualRange[1]));
-    const bool isInNMvtxRange   = ((trkNMvtx   > m_trkNMvtxRange[0])   && (trkNMvtx   <= m_trkNMvtxRange[1]));
-    const bool isInNInttRange   = ((trkNIntt   > m_trkNInttRange[0])   && (trkNIntt   <= m_trkNInttRange[1]));
-    const bool isInNTpcRange    = ((trkNTpc    > m_trkNTpcRange[0])    && (trkNTpc    <= m_trkNTpcRange[1]));
-    const bool isInDeltaPtRange = ((trkDeltaPt > m_trkDeltaPtRange[0]) && (trkDeltaPt <  m_trkDeltaPtRange[1]));
+    const bool isInPtRange      = ((trkPt      > m_config.trkPtRange[0])      && (trkPt      <  m_config.trkPtRange[1]));
+    const bool isInEtaRange     = ((trkEta     > m_config.trkEtaRange[0])     && (trkEta     <  m_config.trkEtaRange[1]));
+    const bool isInQualRange    = ((trkQual    > m_config.trkQualRange[0])    && (trkQual    <  m_config.trkQualRange[1]));
+    const bool isInNMvtxRange   = ((trkNMvtx   > m_config.trkNMvtxRange[0])   && (trkNMvtx   <= m_config.trkNMvtxRange[1]));
+    const bool isInNInttRange   = ((trkNIntt   > m_config.trkNInttRange[0])   && (trkNIntt   <= m_config.trkNInttRange[1]));
+    const bool isInNTpcRange    = ((trkNTpc    > m_config.trkNTpcRange[0])    && (trkNTpc    <= m_config.trkNTpcRange[1]));
+    const bool isInDeltaPtRange = ((trkDeltaPt > m_config.trkDeltaPtRange[0]) && (trkDeltaPt <  m_config.trkDeltaPtRange[1]));
     const bool isInNumRange     = (isInNMvtxRange && isInNInttRange && isInNTpcRange);
     const bool isInDcaRange     = (isInDcaRangeXY && isInDcaRangeZ);
     const bool isGoodTrack      = (isSeedGood && isGoodPhi && isInPtRange && isInEtaRange && isInQualRange && isInNumRange && isInDcaRange && isInDeltaPtRange && isInVtxRange);
