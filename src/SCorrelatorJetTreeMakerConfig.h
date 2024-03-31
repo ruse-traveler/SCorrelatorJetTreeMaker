@@ -34,8 +34,6 @@ namespace SColdQcdCorrelatorAnalysis {
     string trueJetTreeName {""};
     string recoJetTreeName {""};
 
-    // system parameters
-
     // jet options
     bool   addTracks {true};
     bool   addFlow   {false};
