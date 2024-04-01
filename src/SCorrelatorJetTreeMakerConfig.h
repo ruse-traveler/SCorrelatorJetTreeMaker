@@ -35,14 +35,16 @@ namespace SColdQcdCorrelatorAnalysis {
     string recoJetTreeName {""};
 
     // jet options
-    bool   addTracks {true};
-    bool   addFlow   {false};
-    bool   addECal   {false};
-    bool   addHCal   {false};
-    float  rJet      {0.4};
-    string jetAlgo   {"antikt"};
-    string jetRecomb {"pt"};
-    string jetArea   {"active"};
+    //   - FIXME tie which constituents are added to type
+    bool           addTracks {true};
+    bool           addFlow   {false};
+    bool           addECal   {false};
+    bool           addHCal   {false};
+    float          rJet      {0.4};
+    string         jetAlgo   {"antikt"};
+    string         jetRecomb {"pt"};
+    string         jetArea   {"active"};
+    Const::JetType jetType   {Const::JetType::Charged};
 
     // cut options
     bool doVtxCut       {false};
