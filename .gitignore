@@ -14,7 +14,6 @@ src/*
 !src/SCorrelatorJetTreeMaker.ana.h
 !src/SCorrelatorJetTreeMaker.cst.h
 !src/SCorrelatorJetTreeMaker.evt.h
-!src/SCorrelatorJetTreeMaker.jet.h
 !src/SCorrelatorJetTreeMaker.sys.h
 !src/SCorrelatorJetTreeMakerConfig.h
 !src/SCorrelatorJetTreeMakerOutput.h
