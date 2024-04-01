@@ -33,7 +33,6 @@ to_copy = [
   "src/SCorrelatorJetTreeMaker.h",
   "src/SCorrelatorJetTreeMaker.io.h",
   "src/SCorrelatorJetTreeMaker.ana.h",
-  "src/SCorrelatorJetTreeMaker.cst.h",
   "src/SCorrelatorJetTreeMaker.evt.h",
   "src/SCorrelatorJetTreeMaker.sys.h",
   "src/SCorrelatorJetTreeMakerConfig.h",
