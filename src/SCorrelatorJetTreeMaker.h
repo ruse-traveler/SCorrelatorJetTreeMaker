@@ -137,12 +137,10 @@ namespace SColdQcdCorrelatorAnalysis {
       map<int, int> m_mapCstToEmbedID;
 
       // jet parameters
-      uint32_t             m_jetType      = 0;
-      unique_ptr<JetDefinition>   m_trueJetDef;
-      unique_ptr<JetDefinition>   m_recoJetDef;
-      unique_ptr<ClusterSequence> m_trueClust    = NULL;
-      ClusterSequence*     m_recoClust    = NULL;
-      RecombinationScheme  m_recombScheme = pt_scheme;
+      unique_ptr<JetDefinition>   m_trueJetDef = NULL;
+      unique_ptr<JetDefinition>   m_recoJetDef = NULL;
+      unique_ptr<ClusterSequence> m_trueClust  = NULL;
+      unique_ptr<ClusterSequence> m_recoClust  = NULL;
 
       // event, jet members
       long long         m_partonID[CONST::NPart];
