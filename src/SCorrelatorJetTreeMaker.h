@@ -162,12 +162,10 @@ namespace SColdQcdCorrelatorAnalysis {
       void AddFlow(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
       void AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
       void AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
-
-      // constituent methods (*.cst.h)
-      bool IsGoodParticle(Types::ParInfo& par);
-      bool IsGoodTrack(Types::TrkInfo& trk);
-      bool IsGoodFlow(Types::FlowInfo& flow);
-      bool IsGoodClust(Types::ClustInfo& clust, const int subsys);
+      bool IsGoodTrack(Types::TrkInfo& info);
+      bool IsGoodFlow(Types::FlowInfo& info);
+      bool IsGoodClust(Types::ClustInfo& info, const Const::Subsys subsys);
+      bool IsGoodParticle(Types::ParInfo& info);
 
       // system methods (*.sys.h)
       void InitVariables();

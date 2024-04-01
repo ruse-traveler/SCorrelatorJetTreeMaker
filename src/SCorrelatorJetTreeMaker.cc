@@ -16,7 +16,6 @@
 #include "SCorrelatorJetTreeMaker.io.h"
 #include "SCorrelatorJetTreeMaker.ana.h"
 #include "SCorrelatorJetTreeMaker.evt.h"
-#include "SCorrelatorJetTreeMaker.cst.h"
 #include "SCorrelatorJetTreeMaker.sys.h"
 
 using namespace std;
@@ -95,7 +94,7 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::Init(PHCompositeNode* topNode) {
 
     // print debug statement
-    if (m_config.isDebugOn || (Verbosity() > 1)) {
+    if (m_config.isDebugOn) {
       cout << "SCorrelatorJetTreeMaker::Init(PHCompositeNode*) Initializing..." << endl;
     }
 
@@ -123,7 +122,7 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::process_event(PHCompositeNode* topNode) {
 
     // print debug statement
-    if (m_config.isDebugOn || (Verbosity() > 1)) {
+    if (m_config.isDebugOn) {
       cout << "SCorrelatorJetTreeMaker::process_event(PHCompositeNode*) Processing Event..." << endl;
     }
 
@@ -180,7 +179,7 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::End(PHCompositeNode* topNode) {
 
     // print debug statements
-    if (m_config.isDebugOn || (Verbosity() > 1)) {
+    if (m_config.isDebugOn) {
       cout << "SCorrelatorJetTreeMaker::End(PHCompositeNode*) This is the End..." << endl;
     }
 

@@ -133,7 +133,7 @@ namespace SColdQcdCorrelatorAnalysis {
       Types::TrkInfo info(track, topNode);
 
       // check if good
-      const bool isGoodTrack = IsGoodTrack(info, topNode);
+      const bool isGoodTrack = IsGoodTrack(info, track, topNode);
       if (!isGoodTrack) continue;
 
       // grab barcode of matching particle
@@ -266,7 +266,7 @@ namespace SColdQcdCorrelatorAnalysis {
         Types::ClustInfo info(cluster, vtx, subsys);
 
         // check if good
-        const bool isGoodClust = IsGoodClust(info);
+        const bool isGoodClust = IsGoodCluster(info);
         if (!isGoodClust) continue;
 
         // make pseudojet
@@ -363,9 +363,119 @@ namespace SColdQcdCorrelatorAnalysis {
   }  // end 'AddParticles(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
 
 
+
+  bool SCorrelatorJetTreeMaker::IsGoodTrack(Types::TrkInfo& info, SvtxTrack* track, PHCompositeNode* topNode) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 4)) {
+      cout << "SCorrelatorJetTreeMaker::IsGoodTrack(Types:TrkInfo&, SvtxTrack*, PHCompositeNode*) Checking if track is good..." << endl;
+    }
+
+    // if needed, check if dca is in pt-dependent range
+    bool isInDcaSigma = true;
+    if (m_config.doDcaSigCut) {
+      isInDcaSigma = info.IsInSigmaDcaCut(
+        m_config.nSigCut,
+        m_config.ptFitMax,
+        m_config.fSigDca
+      );
+    }
+
+    // if needed, check if track vertex is in acceptance
+    bool isInVtxRange = true;
+    /* TODO put here */
+
+    // if needed, check if track is from primary vertex,
+    const bool isFromPrimVtx = m_config.useOnlyPrimVtx ? info.IsFromPrimaryVtx(topNode) : true;
+
+    // check seed, if in acceptance, and return overall goodness
+    const bool isSeedGood = Tools::IsGoodTrackSeed(track, m_config.requireSiSeed);
+    const bool isInAccept = info.IsInAcceptance(m_config.trkAccept);
+    return (isInDcaSigma && isFromPrimVtx && isSeedGood && isInAccept);
+
+  }  // end 'IsGoodTrack(Types::TrkInfo&, SvtxTrack*, PHCompositeNode*)'
+
+
+
+  bool SCorrelatorJetTreeMaker::IsGoodFlow(Types::FlowInfo& info) {
+
+    // print debug statement
+    if (m_config.isebugOn && (m_config.verbosity > 4)) {
+      cout << "SCorrelatorJetTreeMaker::IsGoodFlow(Types::FlowInfo&) Checking if particle flow element is good..." << endl;
+    }
+
+    const bool isInAccept = info.IsInAcceptance(m_config.flowAccept);
+    return isInAccept;
+
+  }  // end 'IsGoodFlow(Types::FlowInfo&)'
+
+
+
+  bool IsGoodCluster(Types::ClustInfo& info, Const::Subsys subsys) {
+
+    // print debug statement
+    if (m_dconfig.isDebugOn && (m_config.verbosity > 4)) {
+      cout << "SCorrelatorJetTreeMaker::IsGoodCluster(types::ClustInfo&, Const::subsys) Checking if cluster is good..." << endl;
+    }
+
+    // check if in acceptance
+    bool isInAccept;
+    switch (subsys) {
+
+      case Const::Subsys::EMCal:
+        isInAccept = info.IsInAcceptance(m_config.ecalAccept);
+        break;
+
+      case Const::Subsys::IHCal:
+        [[fallthrough]];
+
+      case Const::Subsys::OHCal:
+        isInAccept = info.IsInAcceptance(m_config.hcalAccept);
+        break;
+
+      default:
+        isInAccept = true;
+        break;
+    }
+    return isInAccept;
+
+  }  // end 'IsGoodCluster(Types::ClustInfo&, Const::Subsys)'
+
+
+
   bool IsGoodParticle(Types::ParInfo& info) {
 
-  }
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 4)) {
+      cout << "SCorrelatorJetTreeMaker::IsGoodParticle(Types::ParInfo&) Checking if particle is good..." << endl;
+    }
+
+    // check charge if needed
+    //   - TODO allow for different truth/reco jet types
+    bool isGoodCharge;
+    switch (m_config.jetType) {
+
+      case Const::JetType::Charged:
+        isGoodCharge = (info.GetCharge() != 0.);
+        break;
+
+      case Const::JetType::Neutral:
+        isGoodCharge = (info.GetCharge() == 0.);
+        break;
+
+      case Const::JetType::Full:
+        [[fallthrough]];
+
+      default:
+        isGoodCharge = true;
+        break;
+    }
+
+    // check if in acceptance and return
+    const bool isInAccept = info.IsInAcceptance(m_config.parAccept);
+    return (isGoodCharge && isInAccept);
+
+  }  // end 'IsGoodParticle(Types::ParInfo&)'
 
 }  // end SColdQcdCorrelatorAnalysis namespace
 

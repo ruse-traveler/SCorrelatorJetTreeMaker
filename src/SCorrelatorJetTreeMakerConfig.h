@@ -54,11 +54,11 @@ namespace SColdQcdCorrelatorAnalysis {
     bool maskTpcSectors {false};
 
     // constituent cuts
-    pair<Types::ParInfo,   Types::ParInfo>   parAccept;
     pair<Types::TrkInfo,   Types::TrkInfo>   trkAccept;
     pair<Types::FlowInfo,  Types::FlowInfo>  flowAccept;
     pair<Types::ClustInfo, Types::ClustInfo> ecalAccept;
     pair<Types::ClustInfo, Types::ClustInfo> hcalAccept;
+    pair<Types::ParInfo,   Types::ParInfo>   parAccept;
 
     // for pt-dependent dca cuts
     pair<float, float> nSigCut;
