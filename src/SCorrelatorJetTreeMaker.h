@@ -137,7 +137,6 @@ namespace SColdQcdCorrelatorAnalysis {
       map<int, int> m_mapCstToEmbedID;
 
       // jet parameters
-      double               m_jetR         = 0.4;
       uint32_t             m_jetType      = 0;
       unique_ptr<JetDefinition>   m_trueJetDef;
       unique_ptr<JetDefinition>   m_recoJetDef;
@@ -156,14 +155,13 @@ namespace SColdQcdCorrelatorAnalysis {
       // event methods (*.evt.h)
       bool IsGoodVertex(const CLHEP::Hep3Vector vtx);
 
-      // jet methods (*.jet.h)
-      void FindTrueJets(PHCompositeNode* topNode);
-      void FindRecoJets(PHCompositeNode* topNode);
-      void AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
+      // analysis methods (*.ana.h)
+      void MakeRecoJets(PHCompositeNode* topNode);
+      void MakeTrueJets(PHCompositeNode* topNode);
       void AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
       void AddFlow(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
-      void AddECal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
-      void AddHCal(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
+      void AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
+      void AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
 
       // constituent methods (*.cst.h)
       bool IsGoodParticle(Types::ParInfo& par);

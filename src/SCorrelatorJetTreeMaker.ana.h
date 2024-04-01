@@ -53,6 +53,7 @@ namespace SColdQcdCorrelatorAnalysis {
     map<int, pair<Jet::SRC, int>> fjMap;
 
     // add constitutents
+    //   - FIXME tie added consituents to jet type
     if (m_config.addTracks) AddTracks(topNode, particles, fjMap);
     if (m_config.addFlow)   AddFlow(topNode, particles, fjMap);
     if (m_config.addECal)   AddClusts(topNode, {Const::Subsys::EMCal}, particles, fjMap);
@@ -126,18 +127,14 @@ namespace SColdQcdCorrelatorAnalysis {
 
       // get track
       SvtxTrack* track = itTrk -> second;
-      if (!track) {
-        continue;
-      }
+      if (!track) continue;
 
       // grab info
       Types::TrkInfo info(track, topNode);
 
       // check if good
       const bool isGoodTrack = IsGoodTrack(info, topNode);
-      if (!isGoodTrack) {
-        continue;
-      }
+      if (!isGoodTrack) continue;
 
       // grab barcode of matching particle
       int matchID;
@@ -195,18 +192,14 @@ namespace SColdQcdCorrelatorAnalysis {
 
       // get pf element
       ParticleFlowElement* flow = itFlow -> second;
-      if (!flow) {
-        continue;
-      }
-
-      // check if good
-      const bool isGoodFlow = IsGoodFlow(flow);
-      if (!isGoodFlow) {
-        continue;
-      }
+      if (!flow) continue;
 
       // grab info
       Types::FlowInfo info(flow);
+
+      // check if good
+      const bool isGoodFlow = IsGoodFlow(info);
+      if (!isGoodFlow) continue;
 
       // make pseudojet
       fastjet::PseudoJet pseudojet(
@@ -221,7 +214,7 @@ namespace SColdQcdCorrelatorAnalysis {
       //   - TODO can fold into a templated function
       //   - FIXME probably can do without declaration
       pair<int, pair<Jet::SRC, int>> jetPartFlowPair(iCst, make_pair(Jet::SRC::PARTICLE, info.GetID()));
-      particles.push_back(pseduojet);
+      particles.push_back(pseudojet);
       fjMap.insert(jetPartFlowPair);
       ++iCst;
 
@@ -251,14 +244,128 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // loop over subsystems to add
+    int64_t iCst = particles.size();
     for (Const::Subsys subsys : vecSubsysToAdd) {
 
-      /* TODO fill in */
+      // loop over clusters
+      RawClusterContainer::ConstRange clusters = Interfaces::GetClusters(topNode, Const::MapIndexOnotoNode()[ subsys ]);
+      for (
+        RawClusterContainer::ConstIterator itClust = clusters.first;
+        itClust != clusters.second;
+        ++itClust
+      ) { 
 
+        // get cluster
+        RawCluster* cluster = itClust -> second;
+        if (!cluster) continue;
+
+        // get primary reconstructed vtx
+        ROOT::Math::XYZVector vtx = Interfaces::GetRecoVtx(topNode);
+
+        // grab info
+        Types::ClustInfo info(cluster, vtx, subsys);
+
+        // check if good
+        const bool isGoodClust = IsGoodClust(info);
+        if (!isGoodClust) continue;
+
+        // make pseudojet
+        fastjet::PseudoJet pseudojet(
+          info.GetPX(),
+          info.GetPY(),
+          info.GetPZ(),
+          info.GetEne()
+        );
+        pseudojet.set_user_index(iCst);
+
+        // add to lists
+        //   - TODO can fold into a templated function
+        //   - FIXME probably can get rid of declaration
+        pair<int, pair<Jet::SRC, int>> jetClustPair(
+          iCst,
+          make_pair(
+            Const::MapIndexOntoSrc()[ subsys ],
+            info.GetID()
+          )
+        );
+        particles.push_back(pseudojet);
+        fjMap.insert(jetClustPair);
+        ++iCst;
+
+      }  // end cluster loop
     }  // end subsystem loop
     return;
 
   }  // end 'AddClusts(PHCompositeNode* topNode, vector<Const::Subsys>, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
+
+
+
+  void SCorrelatorJetTreeMaker::AddParticles(
+    PHCompositeNode* topNode,
+    vector<PseudoJet>& particles,
+    map<int, pair<Jet::SRC, int>>& fjMap
+  ) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 3)) {
+      cout << "SCorrelatorJetTreeMaker::AddParticles(PHComposite*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&) Adding MC particles..." << endl;
+    }
+
+    // loop over relevant subevents
+    int64_t iCst = particles.size();
+    for (const int evtToGrab : m_vecEvtsToGrab) {
+
+      // grab subevent
+      HepMC::GenEvent* mcEvt = Interfaces::GetGenEvent(topNode, evtToGrab);
+
+      // grab embedding ID
+      const int embedID = GetEmbedID(topNode, evtToGrab);
+
+      // loop over particles in subevent
+      for (
+        HepMC::GenEvent::particle_const_iterator itPar = mcEvt -> particles_begin();
+        itPar != mcEvt -> particles_end();
+        ++itPar
+      ) {
+
+        // grab info
+        Types::ParInfo info(*itPar, embedID);
+        if (!info.IsFinalState()) continue;
+
+        // check if particle is good
+        const bool isGoodPar = IsGoodParticle(info);
+        if (!isGoodPar) continue;
+
+        // map barcode onto relevant embeddingID
+        m_mapCstToEmbedID[parID] = embedID;
+
+        // create pseudojet & add to constituent vector
+        fastjet::PseudoJet pseudojet(
+          info.GetPX(),
+          info.GetPY(),
+          info.GetPZ(),
+          info.GetEne()
+        );
+        pseudojet.set_user_index(info.GetBarcode());
+
+        // add to lists
+        //   - TODO can fold into a templated function
+        //   - FIXME probably can get rid of declaration
+        pair<int, pair<Jet::SRC, int>> jetParPair(iCst, make_pair(Jet::SRC::PARTICLE, info.GetBarcode()));
+        particles.push_back(pseudojet);
+        fjMap.insert(jetPartPair);
+        ++iCst;
+
+      }  // end particle loop
+    }  // end subevent loop
+    return;
+
+  }  // end 'AddParticles(PHCompositeNode*, vector<PseudoJet>&, map<int, pair<Jet::SRC, int>>&)'
+
+
+  bool IsGoodParticle(Types::ParInfo& info) {
+
+  }
 
 }  // end SColdQcdCorrelatorAnalysis namespace
 

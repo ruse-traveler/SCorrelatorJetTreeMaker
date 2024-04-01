@@ -14,8 +14,8 @@
 // user includes
 #include "SCorrelatorJetTreeMaker.h"
 #include "SCorrelatorJetTreeMaker.io.h"
+#include "SCorrelatorJetTreeMaker.ana.h"
 #include "SCorrelatorJetTreeMaker.evt.h"
-#include "SCorrelatorJetTreeMaker.jet.h"
 #include "SCorrelatorJetTreeMaker.cst.h"
 #include "SCorrelatorJetTreeMaker.sys.h"
 
@@ -160,9 +160,9 @@ namespace SColdQcdCorrelatorAnalysis {
     if (isGoodEvt) {
 
       // find jets
-      FindRecoJets(topNode);
+      MakeRecoJets(topNode);
       if (m_config.isMC) {
-        FindTrueJets(topNode);
+        MakeTrueJets(topNode);
       }
 
       // fill output trees
