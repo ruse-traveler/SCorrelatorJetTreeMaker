@@ -9,11 +9,22 @@
 // Initially derived from code by Antonio Silva (thanks!!)
 // ----------------------------------------------------------------------------
 
+// c++ utilities
+#include <vector>
+#include <utility>
+// analysis utilities
+#include <scorrelatorutilities/Types.h>
+// analysis definitions
+#include "SCorrelatorJetTreeMaker.h"
+#include "SCorrelatorJetTreeMakerOutput.h"
+
+
+
 #ifdef __CINT__
 
 #pragma link C++ class SCorrelatorJetTreeMaker-!;
-#pragma link C++ class SCorrelatorJetTreeMakerTruthOutput+;
 #pragma link C++ class SCorrelatorJetTreeMakerRecoOutput+;
+#pragma link C++ class SCorrelatorJetTreeMakerTruthOutput+;
 
 #endif
 
