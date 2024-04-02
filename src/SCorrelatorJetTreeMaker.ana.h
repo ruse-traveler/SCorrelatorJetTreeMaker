@@ -69,8 +69,8 @@ namespace SColdQcdCorrelatorAnalysis {
     );
 
     // cluster jets
-    m_recoClust = make_unique<ClusterSequence>(particles, *m_recoJetDef);
-    m_recoJets  = m_recoClust -> inclusive_jets();
+    ClusterSequence clustering(particles, *m_recoJetDef);
+    m_recoJets = clustering.inclusive_jets();
     return;
 
   }  // end 'MakeRecoJets(PHCompositeNode*)'
@@ -101,8 +101,8 @@ namespace SColdQcdCorrelatorAnalysis {
     );
 
     // run clustering, grab jets, and return
-    m_trueClust = make_unique<ClusterSequence>(particles, *m_trueJetDef);
-    m_trueJets  = m_trueClust -> inclusive_jets();
+    ClusterSequence clustering(particles, *m_trueJetDef);
+    m_trueJets = clustering.inclusive_jets();
     return;
 
   }  // end 'MakeTrueJets(PHCompositeNode*)'
