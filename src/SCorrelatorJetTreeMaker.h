@@ -91,7 +91,6 @@
 
 using namespace std;
 using namespace fastjet;
-using namespace findNode;
 
 
 
@@ -121,35 +120,6 @@ namespace SColdQcdCorrelatorAnalysis {
 
     private:
 
-      // io members
-      TFile*    m_outFile     = NULL;
-      TTree*    m_recoTree    = NULL;
-      TTree*    m_trueTree    = NULL;
-      JetMapv1* m_recoJetMap  = NULL;
-      JetMapv1* m_trueJetMap  = NULL;
-
-      // track evaluator members
-      SvtxEvalStack* m_evalStack = NULL;
-      SvtxTrackEval* m_trackEval = NULL;
-
-      // system members
-      vector<int>   m_vecEvtsToGrab;
-      map<int, int> m_mapCstToEmbedID;
-
-      // jet parameters
-      unique_ptr<JetDefinition>   m_trueJetDef = NULL;
-      unique_ptr<JetDefinition>   m_recoJetDef = NULL;
-      unique_ptr<ClusterSequence> m_trueClust  = NULL;
-      unique_ptr<ClusterSequence> m_recoClust  = NULL;
-
-      // event, jet members
-      long long         m_partonID[CONST::NPart];
-      CLHEP::Hep3Vector m_partonMom[CONST::NPart];
-      CLHEP::Hep3Vector m_trueVtx;
-      CLHEP::Hep3Vector m_recoVtx;
-      vector<PseudoJet> m_trueJets;
-      vector<PseudoJet> m_recoJets;
-
       // event methods (*.evt.h)
       bool IsGoodVertex(const CLHEP::Hep3Vector vtx);
 
@@ -177,6 +147,43 @@ namespace SColdQcdCorrelatorAnalysis {
       void ResetVariables();
       void DetermineEvtsToGrab(PHCompositeNode* topNode);
       int  CreateJetNode(PHCompositeNode* topNode);
+
+      // configuration
+      SCorrealtorJetTreeConfig m_config;
+
+      // outputs
+      SCorrelatorJetTreeMakerRecoOutput        m_recoOutput;
+      SCorrelatorJetTreeMakerTruthOutput       m_trueOutput;
+      SCorrelatorJetTreeMakerLegacyRecoOutput  m_recoLegacy;
+      SCorrelatorJetTreeMakerLegacyTruthOutput m_trueLegacy;
+
+      // io members
+      TFile*    m_outFile     = NULL;
+      TTree*    m_recoTree    = NULL;
+      TTree*    m_trueTree    = NULL;
+      JetMapv1* m_recoJetMap  = NULL;
+      JetMapv1* m_trueJetMap  = NULL;
+
+      // track evaluator members
+      SvtxEvalStack* m_evalStack = NULL;
+      SvtxTrackEval* m_trackEval = NULL;
+
+      // system members
+      vector<int>   m_vecEvtsToGrab;
+      map<int, int> m_mapCstToEmbedID;
+
+      // jet members
+      //   - TODO add area definition
+      unique_ptr<JetDefinition> m_trueJetDef = NULL;
+      unique_ptr<JetDefinition> m_recoJetDef = NULL;
+
+      // event, jet members
+      long long         m_partonID[CONST::NPart];
+      CLHEP::Hep3Vector m_partonMom[CONST::NPart];
+      CLHEP::Hep3Vector m_trueVtx;
+      CLHEP::Hep3Vector m_recoVtx;
+      vector<PseudoJet> m_trueJets;
+      vector<PseudoJet> m_recoJets;
 
   };
 
