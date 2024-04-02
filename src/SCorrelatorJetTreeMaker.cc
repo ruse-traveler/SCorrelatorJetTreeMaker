@@ -15,7 +15,6 @@
 #include "SCorrelatorJetTreeMaker.h"
 #include "SCorrelatorJetTreeMaker.io.h"
 #include "SCorrelatorJetTreeMaker.ana.h"
-#include "SCorrelatorJetTreeMaker.evt.h"
 #include "SCorrelatorJetTreeMaker.sys.h"
 
 using namespace std;

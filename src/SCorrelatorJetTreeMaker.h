@@ -26,7 +26,7 @@
 #include <TF1.h>
 #include <TFile.h>
 #include <TTree.h>
-#include <TMath.h>
+#include <Math/Vector3D.h>
 // fastjet libraries
 #include <fastjet/PseudoJet.hh>
 #include <fastjet/JetDefinition.hh>
@@ -120,10 +120,8 @@ namespace SColdQcdCorrelatorAnalysis {
 
     private:
 
-      // event methods (*.evt.h)
-      bool IsGoodVertex(const CLHEP::Hep3Vector vtx);
-
       // analysis methods (*.ana.h)
+      void GetEventVariables(PHComposite* topNode);
       void MakeRecoJets(PHCompositeNode* topNode);
       void MakeTrueJets(PHCompositeNode* topNode);
       void AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
@@ -134,6 +132,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool IsGoodFlow(Types::FlowInfo& info);
       bool IsGoodClust(Types::ClustInfo& info, const Const::Subsys subsys);
       bool IsGoodParticle(Types::ParInfo& info);
+      bool IsGoodVertex(const ROOT::Math::XYZVector vtx);
 
       // system methods (*.sys.h)
       void InitVariables();

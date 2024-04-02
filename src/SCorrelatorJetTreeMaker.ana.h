@@ -20,6 +20,27 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // analysis methods ---------------------------------------------------------
 
+  void SCorrelatorJetTreeMaker::GetEventVariables(PHCompositeNode* topNode) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
+      cout << "SCorrelatorJetTreeMaker::GetEventVariables(PHCompositeNode*) Grabbing event info..." << endl;
+    }
+
+    // get indices of relevant subevents
+    m_vecEvtsToGrab = Tools::GrabSubevents(topNode, subEvtOpt, m_config.isEmbed);
+
+    // set event info
+    m_recoOutput.evt.SetInfo(topNode);
+    if (m_config.isSimulation) {
+      m_trueOutput.evt.SetInfo(topNode, m_config.isEmbed, m_vecEvtsToGrab);
+    }
+    return;
+
+  }  // end 'GetEventVariables(PHCompositeNode*)'
+
+
+
   void SCorrelatorJetTreeMaker::MakeJets(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -382,8 +403,7 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // if needed, check if track vertex is in acceptance
-    bool isInVtxRange = true;
-    /* TODO put here */
+    const bool isInVtxRange = m_config.doVtxCut ? IsGoodVtx((info.GetVX(), info.GetVY(), info.GetVZ())) : true;
 
     // if needed, check if track is from primary vertex,
     const bool isFromPrimVtx = m_config.useOnlyPrimVtx ? info.IsFromPrimaryVtx(topNode) : true;
@@ -476,6 +496,22 @@ namespace SColdQcdCorrelatorAnalysis {
     return (isGoodCharge && isInAccept);
 
   }  // end 'IsGoodParticle(Types::ParInfo&)'
+
+
+
+  bool SCorrelatorJetTreeMaker::IsGoodVertex(const ROOT::Math::XYZVector vtx) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 5)) {
+      cout << "SCorrelatorJetTreeMaker::IsGoodVertex(ROOT::Math::XYZVector) Checking if vertex is good..." << endl;
+    }
+
+    // check if vertex is in acceptance
+    const bool isInVrAccept = ((vtx.Rho() >= m_config.vrAccept.first) && (vtx.Rho() <= m_config.vzAccept.second));
+    const bool isInVzAccept = ((vtx.Z()   >= m_config.vzAccept.frist) && (vtx.Z()   <= m_config.vzAccept.second));
+    return (isInVrAccept && isInVzAccept);
+
+  }  // end 'IsGoodVertex(const ROOT::Math::XYZVector)'
 
 }  // end SColdQcdCorrelatorAnalysis namespace
 

@@ -47,11 +47,15 @@ namespace SColdQcdCorrelatorAnalysis {
     Const::JetType jetType   {Const::JetType::Charged};
 
     // cut options
-    bool doVtxCut       {false};
-    bool doDcaSigmaCut  {false};
-    bool requireSiSeeds {true};
-    bool useOnlyPrimVtx {true};
-    bool maskTpcSectors {false};
+    bool             doVtxCut       {false};
+    bool             doDcaSigmaCut  {false};
+    bool             requireSiSeeds {true};
+    bool             useOnlyPrimVtx {true};
+    Const::SubEvtOpt subEvtOpt      {Const::SubEvtOpt::Everything;}
+
+    // vertex cuts
+    pair<float, float> vrAccept;
+    pair<float, float> vzAccept;
 
     // constituent cuts
     pair<Types::TrkInfo,   Types::TrkInfo>   trkAccept;
