@@ -89,8 +89,12 @@
 
 #pragma GCC diagnostic pop
 
+// make common namespaces implicit
 using namespace std;
 using namespace fastjet;
+
+// set up aliases for convenience
+typedef map<int, pair<Jet::SRC, int>> JetCstSourceMap;
 
 
 
@@ -135,16 +139,12 @@ namespace SColdQcdCorrelatorAnalysis {
       bool IsGoodVertex(const ROOT::Math::XYZVector vtx);
 
       // system methods (*.sys.h)
-      void InitVariables();
-      void InitHists();
       void InitTrees();
-      void InitFuncs();
       void InitEvals(PHCompositeNode* topNode);
-      void FillTrueTree();
-      void FillRecoTree();
+      void FillTrees();
       void SaveOutput();
-      void ResetVariables();
-      void DetermineEvtsToGrab(PHCompositeNode* topNode);
+      void ResetSysVariables();
+      void ResetJetVariables();
       int  CreateJetNode(PHCompositeNode* topNode);
 
       // configuration
@@ -176,13 +176,13 @@ namespace SColdQcdCorrelatorAnalysis {
       unique_ptr<JetDefinition> m_trueJetDef = NULL;
       unique_ptr<JetDefinition> m_recoJetDef = NULL;
 
-      // event, jet members
-      long long         m_partonID[CONST::NPart];
-      CLHEP::Hep3Vector m_partonMom[CONST::NPart];
-      CLHEP::Hep3Vector m_trueVtx;
-      CLHEP::Hep3Vector m_recoVtx;
-      vector<PseudoJet> m_trueJets;
+      // vectors/maps for jet finding
       vector<PseudoJet> m_recoJets;
+      vector<PseudoJet> m_trueJets;
+      vector<PseudoJet> m_recoJetInput;
+      vector<PseudoJet> m_trueJetInput;
+      JetCstSourceMap   m_recoSourceMap;
+      JetCstSourceMap   m_trueSourceMap;
 
   };
 

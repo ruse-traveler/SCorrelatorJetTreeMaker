@@ -49,8 +49,9 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // prepare variables for jet finding
-    /* TODO will go here */
+    ResetJetVariables();
 
+    // do jet finding
     MakeRecoJets(topNode);
     if (m_config.isSimulation) {
       MakeTrueJets(topNode);

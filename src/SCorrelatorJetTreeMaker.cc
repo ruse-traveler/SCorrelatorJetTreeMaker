@@ -29,10 +29,13 @@ namespace SColdQcdCorrelatorAnalysis {
 
   SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(const string& name, const bool debug) : SubsysReco(name) {
 
-    if (debug) {
+    if (debug && (Verbosity() > 1)) {
       cout << "SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(string&, bool) Calling ctor" << endl;
     }
-    InitVariables();  // TODO remove
+
+    // clear vector/map members
+    ResetSysVariables();
+    ResetJetVariables();
 
   }  // end ctor(string&, bool)
 
@@ -41,47 +44,31 @@ namespace SColdQcdCorrelatorAnalysis {
   SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(SCorrelatorJetTreeMaker& config) : SubsysReco(config.moduleName) {
 
     m_config = config;
-    if (m_config.isDebugOn) {
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
       cout << "SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(SCorrelatorJetTreeMakerConfig&) Calling ctor" << endl;
     }
-    InitVariables();  // TODO remove
+
+    // clear vector/map members
+    ResetSysVariables();
+    ResetJetVariables();
 
   }  // end ctor(SCorrelatorJetTreeMakerConfig&)
+
 
 
   SCorrelatorJetTreeMaker::~SCorrelatorJetTreeMaker() {
 
     // print debug statement
-    if (m_config.isDebugOn) {
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
       cout << "SCorrelatorJetTreeMaker::~SCorrelatorJetTreeMaker() Calling dtor" << endl;
     }
 
     // clean up dangling pointers
     //   - FIXME use smart pointers instead
-    if (m_histMan) {
-      delete m_histMan;
-      m_histMan = NULL;
-    }
     if (m_evalStack) {
       delete m_evalStack;
       m_evalStack = NULL;
       m_trackEval = NULL;
-    }
-    if (m_trueJetDef) {
-      delete m_trueJetDef;
-      m_trueJetDef = NULL;
-    }
-    if (m_recoJetDef) {
-      delete m_recoJetDef;
-      m_recoJetDef = NULL;
-    }
-    if (m_trueClust) {
-      delete m_trueClust;
-      m_trueClust = NULL;
-    }
-    if (m_recoClust) {
-      delete m_recoClust;
-      m_recoClust = NULL;
     }
 
   }  // end dtor
@@ -104,14 +91,12 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // create node for jet-tree
-    if (m_saveDST) {
+    if (m_config.saveDST) {
       CreateJetNode(topNode);
     }
 
-    // initialize QA histograms/tuples, output trees, and functions
-    InitHists();
+    // initialize output trees
     InitTrees();
-    InitFuncs();
     return Fun4AllReturnCodes::EVENT_OK;
 
   }  // end 'Init(PHcompositeNode*)'
@@ -125,50 +110,32 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::process_event(PHCompositeNode*) Processing Event..." << endl;
     }
 
-    // reset event-wise variables & members
-    ResetVariables();
-
     // initialize evaluator & determine subevts to grab for event
-    if (m_config.isMC) {
+    if (m_config.isSimulation) {
       InitEvals(topNode);
       DetermineEvtsToGrab(topNode);
     }
 
     // get event-wise variables
     GetEventVariables(topNode);
+
+    // if needed, check reconstructed vtx
+/* FIXME finish!
+    if (m_config.doVtxCut && !IsGoodVertex()) {
+      return Fun4AllReturnCodes::DISCARDEVENT;
+    }
+*/
+
+    // find jets
+    MakeRecoJets(topNode);
     if (m_config.isMC) {
-      GetPartonInfo(topNode);
+      MakeTrueJets(topNode);
     }
 
-    // check if reconstructed vertex is in in acceptance
-    bool isGoodEvt = true;
-    if (m_config.doVtxCut) {
-      isGoodEvt = IsGoodVertex(m_recoVtx);
-    }
+    /* TODO add jet collector function */
 
-    // set event status
-    int eventStatus = Fun4AllReturnCodes::EVENT_OK;
-    if (m_config.doVtxCut && !isGoodEvt) {
-      eventStatus = Fun4AllReturnCodes::DISCARDEVENT;
-    } else {
-      eventStatus = Fun4AllReturnCodes::EVENT_OK;
-    }
-
-    // if event is good, continue processing
-    if (isGoodEvt) {
-
-      // find jets
-      MakeRecoJets(topNode);
-      if (m_config.isMC) {
-        MakeTrueJets(topNode);
-      }
-
-      // fill output trees
-      FillRecoTree();
-      if (m_config.isMC) {
-        FillTrueTree();
-      }
-    }
+    // fill output trees
+    FillTrees();
     return eventStatus;
 
   }  // end 'process_event(PHCompositeNode*)'
@@ -182,8 +149,9 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::End(PHCompositeNode*) This is the End..." << endl;
     }
 
-    // save output and close
     SaveOutput();
+
+    // close file and exit
     m_outFile -> cd();
     m_outFile -> Close();
     return Fun4AllReturnCodes::EVENT_OK;
