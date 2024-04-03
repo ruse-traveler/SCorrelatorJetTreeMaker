@@ -10,7 +10,6 @@ EnergyEnergyCorrelators/
 src/*
 !src/SCorrelatorJetTreeMaker.h
 !src/SCorrelatorJetTreeMaker.cc
-!src/SCorrelatorJetTreeMaker.io.h
 !src/SCorrelatorJetTreeMaker.ana.h
 !src/SCorrelatorJetTreeMaker.sys.h
 !src/SCorrelatorJetTreeMakerConfig.h

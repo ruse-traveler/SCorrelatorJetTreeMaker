@@ -31,7 +31,6 @@ to_copy = [
   "scripts/RunCorrelatorJetTreeMakerOnCondor.sh",
   "src/SCorrelatorJetTreeMaker.cc",
   "src/SCorrelatorJetTreeMaker.h",
-  "src/SCorrelatorJetTreeMaker.io.h",
   "src/SCorrelatorJetTreeMaker.ana.h",
   "src/SCorrelatorJetTreeMaker.sys.h",
   "src/SCorrelatorJetTreeMakerConfig.h",
