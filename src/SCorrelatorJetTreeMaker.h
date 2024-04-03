@@ -125,7 +125,8 @@ namespace SColdQcdCorrelatorAnalysis {
     private:
 
       // analysis methods (*.ana.h)
-      void GetEventVariables(PHComposite* topNode);
+      void GetEventVariables(PHCompositeNode* topNode);
+      void GetJetVariables(PHCompositeNode* topNode);
       void MakeRecoJets(PHCompositeNode* topNode);
       void MakeTrueJets(PHCompositeNode* topNode);
       void AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
@@ -139,10 +140,13 @@ namespace SColdQcdCorrelatorAnalysis {
       bool IsGoodVertex(const ROOT::Math::XYZVector vtx);
 
       // system methods (*.sys.h)
+      void OpenOutFile();
       void InitTrees();
+      void InitFastJet();
       void InitEvals(PHCompositeNode* topNode);
       void FillTrees();
       void SaveOutput();
+      void CloseOutFile();
       void ResetSysVariables();
       void ResetJetVariables();
       int  CreateJetNode(PHCompositeNode* topNode);

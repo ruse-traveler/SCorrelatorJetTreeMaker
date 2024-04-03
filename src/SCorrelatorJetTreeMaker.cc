@@ -13,7 +13,6 @@
 
 // user includes
 #include "SCorrelatorJetTreeMaker.h"
-#include "SCorrelatorJetTreeMaker.io.h"
 #include "SCorrelatorJetTreeMaker.ana.h"
 #include "SCorrelatorJetTreeMaker.sys.h"
 

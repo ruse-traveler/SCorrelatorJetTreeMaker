@@ -20,6 +20,20 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // system methods -----------------------------------------------------------
 
+  void SCorrelatorJetTreeMaker::OpenOutFile() {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
+      cout << "SCorrelatorJetTreeMaker::OpenOutFile() Opening output file..." << endl;
+    }
+
+    /* TODO fill in */
+    return;
+
+  }  // end 'InitOutFile()'
+
+
+
   void SCorrelatorJetTreeMaker::InitTrees() {
 
     // print debug statement
@@ -47,6 +61,20 @@ namespace SColdQcdCorrelatorAnalysis {
     return;
 
   }  // end 'InitTrees()'
+
+
+
+  void SCorrelatorJetTreeMaker::InitFastJet() {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
+      cout << "SCorrelatorJetTreeMaker::InitFastjet() Initializing fastjet..." << endl;
+    }
+
+    /* TODO fill in */
+    return;
+
+  }  // end 'InitFastJet()'
 
 
 
@@ -97,7 +125,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // print debug statement
     if (m_config.isDebugOn && (m_config.verbosity > 1)) {
-      cout << "SCorrelatorJetTreeMaker::SaveOutput() Saving output trees and histograms..." << endl;
+      cout << "SCorrelatorJetTreeMaker::SaveOutput() Saving output trees..." << endl;
     }
 
     // save output trees
@@ -109,6 +137,20 @@ namespace SColdQcdCorrelatorAnalysis {
     return;
 
   }  // end 'SaveOutput()'
+
+
+
+  void SCorrelatorJetTreeMaker::CloseOutFile() {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
+      cout << "SCorrelatorJetTreeMaker::SaveOutput() Closing output file..." << endl;
+    }
+
+    /* TODO fill in */
+    return;
+
+  }  // end 'CloseOutFile()'
 
 
 
