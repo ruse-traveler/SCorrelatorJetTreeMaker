@@ -27,7 +27,10 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::OpenOutFile() Opening output file..." << endl;
     }
 
-    /* TODO fill in */
+    m_outFile = new TFile(m_config.outFileName.c_str(), "RECREATE");
+    if (!m_outFile) {
+      cerr << "PANIC: couldn't open SCorrelatorJetTreeMaker output file!" << endl;
+    }
     return;
 
   }  // end 'InitOutFile()'
@@ -71,7 +74,23 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::InitFastjet() Initializing fastjet..." << endl;
     }
 
-    /* TODO fill in */
+    // set reco jet definition
+    m_recoJetDef = make_unique<JetDefinition>(
+      Const::MapStringOntoFJAlgo()[ m_config.jetAlgo ],
+      m_config.rJet,
+      Const::MapStringOntoFJRecomb()[ m_config.recombScheme ],
+      fastjet::Best
+    );
+
+    // set truth jet definition if needed
+    if (m_config.isSimulation)
+      m_trueJetDef = make_unique<JetDefinition>(
+        Const::MapStringOntoFJAlgo()[ m_config.jetAlgo ],
+        m_config.rJet,
+        Const::MapStringOntoFJRecomb()[ m_config.recombScheme ],
+        fastjet::Best
+      );
+    }
     return;
 
   }  // end 'InitFastJet()'
@@ -147,7 +166,8 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::SaveOutput() Closing output file..." << endl;
     }
 
-    /* TODO fill in */
+    m_outFile -> cd();
+    m_outFile -> Close();
     return;
 
   }  // end 'CloseOutFile()'

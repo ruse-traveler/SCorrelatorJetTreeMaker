@@ -81,15 +81,6 @@ namespace SColdQcdCorrelatorAnalysis {
     if (m_config.addECal)   AddClusts(topNode, {Const::Subsys::EMCal}, particles, fjMap);
     if (m_config.addHCal)   AddClusts(topNode, {Const::Subsys::IHCal, Const::Subsys::OHCal}, particles, fjMap);
 
-    // set reco jet definition
-    //   - FIXME move to initialization
-    m_recoJetDef = make_unique<JetDefinition>(
-      Const::MapStringOntoFJAlgo()[ m_config.jetAlgo ],
-      m_config.rJet,
-      Const::MapStringOntoFJRecomb()[ m_config.recombScheme ],
-      fastjet::Best
-    );
-
     // cluster jets
     ClusterSequence clustering(particles, *m_recoJetDef);
     m_recoJets = clustering.inclusive_jets();
@@ -112,15 +103,6 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // add constituents
     AddParticles(topNode, particles, fjMapMC);
-
-    // set truth jet definition
-    //   - FIXME move to initialization
-    m_trueJetDef = make_unique<JetDefinition>(
-      Const::MapStringOntoFJAlgo()[ m_config.jetAlgo ],
-      m_config.rJet,
-      Const::MapStringOntoFJRecomb()[ m_config.recombScheme ],
-      fastjet::Best
-    );
 
     // run clustering, grab jets, and return
     ClusterSequence clustering(particles, *m_trueJetDef);

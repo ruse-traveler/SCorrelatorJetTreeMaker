@@ -83,19 +83,15 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::Init(PHCompositeNode*) Initializing..." << endl;
     }
 
-    // intitialize output file
-    m_outFile = new TFile(m_config.outFileName.c_str(), "RECREATE");
-    if (!m_outFile) {
-      cerr << "PANIC: couldn't open SCorrelatorJetTreeMaker output file!" << endl;
-    }
-
-    // create node for jet-tree
+    // if needed, create node on node tree
     if (m_config.saveDST) {
       CreateJetNode(topNode);
     }
 
-    // initialize output trees
+    // run other intialization routines
+    OpenOutFile();
     InitTrees();
+    InitFastJet();
     return Fun4AllReturnCodes::EVENT_OK;
 
   }  // end 'Init(PHcompositeNode*)'
@@ -119,15 +115,14 @@ namespace SColdQcdCorrelatorAnalysis {
     GetEventVariables(topNode);
 
     // if needed, check reconstructed vtx
-/* FIXME finish!
-    if (m_config.doVtxCut && !IsGoodVertex()) {
+    if (m_config.doVtxCut) {
+      const bool isGoodVtx = IsGoodVertex( ROOT::Math::XYZVector(m_recoOut.evt.GetVX(), m_recoOut.evt.GetVY(), m_recoOut.evt.GetVZ()) );
       return Fun4AllReturnCodes::DISCARDEVENT;
     }
-*/
 
     // find jets
     MakeRecoJets(topNode);
-    if (m_config.isMC) {
+    if (m_config.isSimulation) {
       MakeTrueJets(topNode);
     }
 
@@ -149,10 +144,7 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     SaveOutput();
-
-    // close file and exit
-    m_outFile -> cd();
-    m_outFile -> Close();
+    CloseOutFile();
     return Fun4AllReturnCodes::EVENT_OK;
 
   }  // end 'End(PHcompositeNode*)'
