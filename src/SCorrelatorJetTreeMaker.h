@@ -148,6 +148,7 @@ namespace SColdQcdCorrelatorAnalysis {
       void SaveOutput();
       void CloseOutFile();
       void ResetSysVariables();
+      void ResetOutVariables();
       void ResetJetVariables();
       int  CreateJetNode(PHCompositeNode* topNode);
 

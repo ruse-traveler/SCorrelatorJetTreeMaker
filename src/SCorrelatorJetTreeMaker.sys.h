@@ -130,6 +130,15 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::FillTrueTree() Filling jet trees..." << endl;
     }
 
+    // if making legacy output, translate output
+    if (m_config.isLegacy) {
+      m_recoLegacy.GetTreeMakerOutput(m_recoOutput);
+      if (m_config.isSimulation) {
+        m_trueLegacy.GetTreeMakerOutput(m_trueOutput);
+      }
+    }
+
+    // fill output trees
     m_recoTree -> Fill();
     if (m_config.isSimulation) {
       m_trueTree -> Fill();
@@ -186,6 +195,23 @@ namespace SColdQcdCorrelatorAnalysis {
     return;
 
   }  // end 'ResetSysVariables()'
+
+
+
+  void SCorrelatorJetTreeMaker::ResetOutVariables() {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 2)) {
+      cout << "SCorrelatorJetTreeMaker::ResetOutVariables() Resetting output variables..." << endl;
+    }
+
+    m_recoOutput.Reset();
+    m_trueOutput.Reset();
+    m_recoLegacy.Reset();
+    m_trueLegacy.Reset();
+    return;
+
+  }  // end 'ResetOutVariables()'
 
 
 

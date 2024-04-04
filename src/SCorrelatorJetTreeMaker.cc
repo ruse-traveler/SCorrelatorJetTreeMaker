@@ -34,6 +34,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // clear vector/map members
     ResetSysVariables();
+    ResetOutVariables();
     ResetJetVariables();
 
   }  // end ctor(string&, bool)
@@ -49,6 +50,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // clear vector/map members
     ResetSysVariables();
+    ResetOutVariables();
     ResetJetVariables();
 
   }  // end ctor(SCorrelatorJetTreeMakerConfig&)
@@ -104,6 +106,11 @@ namespace SColdQcdCorrelatorAnalysis {
     if (m_config.isDebugOn) {
       cout << "SCorrelatorJetTreeMaker::process_event(PHCompositeNode*) Processing Event..." << endl;
     }
+
+    // make sure variables are empty
+    ResetSysVariables();
+    ResetOutVariables();
+    ResetJetVariables();
 
     // initialize evaluator & determine subevts to grab for event
     if (m_config.isSimulation) {
