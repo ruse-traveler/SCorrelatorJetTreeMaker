@@ -129,10 +129,10 @@ namespace SColdQcdCorrelatorAnalysis {
       void GetJetVariables(PHCompositeNode* topNode);
       void MakeRecoJets(PHCompositeNode* topNode);
       void MakeTrueJets(PHCompositeNode* topNode);
-      void AddTracks(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
-      void AddFlow(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
-      void AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
-      void AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles, map<int, pair<Jet::SRC, int>>& fjMap);
+      void AddTracks(PHCompositeNode* topNode);
+      void AddFlow(PHCompositeNode* topNode);
+      void AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd);
+      void AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles);
       bool IsGoodTrack(Types::TrkInfo& info);
       bool IsGoodFlow(Types::FlowInfo& info);
       bool IsGoodClust(Types::ClustInfo& info, const Const::Subsys subsys);
