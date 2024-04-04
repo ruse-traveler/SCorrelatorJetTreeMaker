@@ -132,7 +132,7 @@ namespace SColdQcdCorrelatorAnalysis {
       void AddTracks(PHCompositeNode* topNode);
       void AddFlow(PHCompositeNode* topNode);
       void AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd);
-      void AddParticles(PHCompositeNode* topNode, vector<PseudoJet>& particles);
+      void AddParticles(PHCompositeNode* topNode);
       bool IsGoodTrack(Types::TrkInfo& info);
       bool IsGoodFlow(Types::FlowInfo& info);
       bool IsGoodClust(Types::ClustInfo& info, const Const::Subsys subsys);

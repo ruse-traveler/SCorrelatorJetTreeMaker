@@ -35,11 +35,6 @@ namespace SColdQcdCorrelatorAnalysis {
     string recoJetTreeName {""};
 
     // jet options
-    //   - FIXME tie which constituents are added to type
-    bool           addTracks {true};
-    bool           addFlow   {false};
-    bool           addECal   {false};
-    bool           addHCal   {false};
     float          rJet      {0.4};
     string         jetAlgo   {"antikt"};
     string         jetRecomb {"pt"};

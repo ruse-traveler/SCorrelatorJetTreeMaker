@@ -70,11 +70,24 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // add constitutents
-    //   - FIXME tie added consituents to jet type
-    if (m_config.addTracks) AddTracks(topNode);
-    if (m_config.addFlow)   AddFlow(topNode);
-    if (m_config.addECal)   AddClusts(topNode, {Const::Subsys::EMCal});
-    if (m_config.addHCal)   AddClusts(topNode, {Const::Subsys::IHCal, Const::Subsys::OHCal});
+    switch (m_config.jetType) {
+
+      case JetType::Neutral:
+        AddClusts(topNode, {Const::Subsys::EMCal});
+        AddClusts(topNode, {Const::Subsys::IHCal, Const::Subsys::OHCal});
+        break;
+
+      case JetType::Full:
+        AddFlow(topNode);
+        break;
+
+      case JetType::Charged:
+        [[fallthrough]];
+
+      default:
+        AddTracks(topNode);
+        break;
+    }
 
     // cluster jets
     ClusterSequence clustering(m_recoJetInput, *m_recoJetDef);
