@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
-// 'SCorrelatorJetTreeMaker.csts.h'
+// 'SCorrelatorJetTreeMaker.ana.h'
 // Derek Anderson
-// 01.18.2023
+// 03.28.2024
 //
 // A module to produce a tree of jets for the sPHENIX
 // Cold QCD Energy-Energy Correlator analysis.
@@ -27,8 +27,10 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::GetEventVariables(PHCompositeNode*) Grabbing event info..." << endl;
     }
 
-    // get indices of relevant subevents
-    m_vecEvtsToGrab = Tools::GrabSubevents(topNode, subEvtOpt, m_config.isEmbed);
+    // get indices of relevant subevents if needed
+    if (m_config.isSimulation) {
+      m_vecEvtsToGrab = Tools::GrabSubevents(topNode, m_config.subEvtOpt, m_config.isEmbed);
+    }
 
     // set event info
     m_recoOutput.evt.SetInfo(topNode);
@@ -38,6 +40,20 @@ namespace SColdQcdCorrelatorAnalysis {
     return;
 
   }  // end 'GetEventVariables(PHCompositeNode*)'
+
+
+
+  void SCorrelatorJetTreeMaker::GetJetVariables(PHCompositeNode* topNode) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
+      cout << "SCorrelatorJetTreeMaker::GetJetVariables(PHCompositeNode*) Grabbing jet (and constituent) info..." << endl;
+    }
+
+    /* TODO fill in */
+    return;
+
+  }  // end 'GetJetVariables(PHCompositeNode* topNode)'
 
 
 
@@ -72,16 +88,16 @@ namespace SColdQcdCorrelatorAnalysis {
     // add constitutents
     switch (m_config.jetType) {
 
-      case JetType::Neutral:
+      case Const::JetType::Neutral:
         AddClusts(topNode, {Const::Subsys::EMCal});
         AddClusts(topNode, {Const::Subsys::IHCal, Const::Subsys::OHCal});
         break;
 
-      case JetType::Full:
+      case Const::JetType::Full:
         AddFlow(topNode);
         break;
 
-      case JetType::Charged:
+      case Const::JetType::Charged:
         [[fallthrough]];
 
       default:
@@ -147,7 +163,7 @@ namespace SColdQcdCorrelatorAnalysis {
       // grab barcode of matching particle
       int matchID;
       if (m_config.isSimulation) {
-        matchID = Tools::GetMatchID(track, m_svtxEval);
+        matchID = Tools::GetMatchID(track, m_trackEval);
       } else {
         matchID = -1;
       }
@@ -162,7 +178,7 @@ namespace SColdQcdCorrelatorAnalysis {
       pseudojet.set_user_index(matchID);
 
       // add to lists
-      m_recoSourceMap.insert(iCst, make_pair(Jet::SRC::TRACK, info.GetID()));
+      m_recoSourceMap.insert( {iCst, make_pair(Jet::SRC::TRACK, info.GetID())} );
       m_recoJetInput.push_back(pseudojet);
       ++iCst;
 
@@ -216,7 +232,7 @@ namespace SColdQcdCorrelatorAnalysis {
       pseudojet.set_user_index(iCst);
 
       // add to lists
-      m_recoSourceMap.insert(iCst, make_pair(Jet::SRC::PARTICLE, info.GetPID()));
+      m_recoSourceMap.insert( {iCst, make_pair(Jet::SRC::PARTICLE, info.GetID())} );
       m_recoJetInput.push_back(pseudojet);
       ++iCst;
 
@@ -245,7 +261,7 @@ namespace SColdQcdCorrelatorAnalysis {
     for (Const::Subsys subsys : vecSubsysToAdd) {
 
       // loop over clusters
-      RawClusterContainer::ConstRange clusters = Interfaces::GetClusters(topNode, Const::MapIndexOnotoNode()[ subsys ]);
+      RawClusterContainer::ConstRange clusters = Interfaces::GetClusters(topNode, Const::MapIndexOntoNode()[ subsys ]);
       for (
         RawClusterContainer::ConstIterator itClust = clusters.first;
         itClust != clusters.second;
@@ -263,7 +279,7 @@ namespace SColdQcdCorrelatorAnalysis {
         Types::ClustInfo info(cluster, vtx, subsys);
 
         // check if good
-        const bool isGoodClust = IsGoodCluster(info);
+        const bool isGoodClust = IsGoodCluster(info, subsys);
         if (!isGoodClust) continue;
 
         // make pseudojet
@@ -277,11 +293,13 @@ namespace SColdQcdCorrelatorAnalysis {
 
         // add to lists
         m_recoSourceMap.insert(
-          iCst,
-          make_pair(
-            Const::MapIndexOntoSrc()[ subsys ],
-            info.GetID()
-          )
+          {
+            iCst,
+            make_pair(
+              Const::MapIndexOntoSrc()[ subsys ],
+              info.GetID()
+            )
+          }
         );
         m_recoJetInput.push_back(pseudojet);
         ++iCst;
@@ -309,7 +327,7 @@ namespace SColdQcdCorrelatorAnalysis {
       HepMC::GenEvent* mcEvt = Interfaces::GetGenEvent(topNode, evtToGrab);
 
       // grab embedding ID
-      const int embedID = GetEmbedID(topNode, evtToGrab);
+      const int embedID = Tools::GetEmbedID(topNode, evtToGrab);
 
       // loop over particles in subevent
       for (
@@ -327,7 +345,7 @@ namespace SColdQcdCorrelatorAnalysis {
         if (!isGoodPar) continue;
 
         // map barcode onto relevant embeddingID
-        m_mapCstToEmbedID[parID] = embedID;
+        m_mapCstToEmbedID[info.GetBarcode()] = embedID;
 
         // create pseudojet & add to constituent vector
         fastjet::PseudoJet pseudojet(
@@ -339,7 +357,7 @@ namespace SColdQcdCorrelatorAnalysis {
         pseudojet.set_user_index(info.GetBarcode());
 
         // add to lists
-        m_trueSourceMap.insert(iCst, make_pair(Jet::SRC::PARTICLE, info.GetBarcode()));
+        m_trueSourceMap.insert( {iCst, make_pair(Jet::SRC::PARTICLE, info.GetBarcode())} );
         m_trueJetInput.push_back(pseudojet);
         ++iCst;
 
@@ -360,7 +378,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // if needed, check if dca is in pt-dependent range
     bool isInDcaSigma = true;
-    if (m_config.doDcaSigCut) {
+    if (m_config.doDcaSigmaCut) {
       isInDcaSigma = info.IsInSigmaDcaCut(
         m_config.nSigCut,
         m_config.ptFitMax,
@@ -369,15 +387,15 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // if needed, check if track vertex is in acceptance
-    const bool isInVtxRange = m_config.doVtxCut ? IsGoodVertex(ROOT::MATH::XYZVector(info.GetVX(), info.GetVY(), info.GetVZ())) : true;
+    const bool isInVtxRange = m_config.doVtxCut ? IsGoodVertex(ROOT::Math::XYZVector(info.GetVX(), info.GetVY(), info.GetVZ())) : true;
 
     // if needed, check if track is from primary vertex,
     const bool isFromPrimVtx = m_config.useOnlyPrimVtx ? info.IsFromPrimaryVtx(topNode) : true;
 
     // check seed, if in acceptance, and return overall goodness
-    const bool isSeedGood = Tools::IsGoodTrackSeed(track, m_config.requireSiSeed);
+    const bool isSeedGood = Tools::IsGoodTrackSeed(track, m_config.requireSiSeeds);
     const bool isInAccept = info.IsInAcceptance(m_config.trkAccept);
-    return (isInDcaSigma && isFromPrimVtx && isSeedGood && isInAccept);
+    return (isInDcaSigma && isInVtxRange && isFromPrimVtx && isSeedGood && isInAccept);
 
   }  // end 'IsGoodTrack(Types::TrkInfo&, SvtxTrack*, PHCompositeNode*)'
 
@@ -386,7 +404,7 @@ namespace SColdQcdCorrelatorAnalysis {
   bool SCorrelatorJetTreeMaker::IsGoodFlow(Types::FlowInfo& info) {
 
     // print debug statement
-    if (m_config.isebugOn && (m_config.verbosity > 4)) {
+    if (m_config.isDebugOn && (m_config.verbosity > 4)) {
       cout << "SCorrelatorJetTreeMaker::IsGoodFlow(Types::FlowInfo&) Checking if particle flow element is good..." << endl;
     }
 
@@ -397,10 +415,10 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  bool IsGoodCluster(Types::ClustInfo& info, Const::Subsys subsys) {
+  bool SCorrelatorJetTreeMaker::IsGoodCluster(Types::ClustInfo& info, Const::Subsys subsys) {
 
     // print debug statement
-    if (m_dconfig.isDebugOn && (m_config.verbosity > 4)) {
+    if (m_config.isDebugOn && (m_config.verbosity > 4)) {
       cout << "SCorrelatorJetTreeMaker::IsGoodCluster(types::ClustInfo&, Const::subsys) Checking if cluster is good..." << endl;
     }
 
@@ -429,7 +447,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  bool IsGoodParticle(Types::ParInfo& info) {
+  bool SCorrelatorJetTreeMaker::IsGoodParticle(Types::ParInfo& info) {
 
     // print debug statement
     if (m_config.isDebugOn && (m_config.verbosity > 4)) {
@@ -474,7 +492,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // check if vertex is in acceptance
     const bool isInVrAccept = ((vtx.Rho() >= m_config.vrAccept.first) && (vtx.Rho() <= m_config.vzAccept.second));
-    const bool isInVzAccept = ((vtx.Z()   >= m_config.vzAccept.frist) && (vtx.Z()   <= m_config.vzAccept.second));
+    const bool isInVzAccept = ((vtx.Z()   >= m_config.vzAccept.first) && (vtx.Z()   <= m_config.vzAccept.second));
     return (isInVrAccept && isInVzAccept);
 
   }  // end 'IsGoodVertex(const ROOT::Math::XYZVector)'

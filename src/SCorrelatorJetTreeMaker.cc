@@ -11,7 +11,7 @@
 
 #define SCORRELATORJETTREE_CC
 
-// user includes
+// analysis definitions
 #include "SCorrelatorJetTreeMaker.h"
 #include "SCorrelatorJetTreeMaker.ana.h"
 #include "SCorrelatorJetTreeMaker.sys.h"
@@ -41,7 +41,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(SCorrelatorJetTreeMaker& config) : SubsysReco(config.moduleName) {
+  SCorrelatorJetTreeMaker::SCorrelatorJetTreeMaker(SCorrelatorJetTreeMakerConfig& config) : SubsysReco(config.moduleName) {
 
     m_config = config;
     if (m_config.isDebugOn && (m_config.verbosity > 1)) {
@@ -115,7 +115,6 @@ namespace SColdQcdCorrelatorAnalysis {
     // initialize evaluator & determine subevts to grab for event
     if (m_config.isSimulation) {
       InitEvals(topNode);
-      DetermineEvtsToGrab(topNode);
     }
 
     // get event-wise variables
@@ -123,8 +122,8 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // if needed, check reconstructed vtx
     if (m_config.doVtxCut) {
-      const bool isGoodVtx = IsGoodVertex( ROOT::Math::XYZVector(m_recoOut.evt.GetVX(), m_recoOut.evt.GetVY(), m_recoOut.evt.GetVZ()) );
-      return Fun4AllReturnCodes::DISCARDEVENT;
+      const bool isGoodVtx = IsGoodVertex( ROOT::Math::XYZVector(m_recoOutput.evt.GetVX(), m_recoOutput.evt.GetVY(), m_recoOutput.evt.GetVZ()) );
+      if (!isGoodVtx) return Fun4AllReturnCodes::DISCARDEVENT;
     }
 
     // find jets
@@ -137,7 +136,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // fill output trees
     FillTrees();
-    return eventStatus;
+    return Fun4AllReturnCodes::EVENT_OK;
 
   }  // end 'process_event(PHCompositeNode*)'
 

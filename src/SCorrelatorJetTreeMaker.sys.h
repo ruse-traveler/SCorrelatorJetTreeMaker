@@ -20,6 +20,49 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // system methods -----------------------------------------------------------
 
+  void SCorrelatorJetTreeMaker::CreateJetNode(PHCompositeNode* topNode) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
+      cout << "SCorrelatorJetTreeMaker::CreateJetNode(PHCompositeNode*, string) Creating jet node..." << endl;
+    }
+
+    // construct reco node name
+    string recoNodeName;
+    if (m_config.recoJetTreeName.empty()) {
+      recoNodeName = "RecoJetTree";
+    } else {
+      recoNodeName = m_config.recoJetTreeName;
+    }
+
+    // construct truth node name
+    string trueNodeName;
+    if (m_config.trueJetTreeName.empty()) {
+      trueNodeName = "TruthJetTree";
+    } else {
+      trueNodeName = m_config.trueJetTreeName;
+    }
+
+    // construct jet maps
+    //   - FIXME I don't think the jet maps are actually being
+    //     filled? And I want my jet trees in there anyways...
+    m_recoJetMap = new JetMapv1();
+    if (m_config.isSimulation) {
+      m_trueJetMap = new JetMapv1();
+    }
+
+    // create nodes
+    //   - FIXME this interface doesn't work...
+    //Interfaces::CreateNode(topNode, recoNodeName, m_recoJetMap);
+    //if (m_config.isSimulation) {
+    //  Interfaces::CreateNode(topNode, trueNodeName, m_trueJetMap);
+    //}
+    return;
+
+  }  // end 'CreateJetNode(PHCompositeNode*)'
+
+
+
   void SCorrelatorJetTreeMaker::OpenOutFile() {
 
     // print debug statement
@@ -78,16 +121,16 @@ namespace SColdQcdCorrelatorAnalysis {
     m_recoJetDef = make_unique<JetDefinition>(
       Const::MapStringOntoFJAlgo()[ m_config.jetAlgo ],
       m_config.rJet,
-      Const::MapStringOntoFJRecomb()[ m_config.recombScheme ],
+      Const::MapStringOntoFJRecomb()[ m_config.jetRecomb ],
       fastjet::Best
     );
 
     // set truth jet definition if needed
-    if (m_config.isSimulation)
+    if (m_config.isSimulation) {
       m_trueJetDef = make_unique<JetDefinition>(
         Const::MapStringOntoFJAlgo()[ m_config.jetAlgo ],
         m_config.rJet,
-        Const::MapStringOntoFJRecomb()[ m_config.recombScheme ],
+        Const::MapStringOntoFJRecomb()[ m_config.jetRecomb ],
         fastjet::Best
       );
     }
@@ -231,44 +274,6 @@ namespace SColdQcdCorrelatorAnalysis {
     return;
 
   }  // end 'ResetJetVariables()'
-
-
-
-  int SCorrelatorJetTreeMaker::CreateJetNode(PHCompositeNode* topNode) {
-
-    // print debug statement
-    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
-      cout << "SCorrelatorJetTreeMaker::CreateJetNode(PHCompositeNode*, string) Creating jet node..." << endl;
-    }
-
-    // construct jet tree name
-    string baseName;
-    if (m_config.jetTreeName.empty()) {
-      baseName = "JetTree";
-    } else {
-      baseName = m_config.jetTreeName;
-    }
-
-    // construct jet node name
-    recoNodeName = baseName + "_RecoJets";
-    trueNodeName = baseName + "_TruthJets";
-
-    // construct jet maps
-    //   - FIXME I don't think the jet maps are actually being
-    //     filled? And I want my jet trees in there anyways...
-    m_recoJetMap = new JetMapv1();
-    if (m_config.isSimulation) {
-      m_trueJetMap = new JetMapv1();
-    }
-
-    // create nodes
-    Interfaces::CreateNode(topNode, recoNodeName, m_recoJetMap);
-    if (m_config.isSimulation) {
-      Interfaces::CreateNode(topNode, trueNodeName, m_trueJetMap);
-    }
-    return Fun4AllReturnCodes::EVENT_OK;
-
-  }  // end 'CreateJetNode(PHCompositeNode*)'
 
 }  // end SColdQcdCorrelatorAnalysis namespace
 

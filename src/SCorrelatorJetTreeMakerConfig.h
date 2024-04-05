@@ -29,6 +29,7 @@ namespace SColdQcdCorrelatorAnalysis {
     bool   saveDST         {false};
     bool   isSimulation    {true};
     bool   isEmbed         {false};
+    bool   isLegacy        {true};
     string moduleName      {""};
     string outFileName     {""};
     string trueJetTreeName {""};
@@ -46,7 +47,7 @@ namespace SColdQcdCorrelatorAnalysis {
     bool             doDcaSigmaCut  {false};
     bool             requireSiSeeds {true};
     bool             useOnlyPrimVtx {true};
-    Const::SubEvtOpt subEvtOpt      {Const::SubEvtOpt::Everything;}
+    Const::SubEvtOpt subEvtOpt      {Const::SubEvtOpt::Everything};
 
     // vertex cuts
     pair<float, float> vrAccept;

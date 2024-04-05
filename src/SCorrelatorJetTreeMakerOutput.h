@@ -40,9 +40,9 @@ namespace SColdQcdCorrelatorAnalysis {
     }  // end 'Reset()'
 
     void SetTreeAddresses(TTree* tree) {
-      tree -> SetBranch("Evt",  "SColdQcdCorrelatorAnalysis::Types::RecoInfo", &evt, 32000, 0);
-      tree -> SetBranch("Jets", "std::vector<SColdQcdCorrelatorAnalysis::Types::JetInfo>", &jets, 32000, 0);
-      tree -> SetBranch("Csts", "std::vector<std::vector<SColdQcdCorrelatorAnalysis::Types::CstInfo>>", &csts, 32000, 0);
+      tree -> Branch("Evt",  "SColdQcdCorrelatorAnalysis::Types::RecoInfo", &evt, 32000, 0);
+      tree -> Branch("Jets", "std::vector<SColdQcdCorrelatorAnalysis::Types::JetInfo>", &jets, 32000, 0);
+      tree -> Branch("Csts", "std::vector<std::vector<SColdQcdCorrelatorAnalysis::Types::CstInfo>>", &csts, 32000, 0);
       return;
     }  // end 'SetTreeAddresses(TTree*)'
 
@@ -71,9 +71,9 @@ namespace SColdQcdCorrelatorAnalysis {
     }  // end 'Reset()'
 
     void SetTreeAddresses(TTree* tree) {
-      tree -> SetBranch("Evt",  "SColdQcdCorrelatorAnalysis::Types::GenInfo", &evt, 32000, 0);
-      tree -> SetBranch("Jets", "std::vector<SColdQcdCorrelatorAnalysis::Types::JetInfo>", &jets, 32000, 0);
-      tree -> SetBranch("Csts", "std::vector<std::vector<SColdQcdCorrelatorAnalysis::Types::CstInfo>>", &csts, 32000, 0);
+      tree -> Branch("Evt",  "SColdQcdCorrelatorAnalysis::Types::GenInfo", &evt, 32000, 0);
+      tree -> Branch("Jets", "std::vector<SColdQcdCorrelatorAnalysis::Types::JetInfo>", &jets, 32000, 0);
+      tree -> Branch("Csts", "std::vector<std::vector<SColdQcdCorrelatorAnalysis::Types::CstInfo>>", &csts, 32000, 0);
       return;
     }  // end 'SetTreeAddresses(TTree*)'
 
@@ -143,7 +143,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-    void SetTreeAddressses(TTree* tree) {
+    void SetTreeAddresses(TTree* tree) {
       tree -> Branch("EvtNumJets",    &nJets,    "EvtNumJets/I");
       tree -> Branch("EvtNumTrks",    &nTrks,    "EvtNumTrks/I");
       tree -> Branch("EvtVtxX",       &vtxX,     "EvtVtxX/D");
@@ -171,7 +171,7 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-    void SetTreeMakerOutput(SCorrelatorJetTreeMakerRecoOutput& output) {
+    void GetTreeMakerOutput(SCorrelatorJetTreeMakerRecoOutput& output) {
 
       // get event variables
       nJets     = output.jets.size();
@@ -202,7 +202,7 @@ namespace SColdQcdCorrelatorAnalysis {
       cstPt.resize( output.csts.size() );
       cstEta.resize( output.csts.size() );
       cstPhi.resize( output.csts.size() );
-      for (int64_t iJet = 0; iJet < output.csts.size(); iJet++) {
+      for (uint64_t iJet = 0; iJet < output.csts.size(); iJet++) {
         for (Types::CstInfo& cst : output.csts.at(iJet)) {
           cstType.at(iJet).push_back( cst.GetType() );
           cstMatchID.at(iJet).push_back( cst.GetCstID() );
@@ -210,8 +210,8 @@ namespace SColdQcdCorrelatorAnalysis {
           cstDr.at(iJet).push_back( cst.GetDR() );
           cstE.at(iJet).push_back( cst.GetEne() );
           cstPt.at(iJet).push_back( cst.GetPT() );
-          cstEta.at(iJet).push_back( cst.Eta() );
-          cstPhi.at(iJet).push_back( cst.Phi() );
+          cstEta.at(iJet).push_back( cst.GetEta() );
+          cstPhi.at(iJet).push_back( cst.GetPhi() );
         }
       }
       return;
@@ -371,7 +371,7 @@ namespace SColdQcdCorrelatorAnalysis {
       cstPt.resize( output.csts.size() );
       cstEta.resize( output.csts.size() );
       cstPhi.resize( output.csts.size() );
-      for (int64_t iJet = 0; iJet < output.csts.size(); iJet++) {
+      for (uint64_t iJet = 0; iJet < output.csts.size(); iJet++) {
         for (Types::CstInfo& cst : output.csts.at(iJet)) {
           cstID.at(iJet).push_back( cst.GetCstID() );
           cstPID.at(iJet).push_back( cst.GetPID() );
@@ -381,8 +381,8 @@ namespace SColdQcdCorrelatorAnalysis {
           cstDr.at(iJet).push_back( cst.GetDR() );
           cstE.at(iJet).push_back( cst.GetEne() );
           cstPt.at(iJet).push_back( cst.GetPT() );
-          cstEta.at(iJet).push_back( cst.Eta() );
-          cstPhi.at(iJet).push_back( cst.Phi() );
+          cstEta.at(iJet).push_back( cst.GetEta() );
+          cstPhi.at(iJet).push_back( cst.GetPhi() );
         }
       }
       return;

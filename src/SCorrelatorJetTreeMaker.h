@@ -127,19 +127,21 @@ namespace SColdQcdCorrelatorAnalysis {
       // analysis methods (*.ana.h)
       void GetEventVariables(PHCompositeNode* topNode);
       void GetJetVariables(PHCompositeNode* topNode);
+      void MakeJets(PHCompositeNode* topNode);
       void MakeRecoJets(PHCompositeNode* topNode);
       void MakeTrueJets(PHCompositeNode* topNode);
       void AddTracks(PHCompositeNode* topNode);
       void AddFlow(PHCompositeNode* topNode);
       void AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd);
       void AddParticles(PHCompositeNode* topNode);
-      bool IsGoodTrack(Types::TrkInfo& info);
+      bool IsGoodTrack(Types::TrkInfo& info, SvtxTrack* track, PHCompositeNode* topNode);
       bool IsGoodFlow(Types::FlowInfo& info);
-      bool IsGoodClust(Types::ClustInfo& info, const Const::Subsys subsys);
+      bool IsGoodCluster(Types::ClustInfo& info, const Const::Subsys subsys);
       bool IsGoodParticle(Types::ParInfo& info);
       bool IsGoodVertex(const ROOT::Math::XYZVector vtx);
 
       // system methods (*.sys.h)
+      void CreateJetNode(PHCompositeNode* topNode);
       void OpenOutFile();
       void InitTrees();
       void InitFastJet();
@@ -150,10 +152,9 @@ namespace SColdQcdCorrelatorAnalysis {
       void ResetSysVariables();
       void ResetOutVariables();
       void ResetJetVariables();
-      int  CreateJetNode(PHCompositeNode* topNode);
 
       // configuration
-      SCorrealtorJetTreeConfig m_config;
+      SCorrelatorJetTreeMakerConfig m_config;
 
       // outputs
       SCorrelatorJetTreeMakerRecoOutput        m_recoOutput;
