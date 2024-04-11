@@ -19,7 +19,8 @@ copy_to   = "/sphenix/user/danderson/analysis/AndersonAnalysisModules/ColdQcdCor
 to_copy = [
   "README.md",
   "Fun4All_RunCorrelatorJetTreeMaker.C",
-  "RunCorrelatorJetTreeMaker.sh",
+  "JetTreeMakerOptions.h",
+  "RunCorrelatorJetTreeMaker.rb",
   "macros/MergeFiles.C",
   "macros/Fun4All_RunCorrelatorJetTreeMakerOnCondor.C",
   "scripts/MergeFiles.rb",
