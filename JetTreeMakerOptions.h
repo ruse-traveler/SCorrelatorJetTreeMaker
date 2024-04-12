@@ -10,16 +10,17 @@
 #define JETTREEMAKEROPTIONS_H
 
 // c++ utilities
+#include <limits>
 #include <string>
 #include <vector>
 #include <utility>
 // root libraries
 #include <TF1.h>
 // analysis utilties
-#include "/sphenix/user/danderson/install/include/scorrelatorutilities/Types.h"
-#include "/sphenix/user/danderson/install/include/scorrelatorutilities/Constants.h"
-#include "/sphenix/user/danderson/install/include/scorrelatorutilities/Interfaces.h"
-#include "/sphenix/user/danderson/install/include/scorrelatorjettreemaker/SCorrelatorJetTreeMakerConfig.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Types.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Constants.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Interfaces.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorjettreemaker/SCorrelatorJetTreeMakerConfig.h"
 
 // make common namespaces implicit
 using namespace std;
@@ -36,9 +37,9 @@ namespace JetTreeMakerOptions {
   const pair<float, float> vrEvtRange = {0.0, 0.418};
 
   // track acceptances
-  const pair<int,    int>  nMvtxTrkRange = {2, 100};
-  const pair<int,    int>  nInttTrkRange = {1, 100};
-  const pair<int,    int>  nTpcTrkRange  = {24, 100};
+  const pair<int,   int>   nMvtxTrkRange = {2, numeric_limits<int>::max()};
+  const pair<int,   int>   nInttTrkRange = {1, numeric_limits<int>::max()};
+  const pair<int,   int>   nTpcTrkRange  = {24, numeric_limits<int>::max()};
   const pair<float, float> ptTrkRange    = {0.2, 100.};
   const pair<float, float> etaTrkRange   = {-1.1, 1.1};
   const pair<float, float> qualTrkRange  = {0., 10.};
@@ -53,17 +54,17 @@ namespace JetTreeMakerOptions {
   const vector<float>      dcaSigmaParsZ  = {1.73, 26.1, -9.45};
 
   // particle flow acceptances
-  const pair<float, float> ptFlowRange  = {0.2, 9999.};
+  const pair<float, float> ptFlowRange  = {0.2, 100.};
   const pair<float, float> etaFlowRange = {-1.1, 1.1};
 
   // calo acceptances
-  const pair<float, float> eECalRange   = {0.3, 9999.};
+  const pair<float, float> eECalRange   = {0.3, 100.};
   const pair<float, float> etaECalRange = {-1.1, 1.1};
-  const pair<float, float> eHCalRange   = {0.3, 9999.};
+  const pair<float, float> eHCalRange   = {0.3, 100.};
   const pair<float, float> etaHCalRange = {-1.1, 1.1};
 
   // particle acceptances
-  const pair<float, float> ptParRange  = {0., 9999.};
+  const pair<float, float> ptParRange  = {0., 100.};
   const pair<float, float> etaParRange = {-1.1, 1.1};
 
 
@@ -79,14 +80,14 @@ namespace JetTreeMakerOptions {
     };
 
     // set specific bounds
-    trkAccept.first.SetNMvtxLayer( nMvxTrkRange.first );
+    trkAccept.first.SetNMvtxLayer( nMvtxTrkRange.first );
     trkAccept.first.SetNInttLayer( nInttTrkRange.first );
     trkAccept.first.SetNTpcLayer( nTpcTrkRange.first );
     trkAccept.first.SetPT( ptTrkRange.first );
     trkAccept.first.SetEta( etaTrkRange.first );
     trkAccept.first.SetQuality( qualTrkRange.first );
     trkAccept.first.SetPtErr( ptErrTrkRange.first );
-    trkAccept.second.SetNMvtxLayer( nMvxTrkRange.second );
+    trkAccept.second.SetNMvtxLayer( nMvtxTrkRange.second );
     trkAccept.second.SetNInttLayer( nInttTrkRange.second );
     trkAccept.second.SetNTpcLayer( nTpcTrkRange.second );
     trkAccept.second.SetPT( ptTrkRange.second );
@@ -95,11 +96,11 @@ namespace JetTreeMakerOptions {
     trkAccept.second.SetPtErr( ptErrTrkRange.second );
 
     // set dca bounds if not doing pt-dependent cut
-    if (!doSigmaCut)
-      trkAccept.first.SetDcaXY( dcaTrackRangeXY.first );
-      trkAccept.first.SetDcaZ( dcaTrackRangeZ.first );
-      trkAccept.second.SetDcaXY( dcaTrackRangeXY.second );
-      trkAccept.second.SetDcaZ( dcaTrackRangeZ.second );
+    if (!doSigmaCut) {
+      trkAccept.first.SetDcaXY( dcaTrkRangeXY.first );
+      trkAccept.first.SetDcaZ( dcaTrkRangeZ.first );
+      trkAccept.second.SetDcaXY( dcaTrkRangeXY.second );
+      trkAccept.second.SetDcaZ( dcaTrkRangeZ.second );
     }
     return trkAccept;
 
@@ -163,6 +164,8 @@ namespace JetTreeMakerOptions {
   }  // end 'GetParAccept()'
 
 
+
+  // make sigma-dca fit funtions ----------------------------------------------
 
   pair<TF1*, TF1*> GetSigmaDcaFunctions() {
 

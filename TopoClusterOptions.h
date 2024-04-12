@@ -13,6 +13,8 @@
 #include <string>
 #include <vector>
 #include <utility>
+// calo libraries
+#include <caloreco/RawClusterBuilderTopo.h>
 
 // make common namespaces implicit
 using namespace std;

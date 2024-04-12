@@ -10,7 +10,7 @@
 // ----------------------------------------------------------------------------
 
 #ifndef FUN4ALL_RUNCORRELATORJETTREEMAKER_C
-#define FUN4ALL_RUNCORRELAOTRJETTREEMAKER_C
+#define FUN4ALL_RUNCORRELATORJETTREEMAKER_C
 
 // c++ utilities
 #include <vector>
@@ -38,7 +38,8 @@
 // analysis utilities
 #include "TopoClusterOptions.h"
 #include "JetTreeMakerOptions.h"
-#include "/sphenix/u/danderson/install/include/scorrelatorjettree/SCorrelatorJetTreeMaker.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorjettreemaker/SCorrelatorJetTreeMaker.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorjettreemaker/SCorrelatorJetTreeMakerConfig.h"
 
 // make common namespaces implicit
 using namespace std;
@@ -49,8 +50,8 @@ R__LOAD_LIBRARY(libg4eval.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libparticleflow.so)
-R__LOAD_LIBRARY(/sphenix/u/danderson/install/lib/libscorrelatorjettree.so)
 R__LOAD_LIBRARY(/sphenix/u/danderson/install/lib/libscorrelatorutilities.so)
+R__LOAD_LIBRARY(/sphenix/u/danderson/install/lib/libscorrelatorjettreemaker.so)
 
 // default input/output
 static const vector<string> VecInFilesDefault = {
@@ -76,7 +77,7 @@ static const size_t NTopoPar    = 3;
 
 // macro body -----------------------------------------------------------------
 
-void Fun4All_RunCorrelatorJetTree(
+void Fun4All_RunCorrelatorJetTreeMaker(
   const vector<string>& vecInFiles = VecInFilesDefault,
   const string outFile = OutFileDefault,
   const int nEvents = NEvtDefault,
@@ -106,7 +107,7 @@ void Fun4All_RunCorrelatorJetTree(
   );
 
   // get jet tree maker configuration
-  SCorrelatorJetTreeMakerConfig cfg_jetTree = JetTreeMakerOptions::GetConfig();
+  SCorrelatorJetTreeMakerConfig cfg_jetTree = JetTreeMakerOptions::GetConfig(verbosity, outFile);
 
   // initialize f4a -----------------------------------------------------------
 
@@ -185,8 +186,8 @@ void Fun4All_RunCorrelatorJetTree(
   // register jet tree maker --------------------------------------------------
 
   // create correlator jet tree
-  SCorrelatorJetTreeMaker *correlatorJetTree = new SCorrelatorJetTreeMaker(cfg_jetTree);
-  ffaServer  -> registerSubsystem(correlatorJetTree);
+  SCorrelatorJetTreeMaker* jetTreeMaker = new SCorrelatorJetTreeMaker(cfg_jetTree);
+  ffaServer  -> registerSubsystem(jetTreeMaker);
 
   // run and close f4a --------------------------------------------------------
 
@@ -200,5 +201,7 @@ void Fun4All_RunCorrelatorJetTree(
   return;
 
 }
+
+#endif
 
 // end ------------------------------------------------------------------------
