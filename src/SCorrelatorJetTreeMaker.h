@@ -79,10 +79,10 @@
 #include <globalvertex/GlobalVertex.h>
 #include <globalvertex/GlobalVertexMap.h>
 // analysis utilities
-#include <scorrelatorutilities/Tools.h>
-#include <scorrelatorutilities/Types.h>
-#include <scorrelatorutilities/Constants.h>
-#include <scorrelatorutilities/Interfaces.h>
+#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Tools.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Types.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Constants.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Interfaces.h"
 // analysis definitions
 #include "SCorrelatorJetTreeMakerConfig.h"
 #include "SCorrelatorJetTreeMakerOutput.h"
