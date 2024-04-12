@@ -32,8 +32,8 @@ namespace SColdQcdCorrelatorAnalysis {
     bool   isLegacy        {true};
     string moduleName      {""};
     string outFileName     {""};
-    string trueJetTreeName {""};
     string recoJetTreeName {""};
+    string trueJetTreeName {""};
 
     // jet options
     float          rJet      {0.4};

@@ -3,35 +3,26 @@
 // Derek Anderson
 // 12.11.2022
 //
-// Use this to run the SCorrelatorJetTreeMaker
-// class.
+// A F4A macro to run the correlator jet tree make module
 //
-// Derived from code by Cameron Dean and
-// Antonio Silva (thanks!!)
-//
-// NOTE: jetType sets whether or not jets
-// are full (charge + neutral) or charged
-//   jetType = 0: charged jets
-//   jetType = 1: full jets
+// Initially derived from code by Cameron Dean and Antonio
+// Silva (thanks!!)
 // ----------------------------------------------------------------------------
 
-/****************************/
-/*     MDC2 Reco for MDC2   */
-/* Cameron Dean, LANL, 2021 */
-/*      cdean@bnl.gov       */
-/****************************/
+#ifndef FUN4ALL_RUNCORRELATORJETTREEMAKER_C
+#define FUN4ALL_RUNCORRELAOTRJETTREEMAKER_C
 
-// standard c includes
+// c++ utilities
 #include <vector>
 #include <string>
 #include <cstdlib>
 #include <utility>
-// f4a/sphenix includes
+// f4a/sphenix utilities
 #include <FROG.h>
 #include <G4_Magnet.C>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <g4main/Fun4AllDstPileupInputManager.h>
-// tracking includes
+// tracking utilities
 #include <Trkr_QA.C>
 #include <Trkr_Reco.C>
 #include <Trkr_Eval.C>
@@ -41,43 +32,83 @@
 #include <G4_TrkrSimulation.C>
 #include <g4eval/SvtxEvaluator.h>
 #include <g4eval/SvtxTruthRecoTableEval.h>
-// calo/pf includes
+// calo/pf libraries
 #include <caloreco/RawClusterBuilderTopo.h>
 #include <particleflowreco/ParticleFlowReco.h>
-// user includes
-#include "/sphenix/user/danderson/install/include/scorrelatorjettree/SCorrelatorJetTreeMaker.h"
+// analysis utilities
+#include "TopoClusterOptions.h"
+#include "JetTreeMakerOptions.h"
+#include "/sphenix/u/danderson/install/include/scorrelatorjettree/SCorrelatorJetTreeMaker.h"
+
+// make common namespaces implicit
+using namespace std;
+using namespace SColdQcdCorrelatorAnalysis;
 
 // load libraries
 R__LOAD_LIBRARY(libg4eval.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libparticleflow.so)
-R__LOAD_LIBRARY(/sphenix/user/danderson/install/lib/libscorrelatorjettree.so)
+R__LOAD_LIBRARY(/sphenix/u/danderson/install/lib/libscorrelatorjettree.so)
+R__LOAD_LIBRARY(/sphenix/u/danderson/install/lib/libscorrelatorutilities.so)
 
-using namespace std;
-using namespace SColdQcdCorrelatorAnalysis;
-
-// global constants
-static const int            NEvtDefault = 10;
-static const int            VerbDefault = 0;
-static const size_t         NTopoClusts = 2;
-static const size_t         NTopoPar    = 3;
-static const string         SOutDefault = "testingPAuInput.root";
-static const vector<string> SInDefault  = {
-  "DST_GLOBAL_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root",
-  "DST_TRKR_G4HIT_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root",
-  "DST_TRACKSEEDS_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root",
-  "DST_TRKR_CLUSTER_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root",
-  "DST_TRACKS_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root",
-  "DST_CALO_G4HIT_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root",
-  "DST_CALO_CLUSTER_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root",
-  "DST_TRUTH_G4HIT_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root",
-  "DST_TRUTH_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00009.root"
+// default input/output
+static const vector<string> VecInFilesDefault = {
+  "DST_GLOBAL_pythia8_Jet30_3MHz-0000000011-00042.root",
+  "DST_TRKR_G4HIT_pythia8_Jet30_3MHz-0000000011-00042.root",
+  "DST_TRACKSEEDS_pythia8_Jet30_3MHz-0000000011-00042.root",
+  "DST_TRKR_CLUSTER_pythia8_Jet30_3MHz-0000000011-00042.root",
+  "DST_TRACKS_pythia8_Jet30_3MHz-0000000011-00042.root",
+  "DST_CALO_G4HIT_pythia8_Jet30_3MHz-0000000011-00042.root",
+  "DST_CALO_CLUSTER_pythia8_Jet30_3MHz-0000000011-00042.root",
+  "DST_TRUTH_G4HIT_pythia8_Jet30_3MHz-0000000011-00042.root",
+  "DST_TRUTH_pythia8_Jet30_3MHz-0000000011-00042.root"
 };
+static const string OutFileDefault = "test.root";
+
+// other default arguments
+static const int NEvtDefault = 10;
+static const int VerbDefault = 0;
+static const size_t NTopoClusts = 2;
+static const size_t NTopoPar    = 3;
 
 
 
-void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, const string sOutput = SOutDefault, const int nEvents = NEvtDefault, const int verbosity = VerbDefault) {
+// macro body -----------------------------------------------------------------
+
+void Fun4All_RunCorrelatorJetTree(
+  const vector<string>& vecInFiles = VecInFilesDefault,
+  const string outFile = OutFileDefault,
+  const int nEvents = NEvtDefault,
+  const int verbosity = VerbDefault
+) {
+
+  // options ------------------------------------------------------------------
+
+  // tracking/pf options
+  const bool   runTracking(false);
+  const bool   runParticleFlow(false);
+  const bool   doTruthTableReco(false);
+  const double nSigma(1.5);
+
+  // get topocluster configurations
+  TopoClusterOptions::TopoClusterConfig cfg_topoClustECal = TopoClusterOptions::GetConfig(
+    TopoClusterOptions::Combo::ECalOnly,
+    verbosity,
+    "EcalRawClusterBuilderTopo",
+    "TOPOCLUSTER_EMCAL"
+  );
+  TopoClusterOptions::TopoClusterConfig cfg_topoClustBoth = TopoClusterOptions::GetConfig(
+    TopoClusterOptions::Combo::BothCalos,
+     verbosity,
+    "HcalRawClusterBuilderTopo",
+    "TOPOCLUSTER_HCAL"
+  );
+
+  // get jet tree maker configuration
+  SCorrelatorJetTreeMakerConfig cfg_jetTree = JetTreeMakerOptions::GetConfig();
+
+  // initialize f4a -----------------------------------------------------------
 
   // load libraries and create f4a server
   gSystem -> Load("libg4dst.so");
@@ -88,11 +119,13 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
   ffaServer -> Verbosity(verbosity);
 
   // add input files 
-  for (size_t iInput = 0; iInput < sInput.size(); iInput++) {
+  for (size_t iInput = 0; iInput < vecInFiles.size(); iInput++) {
     Fun4AllDstInputManager* inManager = new Fun4AllDstInputManager("InputDstManager" + to_string(iInput));
-    inManager -> AddFile(sInput.at(iInput));
+    inManager -> AddFile(vecInFiles.at(iInput));
     ffaServer -> registerInputManager(inManager);
   }
+
+  // set up tracking and truth tables -----------------------------------------
 
   // run the tracking if not already done
   if (runTracking) {
@@ -131,90 +164,31 @@ void Fun4All_RunCorrelatorJetTree(const vector<string>& sInput = SInDefault, con
     }
   }
 
+  // do particle flow reconstruction ------------------------------------------
+
   // if using particle flow, run pf reconstruction
-  if (addParticleFlow) {
+  if (runParticleFlow) {
 
-    // build topo clusters
-    RawClusterBuilderTopo* ecalClusterBuilder = new RawClusterBuilderTopo("EcalRawClusterBuilderTopo");
-    ecalClusterBuilder -> Verbosity(verbosity);
-    ecalClusterBuilder -> set_nodename("TOPOCLUSTER_EMCAL");
-    ecalClusterBuilder -> set_enable_HCal(enableHCal[0]);
-    ecalClusterBuilder -> set_enable_EMCal(enableECal[0]);
-    ecalClusterBuilder -> set_noise(noiseLevels[0], noiseLevels[1], noiseLevels[2]);
-    ecalClusterBuilder -> set_significance(significance[0], significance[1], significance[2]);
-    ecalClusterBuilder -> allow_corner_neighbor(allowCorners);
-    ecalClusterBuilder -> set_do_split(doSplit);
-    ecalClusterBuilder -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
-    ecalClusterBuilder -> set_R_shower(showerR);
-    ffaServer          -> registerSubsystem(ecalClusterBuilder);
-
-    RawClusterBuilderTopo* hcalClusterBuilder = new RawClusterBuilderTopo("HcalRawClusterBuilderTopo");
-    hcalClusterBuilder -> Verbosity(verbosity);
-    hcalClusterBuilder -> set_nodename("TOPOCLUSTER_HCAL");
-    hcalClusterBuilder -> set_enable_HCal(enableHCal[1]);
-    hcalClusterBuilder -> set_enable_EMCal(enableECal[1]);
-    hcalClusterBuilder -> set_noise(noiseLevels[0], noiseLevels[1], noiseLevels[2]);
-    hcalClusterBuilder -> set_significance(significance[0], significance[1], significance[1]);
-    hcalClusterBuilder -> allow_corner_neighbor(allowCorners);
-    hcalClusterBuilder -> set_do_split(doSplit);
-    hcalClusterBuilder -> set_minE_local_max(localMinE[0], localMinE[1], localMinE[2]);
-    hcalClusterBuilder -> set_R_shower(showerR);
-    ffaServer          -> registerSubsystem(hcalClusterBuilder);
+    // register topocluster builders
+    RawClusterBuilderTopo* ecalClusterBuilder = TopoClusterOptions::CreateBuilder(cfg_topoClustECal);
+    RawClusterBuilderTopo* bothClusterBuilder = TopoClusterOptions::CreateBuilder(cfg_topoClustBoth);
+    ffaServer -> registerSubsystem(ecalClusterBuilder);
+    ffaServer -> registerSubsystem(bothClusterBuilder);
 
     // do particle flow
-    ParticleFlowReco *parFlowReco = new ParticleFlowReco();
+    ParticleFlowReco* parFlowReco = new ParticleFlowReco();
     parFlowReco -> set_energy_match_Nsigma(nSigma);
     parFlowReco -> Verbosity(verbosity);
     ffaServer   -> registerSubsystem(parFlowReco);
   }
 
+  // register jet tree maker --------------------------------------------------
+
   // create correlator jet tree
-  SCorrelatorJetTreeMaker *correlatorJetTree = new SCorrelatorJetTreeMaker("SCorrelatorJetTreeMaker", sOutput, isMC, isEmbed, doDebug);
-  correlatorJetTree -> Verbosity(verbosity);
-  correlatorJetTree -> SetDoVertexCut(doVtxCut);
-  correlatorJetTree -> SetDoQualityPlots(doQuality);
-  correlatorJetTree -> SetAddTracks(addTracks);
-  correlatorJetTree -> SetAddFlow(addParticleFlow);
-  correlatorJetTree -> SetAddECal(addECal);
-  correlatorJetTree -> SetAddHCal(addHCal);
-  correlatorJetTree -> SetEvtVzRange(vzEvtRange);
-  correlatorJetTree -> SetEvtVrRange(vrEvtRange);
-  if (isMC) {
-    correlatorJetTree -> SetParPtRange(ptParRange);
-    correlatorJetTree -> SetParEtaRange(etaParRange);
-  }
-  if (addTracks) {
-    correlatorJetTree -> SetRequireSiSeeds(requireSiSeeds);
-    correlatorJetTree -> SetUseOnlyPrimVtx(useOnlyPrimVtx);
-    correlatorJetTree -> SetMaskTpcSectors(maskTpcSectors);
-    correlatorJetTree -> SetTrackPtRange(ptTrackRange);
-    correlatorJetTree -> SetTrackEtaRange(etaTrackRange);
-    correlatorJetTree -> SetTrackQualityRange(qualTrackRange);
-    correlatorJetTree -> SetTrackNMvtxRange(nMvtxTrackRange);
-    correlatorJetTree -> SetTrackNInttRange(nInttTrackRange);
-    correlatorJetTree -> SetTrackNTpcRange(nTpcTrackRange);
-    correlatorJetTree -> SetTrackDcaRangeXY(dcaTrackRangeXY);
-    correlatorJetTree -> SetTrackDcaRangeZ(dcaTrackRangeZ);
-    correlatorJetTree -> SetTrackDeltaPtRange(deltaPtTrackRange);
-    if (doDcaSigmaCut) {
-      correlatorJetTree -> SetTrackDcaSigmaParameters(doDcaSigmaCut, dcaPtFitMax, nDcaSigmaTrack, dcaSigmaParamsXY, dcaSigmaParamsZ);
-    }
-  }
-  if (addParticleFlow) {
-    correlatorJetTree -> SetFlowPtRange(ptFlowRange);
-    correlatorJetTree -> SetFlowEtaRange(etaFlowRange);
-  }
-  if (addECal) {
-    correlatorJetTree -> SetECalPtRange(ptECalRange);
-    correlatorJetTree -> SetECalEtaRange(etaECalRange);
-  }
-  if (addHCal) {
-    correlatorJetTree -> SetHCalPtRange(ptHCalRange);
-    correlatorJetTree -> SetHCalEtaRange(etaHCalRange);
-  }
-  correlatorJetTree -> SetJetParameters(jetRes, jetType, jetAlgo, jetReco);
-  correlatorJetTree -> SetSaveDST(saveDst);
-  ffaServer         -> registerSubsystem(correlatorJetTree);
+  SCorrelatorJetTreeMaker *correlatorJetTree = new SCorrelatorJetTreeMaker(cfg_jetTree);
+  ffaServer  -> registerSubsystem(correlatorJetTree);
+
+  // run and close f4a --------------------------------------------------------
 
   // run reconstruction & close f4a
   ffaServer -> run(nEvents);

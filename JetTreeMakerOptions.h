@@ -6,15 +6,19 @@
 // Options for the SCorrelatorJetTreeMaker module
 // ----------------------------------------------------------------------------
 
-#ifndef CORRELATORQAMAKEROPTIONS_H
-#define CORRELATORQAMAKEROPTIONS_H
+#ifndef JETTREEMAKEROPTIONS_H
+#define JETTREEMAKEROPTIONS_H
 
 // c++ utilities
 #include <string>
+#include <vector>
 #include <utility>
-// analysis libraries
+// root libraries
+#include <TF1.h>
+// analysis utilties
 #include "/sphenix/user/danderson/install/include/scorrelatorutilities/Types.h"
 #include "/sphenix/user/danderson/install/include/scorrelatorutilities/Constants.h"
+#include "/sphenix/user/danderson/install/include/scorrelatorutilities/Interfaces.h"
 #include "/sphenix/user/danderson/install/include/scorrelatorjettreemaker/SCorrelatorJetTreeMakerConfig.h"
 
 // make common namespaces implicit
@@ -25,83 +29,48 @@ using namespace SColdQcdCorrelatorAnalysis;
 
 namespace JetTreeMakerOptions {
 
-  // track & particle flow parameters
-  const bool   runTracking(false);
-  const bool   doTruthTableReco(false);
-  const double nSigma(1.5);
+  // acceptance cuts ----------------------------------------------------------
 
-  // topo cluster parameters
-  const double showerR(0.025);
-  const double noiseLevels[NTopoPar]   = {0.0025, 0.006, 0.03};
-  const double significance[NTopoPar]  = {4.0,    2.0,   0.0};
-  const double localMinE[NTopoPar]     = {1.0,    2.0,   0.5};
-  const bool   enableHCal[NTopoClusts] = {false, true};
-  const bool   enableECal[NTopoClusts] = {true, false};
-  const bool   doSplit(true);
-  const bool   allowCorners(true);
+  // event acceptances
+  const pair<float, float> vzEvtRange = {-10., 10.};
+  const pair<float, float> vrEvtRange = {0.0, 0.418};
 
-  // jet tree general parameters
-  const bool isMC(true);
-  const bool isEmbed(true);
-  const bool doDebug(false);
-  const bool saveDst(true);
-  const bool doVtxCut(false);
-  const bool doQuality(true);
-  const bool requireSiSeeds(true);
-  const bool useOnlyPrimVtx(true);
-  const bool doDcaSigmaCut(false);
-  const bool maskTpcSectors(false);
-  const bool addTracks(true);
-  const bool addECal(false);
-  const bool addHCal(false);
-  const bool addParticleFlow(false);
-
-  // jet tree jet parameters
-  const double       jetRes  = 0.4;
-  const unsigned int jetType = 0;
-  const auto         jetAlgo = SCorrelatorJetTreeMaker::ALGO::ANTIKT;
-  const auto         jetReco = SCorrelatorJetTreeMaker::RECOMB::PT_SCHEME;
-
-  // event acceptance
-  const pair<double, double> vzEvtRange = {-10., 10.};
-  const pair<double, double> vrEvtRange = {0.0,  0.418};
-
-  // particle acceptance
-  const pair<double, double> ptParRange  = {0.,   9999.};
-  const pair<double, double> etaParRange = {-1.1, 1.1};
-
-  // track acceptance
-  const pair<double, double> ptTrackRange      = {0.2,  100.};
-  const pair<double, double> etaTrackRange     = {-1.1, 1.1};
-  const pair<double, double> qualTrackRange    = {0.,   10.};
-  const pair<double, double> nMvtxTrackRange   = {2.,   100.};
-  const pair<double, double> nInttTrackRange   = {1.,   100.};
-  const pair<double, double> nTpcTrackRange    = {24.,  100.};
-  const pair<double, double> dcaTrackRangeXY   = {-5.,  5.};
-  const pair<double, double> dcaTrackRangeZ    = {-5.,  5.};
-  const pair<double, double> deltaPtTrackRange = {0., 0.5};
+  // track acceptances
+  const pair<int,    int>  nMvtxTrkRange = {2, 100};
+  const pair<int,    int>  nInttTrkRange = {1, 100};
+  const pair<int,    int>  nTpcTrkRange  = {24, 100};
+  const pair<float, float> ptTrkRange    = {0.2, 100.};
+  const pair<float, float> etaTrkRange   = {-1.1, 1.1};
+  const pair<float, float> qualTrkRange  = {0., 10.};
+  const pair<float, float> dcaTrkRangeXY = {-5., 5.};
+  const pair<float, float> dcaTrkRangeZ  = {-5., 5.};
+  const pair<float, float> ptErrTrkRange = {0., 0.5};
 
   // for pt dependent dca cuts
-  const pair<double, double> dcaPtFitMax      = {15., 15.};
-  const pair<double, double> nDcaSigmaTrack   = {3.,  3.};
-  const vector<double>       dcaSigmaParamsXY = {-0.0095, 0.091, -0.029};
-  const vector<double>       dcaSigmaParamsZ  = {1.73,    26.1,  -9.45};
+  const pair<float, float> dcaPtFitMax    = {15., 15.};
+  const pair<float, float> nDcaSigmaTrk   = {3., 3.};
+  const vector<float>      dcaSigmaParsXY = {-0.0095, 0.091, -0.029};
+  const vector<float>      dcaSigmaParsZ  = {1.73, 26.1, -9.45};
 
-  // particle flow acceptance
-  const pair<double, double> ptFlowRange  = {0.2,  9999.};
-  const pair<double, double> etaFlowRange = {-1.1, 1.1};
+  // particle flow acceptances
+  const pair<float, float> ptFlowRange  = {0.2, 9999.};
+  const pair<float, float> etaFlowRange = {-1.1, 1.1};
 
-  // calo acceptance
-  const pair<double, double> ptECalRange  = {0.3,  9999.};
-  const pair<double, double> etaECalRange = {-1.1, 1.1};
-  const pair<double, double> ptHCalRange  = {0.3,  9999.};
-  const pair<double, double> etaHCalRange = {-1.1, 1.1};
+  // calo acceptances
+  const pair<float, float> eECalRange   = {0.3, 9999.};
+  const pair<float, float> etaECalRange = {-1.1, 1.1};
+  const pair<float, float> eHCalRange   = {0.3, 9999.};
+  const pair<float, float> etaHCalRange = {-1.1, 1.1};
+
+  // particle acceptances
+  const pair<float, float> ptParRange  = {0., 9999.};
+  const pair<float, float> etaParRange = {-1.1, 1.1};
 
 
 
   // bundle acceptances into pairs --------------------------------------------
 
-  pair<Types::TrkInfo, Types::TrkInfo> GetTrkAccept() {
+  pair<Types::TrkInfo, Types::TrkInfo> GetTrkAccept(const bool doSigmaCut = false) {
 
     // create maximal range
     pair<Types::TrkInfo, Types::TrkInfo> trkAccept = {
@@ -110,22 +79,139 @@ namespace JetTreeMakerOptions {
     };
 
     // set specific bounds
+    trkAccept.first.SetNMvtxLayer( nMvxTrkRange.first );
+    trkAccept.first.SetNInttLayer( nInttTrkRange.first );
+    trkAccept.first.SetNTpcLayer( nTpcTrkRange.first );
+    trkAccept.first.SetPT( ptTrkRange.first );
+    trkAccept.first.SetEta( etaTrkRange.first );
+    trkAccept.first.SetQuality( qualTrkRange.first );
+    trkAccept.first.SetPtErr( ptErrTrkRange.first );
+    trkAccept.second.SetNMvtxLayer( nMvxTrkRange.second );
+    trkAccept.second.SetNInttLayer( nInttTrkRange.second );
+    trkAccept.second.SetNTpcLayer( nTpcTrkRange.second );
+    trkAccept.second.SetPT( ptTrkRange.second );
+    trkAccept.second.SetEta( etaTrkRange.second );
+    trkAccept.second.SetQuality( qualTrkRange.second );
+    trkAccept.second.SetPtErr( ptErrTrkRange.second );
 
-  }  // end 'GetTrkAccept()'
+    // set dca bounds if not doing pt-dependent cut
+    if (!doSigmaCut)
+      trkAccept.first.SetDcaXY( dcaTrackRangeXY.first );
+      trkAccept.first.SetDcaZ( dcaTrackRangeZ.first );
+      trkAccept.second.SetDcaXY( dcaTrackRangeXY.second );
+      trkAccept.second.SetDcaZ( dcaTrackRangeZ.second );
+    }
+    return trkAccept;
 
+  }  // end 'GetTrkAccept(bool)'
+
+
+
+  pair<Types::FlowInfo, Types::FlowInfo> GetFlowAccept() {
+
+    // create maximal range
+    pair<Types::FlowInfo, Types::FlowInfo> flowAccept = {
+      Types::FlowInfo(Const::Init::Minimize),
+      Types::FlowInfo(Const::Init::Maximize)
+    };
+
+    // set specific bounds
+    flowAccept.first.SetPT( ptFlowRange.first );
+    flowAccept.first.SetEta( etaFlowRange.first );
+    flowAccept.second.SetPT( ptFlowRange.second );
+    flowAccept.second.SetEta( etaFlowRange.second );
+    return flowAccept;
+
+  }  // end 'GetFlowAccept()'
+
+
+
+  pair<Types::ClustInfo, Types::ClustInfo> GetClustAccept(pair<double, double> eRange, pair<double, double> etaRange) {
+
+    // create maximal range
+    pair<Types::ClustInfo, Types::ClustInfo> clustAccept = {
+      Types::ClustInfo(Const::Init::Minimize),
+      Types::ClustInfo(Const::Init::Maximize)
+    };
+
+    // set specific bounds
+    clustAccept.first.SetEne( eRange.first );
+    clustAccept.first.SetEta( etaRange.first );
+    clustAccept.second.SetEne( eRange.second );
+    clustAccept.second.SetEta( etaRange.second );
+    return clustAccept;
+
+  }  // end 'GetClustAccept(pair<double, double>, pair<double, double>)'
+
+
+
+  pair<Types::ParInfo, Types::ParInfo> GetParAccept() {
+
+    // create maximal range
+    pair<Types::ParInfo, Types::ParInfo> parAccept = {
+      Types::ParInfo(Const::Init::Minimize),
+      Types::ParInfo(Const::Init::Maximize)
+    };
+
+    // set specific bounds
+    parAccept.first.SetPT( ptParRange.first );
+    parAccept.first.SetEta( etaParRange.first );
+    parAccept.second.SetPT( ptParRange.second );
+    parAccept.second.SetEta( etaParRange.second );
+    return parAccept;
+
+  }  // end 'GetParAccept()'
+
+
+
+  pair<TF1*, TF1*> GetSigmaDcaFunctions() {
+
+    TF1* fSigmaDcaXY = Interfaces::GetSigmaDcaTF1( "fSigmaDcaXY", dcaSigmaParsXY, make_pair(ptTrkRange.first, dcaPtFitMax.first) );
+    TF1* fSigmaDcaZ  = Interfaces::GetSigmaDcaTF1( "fSigmaDcaZ",  dcaSigmaParsZ,  make_pair(ptTrkRange.first, dcaPtFitMax.second) );
+    return make_pair(fSigmaDcaXY, fSigmaDcaZ);
+
+  }  // end 'GetSigmaDcaFunctions()'
 
 
 
   // set up configuration -----------------------------------------------------
 
-  SCorrelatorJetTreeMakerConfig GetConfig(const int verbosity, const string outFile) {
+  SCorrelatorJetTreeMakerConfig GetConfig(const int verbosity, const string outFile, const bool doDcaSigmaCut = false) {
 
     SCorrelatorJetTreeMakerConfig cfg {
-
+      .verbosity       = verbosity,
+      .isDebugOn       = true,
+      .saveDST         = false,
+      .isEmbed         = false,
+      .isLegacy        = true,
+      .moduleName      = "SCorrelatorJetTreeMaker",
+      .outFileName     = outFile,
+      .recoJetTreeName = "RecoJetTree",
+      .trueJetTreeName = "TrueJetTree",
+      .rJet            = 0.4,
+      .jetAlgo         = "antikt",
+      .jetRecomb       = "pt",
+      .jetArea         = "active",
+      .jetType         = Const::JetType::Charged,
+      .doVtxCut        = false,
+      .doDcaSigmaCut   = doDcaSigmaCut,
+      .requireSiSeeds  = true,
+      .useOnlyPrimVtx  = true,
+      .subEvtOpt       = Const::SubEvtOpt::Everything,
+      .vrAccept        = vrEvtRange,
+      .vzAccept        = vzEvtRange,
+      .trkAccept       = GetTrkAccept(doDcaSigmaCut),
+      .flowAccept      = GetFlowAccept(),
+      .ecalAccept      = GetClustAccept(eECalRange, etaECalRange),
+      .hcalAccept      = GetClustAccept(eHCalRange, etaHCalRange),
+      .parAccept       = GetParAccept(),
+      .nSigCut         = nDcaSigmaTrk,
+      .ptFitMax        = dcaPtFitMax,
+      .fSigDca         = GetSigmaDcaFunctions()
     };
     return cfg;
 
-  }  // end 'GetConfig()'
+  }  // end 'GetConfig(int, string, bool)'
 
 }  // end JetTreeMakerOptions namespace
 
