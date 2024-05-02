@@ -26,7 +26,6 @@ namespace SColdQcdCorrelatorAnalysis {
     // system options
     int    verbosity       {0};
     bool   isDebugOn       {false};
-    bool   saveDST         {false};
     bool   isSimulation    {true};
     bool   isEmbed         {false};
     bool   isLegacy        {true};

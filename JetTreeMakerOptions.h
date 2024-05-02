@@ -184,7 +184,6 @@ namespace JetTreeMakerOptions {
     SCorrelatorJetTreeMakerConfig cfg {
       .verbosity       = verbosity,
       .isDebugOn       = true,
-      .saveDST         = false,
       .isEmbed         = false,
       .isLegacy        = true,
       .moduleName      = "SCorrelatorJetTreeMaker",

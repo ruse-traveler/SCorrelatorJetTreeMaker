@@ -85,12 +85,6 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::Init(PHCompositeNode*) Initializing..." << endl;
     }
 
-    // if needed, create node on node tree
-    if (m_config.saveDST) {
-      CreateJetNode(topNode);
-    }
-
-    // run other intialization routines
     OpenOutFile();
     InitTrees();
     InitFastJet();

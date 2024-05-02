@@ -223,8 +223,7 @@ namespace SColdQcdCorrelatorAnalysis {
       );
       pseudojet.set_user_index(matchID);
 
-      // add to lists
-      m_recoSourceMap.insert( {iCst, make_pair(Jet::SRC::TRACK, info.GetID())} );
+      // add to list
       m_recoJetInput.push_back(pseudojet);
       ++iCst;
 
@@ -277,8 +276,7 @@ namespace SColdQcdCorrelatorAnalysis {
       );
       pseudojet.set_user_index(iCst);
 
-      // add to lists
-      m_recoSourceMap.insert( {iCst, make_pair(Jet::SRC::PARTICLE, info.GetID())} );
+      // add to list
       m_recoJetInput.push_back(pseudojet);
       ++iCst;
 
@@ -337,16 +335,7 @@ namespace SColdQcdCorrelatorAnalysis {
         );
         pseudojet.set_user_index(iCst);
 
-        // add to lists
-        m_recoSourceMap.insert(
-          {
-            iCst,
-            make_pair(
-              Const::MapIndexOntoSrc()[ subsys ],
-              info.GetID()
-            )
-          }
-        );
+        // add to list
         m_recoJetInput.push_back(pseudojet);
         ++iCst;
 
@@ -402,8 +391,7 @@ namespace SColdQcdCorrelatorAnalysis {
         );
         pseudojet.set_user_index(info.GetBarcode());
 
-        // add to lists
-        m_trueSourceMap.insert( {iCst, make_pair(Jet::SRC::PARTICLE, info.GetBarcode())} );
+        // add to list
         m_trueJetInput.push_back(pseudojet);
         ++iCst;
 

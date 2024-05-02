@@ -93,9 +93,6 @@
 using namespace std;
 using namespace fastjet;
 
-// set up aliases for convenience
-typedef map<int, pair<Jet::SRC, int>> JetCstSourceMap;
-
 
 
 namespace SColdQcdCorrelatorAnalysis {
@@ -142,7 +139,6 @@ namespace SColdQcdCorrelatorAnalysis {
       int  GetRecoCstType();
 
       // system methods (*.sys.h)
-      void CreateJetNode(PHCompositeNode* topNode);
       void OpenOutFile();
       void InitTrees();
       void InitFastJet();
@@ -190,8 +186,6 @@ namespace SColdQcdCorrelatorAnalysis {
       vector<PseudoJet> m_trueJets;
       vector<PseudoJet> m_recoJetInput;
       vector<PseudoJet> m_trueJetInput;
-      JetCstSourceMap   m_recoSourceMap;
-      JetCstSourceMap   m_trueSourceMap;
 
   };
 

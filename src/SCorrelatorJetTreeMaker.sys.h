@@ -20,49 +20,6 @@ namespace SColdQcdCorrelatorAnalysis {
 
   // system methods -----------------------------------------------------------
 
-  void SCorrelatorJetTreeMaker::CreateJetNode(PHCompositeNode* topNode) {
-
-    // print debug statement
-    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
-      cout << "SCorrelatorJetTreeMaker::CreateJetNode(PHCompositeNode*, string) Creating jet node..." << endl;
-    }
-
-    // construct reco node name
-    string recoNodeName;
-    if (m_config.recoJetTreeName.empty()) {
-      recoNodeName = "RecoJetTree";
-    } else {
-      recoNodeName = m_config.recoJetTreeName;
-    }
-
-    // construct truth node name
-    string trueNodeName;
-    if (m_config.trueJetTreeName.empty()) {
-      trueNodeName = "TruthJetTree";
-    } else {
-      trueNodeName = m_config.trueJetTreeName;
-    }
-
-    // construct jet maps
-    //   - FIXME I don't think the jet maps are actually being
-    //     filled? And I want my jet trees in there anyways...
-    m_recoJetMap = new JetMapv1();
-    if (m_config.isSimulation) {
-      m_trueJetMap = new JetMapv1();
-    }
-
-    // create nodes
-    //   - FIXME this interface doesn't work...
-    //Interfaces::CreateNode(topNode, recoNodeName, m_recoJetMap);
-    //if (m_config.isSimulation) {
-    //  Interfaces::CreateNode(topNode, trueNodeName, m_trueJetMap);
-    //}
-    return;
-
-  }  // end 'CreateJetNode(PHCompositeNode*)'
-
-
-
   void SCorrelatorJetTreeMaker::OpenOutFile() {
 
     // print debug statement
@@ -269,8 +226,6 @@ namespace SColdQcdCorrelatorAnalysis {
     m_trueJets.clear();
     m_recoJetInput.clear();
     m_trueJetInput.clear();
-    m_recoSourceMap.clear();
-    m_trueSourceMap.clear();
     return;
 
   }  // end 'ResetJetVariables()'
