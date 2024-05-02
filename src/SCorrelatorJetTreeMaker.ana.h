@@ -50,7 +50,53 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::GetJetVariables(PHCompositeNode*) Grabbing jet (and constituent) info..." << endl;
     }
 
-    /* TODO fill in */
+    // grab reco variables
+    m_recoOutput.jets.resize( m_recoJets.size() );
+    m_recoOutput.csts.resize( m_recoJets.size() );
+    for (uint64_t iJet = 0; iJet < m_recoJets.size(); iJet++) {
+
+      // grab jet info
+      m_recoOutput.jets[iJet].SetInfo( m_recoJets[iJet] );
+      m_recoOutput.jets[iJet].SetJetID( iJet );
+      for (auto cst : m_recoJets[iJet].constituents()) {
+
+        // grab cst info
+        Types::CstInfo cstInfo( cst );
+        cstInfo.SetEmbedID( 0 );  // FIXME set to signal
+        cstInfo.SetJetID( iJet );
+        cstInfo.SetType( GetRecoCstType() );
+        cstInfo.SetPID( 211 );  // FIXME should use PID when/if ready
+        m_recoOutput.csts[iJet].push_back( cstInfo );
+
+      }  // end reco cst loop
+    }  // end reco jet loop
+
+    // grab truth variables
+    if (m_config.isSimulation) {
+      m_trueOutput.jets.resize( m_trueJets.size() );
+      m_trueOutput.csts.resize( m_trueJets.size() );
+      for (uint64_t iJet = 0; iJet < m_trueJets.size(); iJet++) {
+
+        // grab jet info
+        m_trueOutput.jets[iJet].SetInfo( m_trueJets[iJet] );
+        m_trueOutput.jets[iJet].SetJetID( iJet );
+
+        // loop over constituents
+        for (auto cst : m_trueJets[iJet].constituents()) {
+
+          // get corresponding particle
+          HepMC::GenParticle* par = Tools::GetHepMCGenParticleFromBarcode(cst.user_index(), topNode);
+
+          // grab cst info
+          Types::CstInfo cstInfo( cst );
+          cstInfo.SetEmbedID( m_mapCstToEmbedID[cst.user_index()] );
+          cstInfo.SetJetID( iJet );
+          cstInfo.SetType( Const::Object::Particle );
+          cstInfo.SetPID( par -> pdg_id() );
+          m_trueOutput.csts[iJet].push_back( cstInfo );
+        }  // end reco cst loop
+      }  // end reco jet loop
+    }
     return;
 
   }  // end 'GetJetVariables(PHCompositeNode* topNode)'
@@ -106,8 +152,8 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // cluster jets
-    ClusterSequence clustering(m_recoJetInput, *m_recoJetDef);
-    m_recoJets = clustering.inclusive_jets();
+    m_recoCluster = make_unique<ClusterSequence>(m_recoJetInput, *m_recoJetDef);
+    m_recoJets    = m_recoCluster -> inclusive_jets();
     return;
 
   }  // end 'MakeRecoJets(PHCompositeNode*)'
@@ -125,8 +171,8 @@ namespace SColdQcdCorrelatorAnalysis {
     AddParticles(topNode);
 
     // run clustering, grab jets, and return
-    ClusterSequence clustering(m_trueJetInput, *m_trueJetDef);
-    m_trueJets = clustering.inclusive_jets();
+    m_trueCluster = make_unique<ClusterSequence>(m_trueJetInput, *m_trueJetDef);
+    m_trueJets    = m_trueCluster -> inclusive_jets();
     return;
 
   }  // end 'MakeTrueJets(PHCompositeNode*)'
@@ -496,6 +542,38 @@ namespace SColdQcdCorrelatorAnalysis {
     return (isInVrAccept && isInVzAccept);
 
   }  // end 'IsGoodVertex(const ROOT::Math::XYZVector)'
+
+
+
+  int SCorrelatorJetTreeMaker::GetRecoCstType() {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 2)) {
+      cout << "SCorrelatorJetTreeMaker::GetRecoCstType() Getting cst type..." << endl;
+    }
+
+    int type = Const::Object::Unknown;
+    switch (m_config.jetType) {
+
+      case Const::JetType::Neutral:
+        type = Const::Object::Cluster;
+        break;
+
+      case Const::JetType::Full:
+        type = Const::Object::Flow;
+        break;
+
+      case Const::JetType::Charged:
+        type = Const::Object::Track;
+        break;
+
+      default:
+        type = Const::Object::Unknown;
+        break;
+    }
+    return type;
+
+  }  // end 'GetRecoCstType()'
 
 }  // end SColdQcdCorrelatorAnalysis namespace
 

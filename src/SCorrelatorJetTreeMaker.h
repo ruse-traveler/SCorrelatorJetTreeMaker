@@ -139,6 +139,7 @@ namespace SColdQcdCorrelatorAnalysis {
       bool IsGoodCluster(Types::ClustInfo& info, const Const::Subsys subsys);
       bool IsGoodParticle(Types::ParInfo& info);
       bool IsGoodVertex(const ROOT::Math::XYZVector vtx);
+      int  GetRecoCstType();
 
       // system methods (*.sys.h)
       void CreateJetNode(PHCompositeNode* topNode);
@@ -179,8 +180,10 @@ namespace SColdQcdCorrelatorAnalysis {
 
       // jet members
       //   - TODO add area definition
-      unique_ptr<JetDefinition> m_trueJetDef = NULL;
-      unique_ptr<JetDefinition> m_recoJetDef = NULL;
+      unique_ptr<JetDefinition>   m_recoJetDef  = NULL;
+      unique_ptr<JetDefinition>   m_trueJetDef  = NULL;
+      unique_ptr<ClusterSequence> m_recoCluster = NULL;
+      unique_ptr<ClusterSequence> m_trueCluster = NULL;
 
       // vectors/maps for jet finding
       vector<PseudoJet> m_recoJets;

@@ -132,7 +132,8 @@ namespace SColdQcdCorrelatorAnalysis {
       MakeTrueJets(topNode);
     }
 
-    /* TODO add jet collector function */
+    // grab jet/cst-wise variables
+    GetJetVariables(topNode);
 
     // fill output trees
     FillTrees();
