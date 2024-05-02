@@ -81,7 +81,7 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::Init(PHCompositeNode* topNode) {
 
     // print debug statement
-    if (m_config.isDebugOn) {
+    if (m_config.isDebugOn && (m_config.verbosity > 0)) {
       cout << "SCorrelatorJetTreeMaker::Init(PHCompositeNode*) Initializing..." << endl;
     }
 
@@ -103,7 +103,7 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::process_event(PHCompositeNode* topNode) {
 
     // print debug statement
-    if (m_config.isDebugOn) {
+    if (m_config.isDebugOn && (m_config.verbosity > 0)) {
       cout << "SCorrelatorJetTreeMaker::process_event(PHCompositeNode*) Processing Event..." << endl;
     }
 
@@ -146,7 +146,7 @@ namespace SColdQcdCorrelatorAnalysis {
   int SCorrelatorJetTreeMaker::End(PHCompositeNode* topNode) {
 
     // print debug statements
-    if (m_config.isDebugOn) {
+    if (m_config.isDebugOn && (m_config.verbosity > 0)) {
       cout << "SCorrelatorJetTreeMaker::End(PHCompositeNode*) This is the End..." << endl;
     }
 
