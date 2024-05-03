@@ -63,6 +63,7 @@ namespace SColdQcdCorrelatorAnalysis {
         // grab cst info
         Types::CstInfo cstInfo( cst );
         cstInfo.SetEmbedID( 0 );  // FIXME set to signal
+        cstInfo.SetJetInfo( m_recoOutput.jets[iJet] );
         cstInfo.SetJetID( iJet );
         cstInfo.SetType( GetRecoCstType() );
         cstInfo.SetPID( 211 );  // FIXME should use PID when/if ready
@@ -90,6 +91,7 @@ namespace SColdQcdCorrelatorAnalysis {
           // grab cst info
           Types::CstInfo cstInfo( cst );
           cstInfo.SetEmbedID( m_mapCstToEmbedID[cst.user_index()] );
+          cstInfo.SetJetInfo( m_trueOutput.jets[iJet] );
           cstInfo.SetJetID( iJet );
           cstInfo.SetType( Const::Object::Particle );
           cstInfo.SetPID( par -> pdg_id() );
