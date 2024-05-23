@@ -35,7 +35,7 @@
 // calo/pf libraries
 #include <caloreco/RawClusterBuilderTopo.h>
 #include <particleflowreco/ParticleFlowReco.h>
-// module definitions
+// module definition
 #include <scorrelatorjettreemaker/SCorrelatorJetTreeMaker.h>
 // macro options
 #include "TopoClusterOptions.h"
