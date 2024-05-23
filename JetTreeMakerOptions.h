@@ -17,10 +17,11 @@
 // root libraries
 #include <TF1.h>
 // analysis utilties
-#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Types.h"
-#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Constants.h"
-#include "/sphenix/u/danderson/install/include/scorrelatorutilities/Interfaces.h"
-#include "/sphenix/u/danderson/install/include/scorrelatorjettreemaker/SCorrelatorJetTreeMakerConfig.h"
+#include <scorrelatorutilities/Types.h>
+#include <scorrelatorutilities/Constants.h>
+#include <scorrelatorutilities/Interfaces.h>
+// module configuration
+#include <scorrelatorjettreemaker/SCorrelatorJetTreeMakerConfig.h>
 
 // make common namespaces implicit
 using namespace std;
