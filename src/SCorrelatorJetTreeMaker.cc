@@ -65,7 +65,6 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // clean up dangling pointers
-    //   - FIXME use smart pointers instead
     if (m_evalStack) {
       delete m_evalStack;
       m_evalStack = NULL;
@@ -116,8 +115,16 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // if needed, check reconstructed vtx
     if (m_config.doVtxCut) {
-      const bool isGoodVtx = IsGoodVertex( ROOT::Math::XYZVector(m_recoOutput.evt.GetVX(), m_recoOutput.evt.GetVY(), m_recoOutput.evt.GetVZ()) );
-      if (!isGoodVtx) return Fun4AllReturnCodes::DISCARDEVENT;
+      const bool isGoodVtx = IsGoodVertex(
+        ROOT::Math::XYZVector(
+          m_recoOutput.evt.GetVX(),
+          m_recoOutput.evt.GetVY(),
+          m_recoOutput.evt.GetVZ()
+        )
+      );
+      if (!isGoodVtx) {
+        return Fun4AllReturnCodes::EVENT_OK;
+      }
     }
 
     // find jets
