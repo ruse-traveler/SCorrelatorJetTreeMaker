@@ -25,11 +25,14 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // system options
     int    verbosity       {0};
+    bool   readJetNodes    {false};
     bool   isDebugOn       {false};
     bool   isSimulation    {true};
     bool   isEmbed         {false};
     bool   isLegacy        {true};
     string moduleName      {""};
+    string inRecoNodeName  {""};
+    string inTrueNodeName  {""};
     string outFileName     {""};
     string recoJetTreeName {""};
     string trueJetTreeName {""};

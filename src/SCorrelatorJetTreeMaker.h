@@ -36,7 +36,7 @@
 #include <HepMC/GenEvent.h>
 #include <HepMC/GenVertex.h>
 #include <HepMC/GenParticle.h>
-// f4a utilities
+// f4a libraries
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllReturnCodes.h>
 #include <fun4all/Fun4AllHistoManager.h>
@@ -46,7 +46,7 @@
 #include <phool/PHIODataNode.h>
 #include <phool/PHNodeIterator.h>
 #include <phool/PHCompositeNode.h>
-// truth utilities
+// truth libraries
 #include <g4main/PHG4Hit.h>
 #include <g4main/PHG4Particle.h>
 #include <g4main/PHG4TruthInfoContainer.h>
@@ -54,9 +54,8 @@
 #include <phhepmc/PHHepMCGenEventMap.h>
 // jet utilities
 #include <jetbase/Jet.h>
-#include <jetbase/JetMap.h>
-#include <jetbase/JetMapv1.h>
 #include <jetbase/FastJetAlgo.h>
+#include <jetbase/JetContainer.h>
 // calo utilities
 #include <calobase/RawCluster.h>
 #include <calobase/RawClusterUtility.h>
@@ -124,6 +123,8 @@ namespace SColdQcdCorrelatorAnalysis {
       // analysis methods (*.ana.h)
       void GetEventVariables(PHCompositeNode* topNode);
       void GetJetVariables(PHCompositeNode* topNode);
+      void ReadJetNodes(PHCompositeNode* topNode);
+      void ReadGivenJetNode(const string node, PHCompositeNode* topNode);
       void MakeJets(PHCompositeNode* topNode);
       void MakeRecoJets(PHCompositeNode* topNode);
       void MakeTrueJets(PHCompositeNode* topNode);
@@ -160,11 +161,11 @@ namespace SColdQcdCorrelatorAnalysis {
       SCorrelatorJetTreeMakerLegacyTruthOutput m_trueLegacy;
 
       // io members
-      TFile*    m_outFile     = NULL;
-      TTree*    m_recoTree    = NULL;
-      TTree*    m_trueTree    = NULL;
-      JetMapv1* m_recoJetMap  = NULL;
-      JetMapv1* m_trueJetMap  = NULL;
+      TFile*        m_outFile  = NULL;
+      TTree*        m_recoTree = NULL;
+      TTree*        m_trueTree = NULL;
+      JetContainer* m_recoNode = NULL;
+      JetContainer* m_trueNode = NULL;
 
       // track evaluator members
       SvtxEvalStack* m_evalStack = NULL;

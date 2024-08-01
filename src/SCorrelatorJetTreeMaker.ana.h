@@ -105,6 +105,75 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  void SCorrelatorJetTreeMaker::ReadJetNodes(PHCompositeNode* topNode) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 1)) {
+      cout << "SCorrelatorJetTreeMaker::ReadJetNodes(PHCompositeNode*) Reading jet nodes" << endl;
+    }
+
+    // prepare variables for jet finding
+    ResetJetVariables();
+
+
+    // grab reconstructed jets
+    m_recoNode = getClass<JetContainer>(topNode, m_config.inRecoNodeName.data());
+    if (!m_recoNode) {
+      cerr << "SCorrelatorJetTreeMaker::ReadJetNodes: PANIC: couldn't open reconstructed jet node \"" << m_config.inRecoNodeName << "\"! Aborting!" << endl;
+      assert(m_recoNode);
+    }
+
+    // if needed, grab truth jets
+    if (m_config.isSimulation) {
+      m_trueNode = getClass<JetContainer>(topNode, m_config.inTrueNodeName.data());
+      if (!m_trueNode) {
+        cerr << "SCorrelatorJetTreeMaker::ReadJetNodes: PANIC: couldn't open truth jet node \"" << m_config.inTrueNodeName << "\"! Aborting!" << endl;
+        assert(m_trueNode);
+      }
+    }
+  
+    // loop through reconstructed jets
+    m_recoOutput.jets.resize( m_recoNode -> size() );
+    m_recoOutput.csts.resize( m_recoNode -> size() );
+    for (
+      uint64_t iRecoJet = 0;
+      iRecoJet < m_recoNode -> size();
+      ++iRecoJet
+    ) {
+
+      Jet* jet = m_recoNode -> get_jet(iRecoJet);
+      m_recoOutput.jets[iRecoJet].SetInfo( *jet );
+      m_recoOutput.jets[iRecoJet].SetJetID( iRecoJet );
+
+      /* TODO add constituents */
+
+    }  // end jet loop
+
+
+    // if needed, loop through truth jets
+    if (m_config.isSimulation) {
+      m_trueOutput.jets.resize( m_trueNode -> size() );
+      m_trueOutput.csts.resize( m_trueNode -> size() );
+      for (
+        uint64_t iTrueJet = 0;
+        iTrueJet < m_trueNode -> size();
+        ++iTrueJet
+      ) {
+
+        Jet* jet = m_trueNode -> get_jet(iTrueJet);
+        m_trueOutput.jets[iTrueJet].SetInfo( *jet );
+        m_trueOutput.jets[iTrueJet].SetJetID( iTrueJet );
+
+        /* TODO add constituents */
+
+      }  // end jet loop
+    }
+    return;
+
+  }  // end 'ReadJetNodes(PHCompositeNode*)'
+
+
+
   void SCorrelatorJetTreeMaker::MakeJets(PHCompositeNode* topNode) {
 
     // print debug statement
