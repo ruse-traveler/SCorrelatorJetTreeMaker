@@ -185,10 +185,13 @@ namespace JetTreeMakerOptions {
 
     SCorrelatorJetTreeMakerConfig cfg {
       .verbosity       = verbosity,
+      .readJetNodes    = false,
       .isDebugOn       = true,
       .isEmbed         = false,
       .isLegacy        = true,
       .moduleName      = "SCorrelatorJetTreeMaker",
+      .inRecoNodeName  = "",
+      .inTrueNodeName  = "",
       .outFileName     = outFile,
       .recoJetTreeName = "RecoJetTree",
       .trueJetTreeName = "TrueJetTree",
