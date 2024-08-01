@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 # -----------------------------------------------------------------------------
-# 'RunCorrelatorJetTreeMaker.rb'
-# Derek Anderson
-# 04.11.2024
+# @file   RunCorrelatorJetTreeMaker.rb'
+# @author Derek Anderson
+# @date   04.11.2024
 #
 # Short script to run the 'Fun4All_RunCorrelatorJetTreeMaker.C' macro.
 # -----------------------------------------------------------------------------

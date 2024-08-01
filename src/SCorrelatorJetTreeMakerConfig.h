@@ -1,13 +1,13 @@
-// ----------------------------------------------------------------------------
-// 'SCorrelatorJetTreeMakerConfig.h'
-// Derek Anderson
-// 03.22.2024
-//
-// A module to produce a tree of jets for the sPHENIX
-// Cold QCD Energy-Energy Correlator analysis.
-//
-// Initially derived from code by Antonio Silva (thanks!!)
-// ----------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/*! \file   SCorrelatorJetTreeMakerConfig.h
+ *  \author Derek Anderson
+ *  \date   03.22.2024
+ *
+ * A module to produce a tree of jets for the sPHENIX
+ * Cold QCD Energy-Energy Correlator analysis. Initially
+ * derived from code by Antonio Silva.
+ */
+/// ---------------------------------------------------------------------------
 
 #ifndef SCORRELATORJETTREEMAKERCONFIG_H
 #define SCORRELATORJETTREEMAKERCONFIG_H
@@ -19,8 +19,9 @@ using namespace std;
 
 namespace SColdQcdCorrelatorAnalysis {
 
-  // SCorrelatorJetTreeMakerConfig definition ---------------------------------
-
+  // --------------------------------------------------------------------------
+  //! User options for module
+  // --------------------------------------------------------------------------
   struct SCorrelatorJetTreeMakerConfig {
 
     // system options

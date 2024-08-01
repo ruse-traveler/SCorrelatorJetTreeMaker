@@ -1,13 +1,12 @@
-// ----------------------------------------------------------------------------
-// 'Fun4All_RunCorrelatorJetTreeMaker.C'
-// Derek Anderson
-// 12.11.2022
-//
-// A F4A macro to run the correlator jet tree make module
-//
-// Initially derived from code by Cameron Dean and Antonio
-// Silva (thanks!!)
-// ----------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/*! \file   Fun4All_RunCorrelatorJetTreeMaker.C
+ *  \author Derek Anderson
+ *  \date   12.11.2022
+ *
+ * A F4A macro to run the correlator jet tree maker module. Initially
+ * derived from code by Cameron Dean and Antonio Silva.
+ */
+/// ---------------------------------------------------------------------------
 
 #ifndef FUN4ALL_RUNCORRELATORJETTREEMAKER_C
 #define FUN4ALL_RUNCORRELATORJETTREEMAKER_C

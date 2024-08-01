@@ -1,13 +1,13 @@
-// ----------------------------------------------------------------------------
-// 'SCorrelatorJetTreeMaker.h'
-// Derek Anderson
-// 12.04.2022
-//
-// A module to produce a tree of jets for the sPHENIX
-// Cold QCD Energy-Energy Correlator analysis.
-//
-// Initially derived from code by Antonio Silva (thanks!!)
-// ----------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/*! \file   SCorrelatorJetTreeMaker.h
+ *  \author Derek Anderson
+ *  \date   12.04.2022
+ *
+ * A module to produce a tree of jets for the sPHENIX
+ * Cold QCD Energy-Energy Correlator analysis. Initially
+ * derived from code by Antonio Silva.
+ */
+/// ---------------------------------------------------------------------------
 
 #ifndef SCORRELATORJETTREEMAKER_H
 #define SCORRELATORJETTREEMAKER_H
@@ -96,8 +96,14 @@ using namespace fastjet;
 
 namespace SColdQcdCorrelatorAnalysis {
 
-  // SCorrelatorJetTreeMaker definition ---------------------------------------
-
+  // --------------------------------------------------------------------------
+  //! Correlator jet tree maker
+  // --------------------------------------------------------------------------
+  /*! A module to produce compact trees of jets and their
+   *  constituents for downstream ENC analysis.  Can either
+   *  reconstruct jets from provided tracks, clusters, etc.
+   *  or read in a node of already-constructed jets.
+   */ 
   class SCorrelatorJetTreeMaker : public SubsysReco {
 
     public:

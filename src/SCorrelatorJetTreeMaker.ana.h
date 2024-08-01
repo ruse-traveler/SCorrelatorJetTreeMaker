@@ -15,11 +15,13 @@ using namespace std;
 using namespace findNode;
 
 
+// analysis methods ===========================================================
 
 namespace SColdQcdCorrelatorAnalysis {
 
-  // analysis methods ---------------------------------------------------------
-
+  // --------------------------------------------------------------------------
+  //! Grab event-wise information
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::GetEventVariables(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -43,6 +45,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Grab jet/constituent information from FastJet output
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::GetJetVariables(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -105,6 +110,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Grab jet/constituent information from node
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::ReadJetNodes(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -174,6 +182,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Construct jets using FastJet
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::MakeJets(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -195,6 +206,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Make reconstructed jets based on specified type
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::MakeRecoJets(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -231,6 +245,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Make corresponding truth jets
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::MakeTrueJets(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -250,6 +267,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Add tracks to a FastJet input
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::AddTracks(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -305,6 +325,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Add particle-flow objects to FastJet input
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::AddFlow(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -358,6 +381,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Add clusters from specified calorimeters to FastJet input
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd) {
 
     // print debug statement
@@ -418,6 +444,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Add MC particles to FastJet input
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::AddParticles(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -474,6 +503,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Check if a track satisfies selection criteria
+  // --------------------------------------------------------------------------
   bool SCorrelatorJetTreeMaker::IsGoodTrack(Types::TrkInfo& info, SvtxTrack* track, PHCompositeNode* topNode) {
 
     // print debug statement
@@ -506,6 +538,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Check if a particle-flow object satisfies selection criteria
+  // --------------------------------------------------------------------------
   bool SCorrelatorJetTreeMaker::IsGoodFlow(Types::FlowInfo& info) {
 
     // print debug statement
@@ -520,6 +555,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Check if a cluster satisfies selection criteria
+  // --------------------------------------------------------------------------
   bool SCorrelatorJetTreeMaker::IsGoodCluster(Types::ClustInfo& info, Const::Subsys subsys) {
 
     // print debug statement
@@ -552,6 +590,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Check if a particle satisfies selection criteria
+  // --------------------------------------------------------------------------
   bool SCorrelatorJetTreeMaker::IsGoodParticle(Types::ParInfo& info) {
 
     // print debug statement
@@ -588,6 +629,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Check if a vertex falls in specified cuts
+  // --------------------------------------------------------------------------
   bool SCorrelatorJetTreeMaker::IsGoodVertex(const ROOT::Math::XYZVector vtx) {
 
     // print debug statement
@@ -604,6 +648,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Get corresponding input for specified jet type
+  // --------------------------------------------------------------------------
   int SCorrelatorJetTreeMaker::GetRecoCstType() {
 
     // print debug statement

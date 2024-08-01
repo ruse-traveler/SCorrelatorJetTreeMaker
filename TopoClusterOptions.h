@@ -1,10 +1,11 @@
-// ----------------------------------------------------------------------------
-// 'TopoClusterOptions.h'
-// Derek Anderson
-// 04.12.2024
-//
-// Options for the RawClusterBuilderTopo module
-// ----------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/*! \file   TopoClusterOptions.h
+ *  \author Derek Anderson
+ *  \date   04.12.2024
+ *
+ * Options for the RawClusterBuilderTopo module
+ */
+/// ---------------------------------------------------------------------------
 
 #ifndef TOPOCLUSTEROPTIONS_H
 #define TOPOCLUSTEROPTIONS_H

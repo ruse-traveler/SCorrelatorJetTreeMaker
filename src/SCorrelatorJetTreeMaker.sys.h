@@ -1,13 +1,13 @@
-// ----------------------------------------------------------------------------
-// 'SCorrelatorJetTreeMaker.sys.h'
-// Derek Anderson
-// 01.18.2023
-//
-// A module to produce a tree of jets for the sPHENIX
-// Cold QCD Energy-Energy Correlator analysis.
-//
-// Initially derived from code by Antonio Silva (thanks!!)
-// ----------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/*! \file   SCorrelatorJetTreeMaker.sys.h
+ *  \author Derek Anderson
+ *  \date   01.18.2023
+ *
+ * A module to produce a tree of jets for the sPHENIX
+ * Cold QCD Energy-Energy Correlator analysis. Initially
+ * derived from code by Antonio Silva.
+ */
+/// ---------------------------------------------------------------------------
 
 #pragma once
 
@@ -16,10 +16,13 @@ using namespace findNode;
 
 
 
+// system methods =============================================================
+
 namespace SColdQcdCorrelatorAnalysis {
 
-  // system methods -----------------------------------------------------------
-
+  // --------------------------------------------------------------------------
+  //! Open output file
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::OpenOutFile() {
 
     // print debug statement
@@ -37,6 +40,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Initialize output trees
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::InitTrees() {
 
     // print debug statement
@@ -67,6 +73,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Initialize FastJet
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::InitFastJet() {
 
     // print debug statement
@@ -97,6 +106,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Initialize track evaluators
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::InitEvals(PHCompositeNode* topNode) {
 
     // print debug statement
@@ -123,6 +135,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Fill output trees
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::FillTrees() {
 
     // print debug statement
@@ -149,6 +164,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Save trees to output file
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::SaveOutput() {
 
     // print debug statement
@@ -168,6 +186,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Close output file
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::CloseOutFile() {
 
     // print debug statement
@@ -183,6 +204,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Reset book-keeping variables
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::ResetSysVariables() {
 
     // print debug statement
@@ -198,6 +222,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Reset addresses for output trees
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::ResetOutVariables() {
 
     // print debug statement
@@ -215,6 +242,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Reset jet-specific book-keeping variables
+  // --------------------------------------------------------------------------
   void SCorrelatorJetTreeMaker::ResetJetVariables() {
 
     // print debug statement

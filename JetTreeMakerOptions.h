@@ -1,10 +1,11 @@
-// ----------------------------------------------------------------------------
-// 'JetTreeMakerOptions.h'
-// Derek Anderson
-// 04.11.2024
-//
-// Options for the SCorrelatorJetTreeMaker module
-// ----------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/*! \file   JetTreeMakerOptions.h 
+ *  \author Derek Anderson
+ *  \date   04.11.2024
+ *
+ * Options for the SCorrelatorJetTreeMaker module
+ */
+/// ---------------------------------------------------------------------------
 
 #ifndef JETTREEMAKEROPTIONS_H
 #define JETTREEMAKEROPTIONS_H

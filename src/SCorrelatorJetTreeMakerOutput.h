@@ -1,13 +1,13 @@
-// ----------------------------------------------------------------------------
-// 'SCorrelatorJetTreeMakerOutput.h'
-// Derek Anderson
-// 03.22.2024
-//
-// A module to produce a tree of jets for the sPHENIX
-// Cold QCD Energy-Energy Correlator analysis.
-//
-// Initially derived from code by Antonio Silva (thanks!!)
-// ----------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/*! \file   SCorrelatorJetTreeMakerOutput.h
+ *  \author Derek Anderson
+ *  \date   03.22.2024
+ *
+ * A module to produce a tree of jets for the sPHENIX
+ * Cold QCD Energy-Energy Correlator analysis. Initially
+ * derived from code by Antonio Silva.
+ */
+/// ---------------------------------------------------------------------------
 
 #ifndef SCORRELATORJETTREEMAKEROUTPUT_H
 #define SCORRELATORJETTREEMAKEROUTPUT_H
@@ -19,8 +19,9 @@ using namespace std;
 
 namespace SColdQcdCorrelatorAnalysis {
 
-  // SCorrelatorJetTreeMakerRecoOutput definition -----------------------------
-
+  // --------------------------------------------------------------------------
+  //! Reconstructed jet tree output
+  // --------------------------------------------------------------------------
   struct SCorrelatorJetTreeMakerRecoOutput {
 
     // event-level variables
@@ -32,6 +33,9 @@ namespace SColdQcdCorrelatorAnalysis {
     // cst-level variables
     vector<vector<Types::CstInfo>> csts;
 
+    // ------------------------------------------------------------------------
+    //! Reset variables
+    // ------------------------------------------------------------------------
     void Reset() {
       evt.Reset();
       jets.clear();
@@ -39,6 +43,9 @@ namespace SColdQcdCorrelatorAnalysis {
       return;
     }  // end 'Reset()'
 
+    // ------------------------------------------------------------------------
+    //! Set tree addresses
+    // ------------------------------------------------------------------------
     void SetTreeAddresses(TTree* tree) {
       tree -> Branch("Evt",  "SColdQcdCorrelatorAnalysis::Types::RecoInfo", &evt, 32000, 0);
       tree -> Branch("Jets", "std::vector<SColdQcdCorrelatorAnalysis::Types::JetInfo>", &jets, 32000, 0);
@@ -50,8 +57,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  // SCorrelatorJetTreeMakerTruthOutput definition ----------------------------
-
+  // --------------------------------------------------------------------------
+  //! Truth jet tree output
+  // --------------------------------------------------------------------------
   struct SCorrelatorJetTreeMakerTruthOutput {
 
     // event-level variables
@@ -63,6 +71,9 @@ namespace SColdQcdCorrelatorAnalysis {
     // cst-level variables
     vector<vector<Types::CstInfo>> csts;
 
+    // ------------------------------------------------------------------------
+    //! Reset variables
+    // ------------------------------------------------------------------------
     void Reset() {
       evt.Reset();
       jets.clear();
@@ -70,6 +81,9 @@ namespace SColdQcdCorrelatorAnalysis {
       return;
     }  // end 'Reset()'
 
+    // ------------------------------------------------------------------------
+    //! Set tree addresses
+    // ------------------------------------------------------------------------
     void SetTreeAddresses(TTree* tree) {
       tree -> Branch("Evt",  "SColdQcdCorrelatorAnalysis::Types::GenInfo", &evt, 32000, 0);
       tree -> Branch("Jets", "std::vector<SColdQcdCorrelatorAnalysis::Types::JetInfo>", &jets, 32000, 0);
@@ -81,8 +95,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  // SCorrelatorJetTreeMakerLegacyRecoOutput definition ------------------------
-
+  // --------------------------------------------------------------------------
+  //! Legacy reconstructed jet tree output
+  // --------------------------------------------------------------------------
   struct SCorrelatorJetTreeMakerLegacyRecoOutput {
 
     // output reco tree event variables
@@ -115,6 +130,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+    // ------------------------------------------------------------------------
+    //! Reset variables
+    // ------------------------------------------------------------------------
     void Reset() {
       nJets    = numeric_limits<int>::max();
       nTrks    = numeric_limits<int>::max();
@@ -143,6 +161,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+    // ------------------------------------------------------------------------
+    //! Set tree addresses
+    // ------------------------------------------------------------------------
     void SetTreeAddresses(TTree* tree) {
       tree -> Branch("EvtNumJets",    &nJets,    "EvtNumJets/I");
       tree -> Branch("EvtNumTrks",    &nTrks,    "EvtNumTrks/I");
@@ -171,6 +192,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+    // ------------------------------------------------------------------------
+    //! Translate normal output into legacy output
+    // ------------------------------------------------------------------------
     void GetTreeMakerOutput(SCorrelatorJetTreeMakerRecoOutput& output) {
 
       // get event variables
@@ -222,8 +246,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
-  // SCorrelatorJetTreeMakerLegacyTruthOutput definition ----------------------
-
+  // --------------------------------------------------------------------------
+  //! Legacy truth jet tree output
+  // --------------------------------------------------------------------------
   struct SCorrelatorJetTreeMakerLegacyTruthOutput {
 
     // output truth tree event variables
@@ -263,6 +288,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+    // ------------------------------------------------------------------------
+    //! Reset variables
+    // ------------------------------------------------------------------------
     void Reset() {
       nJets     = numeric_limits<int>::max();
       nChrgPars = numeric_limits<int>::max();
@@ -296,6 +324,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+    // ------------------------------------------------------------------------
+    //! Set tree addresses
+    // ------------------------------------------------------------------------
     void SetTreeAddresses(TTree* tree) {
       tree -> Branch("EvtNumJets",     &nJets,           "EvtNumJets/I");
       tree -> Branch("EvtNumChrgPars", &nChrgPars,       "EvtNumChrgPars/I");
@@ -333,6 +364,9 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
 
+    // ------------------------------------------------------------------------
+    //! Translate normal output into legacy output
+    // ------------------------------------------------------------------------
     void GetTreeMakerOutput(SCorrelatorJetTreeMakerTruthOutput& output) {
 
       // get event variables
