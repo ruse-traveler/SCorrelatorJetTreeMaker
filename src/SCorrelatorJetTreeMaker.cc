@@ -66,9 +66,13 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // clean up dangling pointers
     if (m_evalStack) {
-      delete m_evalStack;
       m_evalStack = NULL;
       m_trackEval = NULL;
+    }
+
+    if (m_recoNode) {
+      m_recoNode = NULL;
+      m_trueNode = NULL;
     }
 
   }  // end dtor
@@ -128,13 +132,12 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // find jets
-    MakeRecoJets(topNode);
-    if (m_config.isSimulation) {
-      MakeTrueJets(topNode);
+    if (m_config.readJetNodes) {
+      ReadJetNodes(topNode);
+    } else {
+      MakeJets(topNode);
+      GetJetVariables(topNode);
     }
-
-    // grab jet/cst-wise variables
-    GetJetVariables(topNode);
 
     // fill output trees
     FillTrees();
