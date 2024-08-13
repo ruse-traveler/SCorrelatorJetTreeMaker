@@ -59,8 +59,10 @@ namespace SColdQcdCorrelatorAnalysis {
     // constituent cuts
     pair<Types::TrkInfo,   Types::TrkInfo>   trkAccept;
     pair<Types::FlowInfo,  Types::FlowInfo>  flowAccept;
-    pair<Types::ClustInfo, Types::ClustInfo> ecalAccept;
-    pair<Types::ClustInfo, Types::ClustInfo> hcalAccept;
+    pair<Types::TwrInfo,   Types::TwrInfo>   eTwrAccept;
+    pair<Types::TwrInfo,   Types::TwrInfo>   hTwrAccept;
+    pair<Types::ClustInfo, Types::ClustInfo> eClustAccept;
+    pair<Types::ClustInfo, Types::ClustInfo> hClustAccept;
     pair<Types::ParInfo,   Types::ParInfo>   parAccept;
 
     // for pt-dependent dca cuts

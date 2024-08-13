@@ -219,13 +219,18 @@ namespace SColdQcdCorrelatorAnalysis {
     // add constitutents
     switch (m_config.jetType) {
 
-      case Const::JetType::Neutral:
-        AddClusts(topNode, {Const::Subsys::EMCal});
-        AddClusts(topNode, {Const::Subsys::IHCal, Const::Subsys::OHCal});
-        break;
-
       case Const::JetType::Full:
         AddFlow(topNode);
+        break;
+
+      case Const::JetType::Tower:
+        AddTowers(topNode, {Const::Subsys::RECal});
+        AddTowers(topNode, {Const::Subsys::IHCal, Const::Subsys::OHCal});
+        break;
+
+      case Const::JetType::Cluster:
+        AddClusters(topNode, {Const::Subsys::EMCal});
+        AddClusters(topNode, {Const::Subsys::IHCal, Const::Subsys::OHCal});
         break;
 
       case Const::JetType::Charged:
@@ -382,9 +387,74 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
   // --------------------------------------------------------------------------
+  //! Add towers to FastJet input
+  // --------------------------------------------------------------------------
+  void SCorrelatorJetTreeMaker::AddTowers(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 3)) {
+      cout << "SCorrelatorJetTreeMaker::AddTowers(PHCompositeNode*, vector<Const::Subsys>) Adding calo towers to fastjet input" << endl;
+    }
+
+    // abort if jets should be charged
+    if (m_config.jetType == Const::JetType::Charged) {
+      cerr << "SCorrelatorJetTreeMaker::AddTowers: ABORT: trying to add calo towers to charged jets! Aborting" << endl;
+      assert(m_config.jetType != Const::JetType::Charged);
+    }
+
+    // abort if jets should be cluster-based
+    if (m_config.jetType == Const::JetType::Cluster) {
+      cerr << "SCorrelatorJetTreeMaker::AddTowers: ABORT: trying to add calo towers to cluster jets! Aborting" << endl;
+      assert(m_config.jetType != Const::JetType::Cluster);
+    }
+
+    // get primary reconstructed vtx
+    ROOT::Math::XYZVector vtx = Interfaces::GetRecoVtx(topNode);
+
+    // loop over subsystems to add
+    int64_t iCst = m_recoJetInput.size();
+    for (Const::Subsys subsys : vecSubsysToAdd) {
+
+      // loop over towers
+      TowerInfoContainer* towers = Interfaces::GetTowerInfoStore(topNode, Const::MapIndexOntoClusters()[ subsys ]);
+      for (uint32_t channel = 0; channel < towers -> size(); channel++) {
+
+        // get tower
+        TowerInfo* tower = towers -> get_tower_at_channel(channel);
+        if (!tower) continue;
+
+        // grab info
+        Types::TwrInfo info(subsys, channel, tower, topNode, vtx);
+
+        // check if good
+        const bool isGoodTwr = IsGoodTower(info, subsys);
+        if (!isGoodTwr) continue;
+
+        // make pseudojet
+        fastjet::PseudoJet pseudojet(
+          info.GetPX(),
+          info.GetPY(),
+          info.GetPZ(),
+          info.GetEne()
+        );
+        pseudojet.set_user_index(iCst);
+
+        // add to list
+        m_recoJetInput.push_back(pseudojet);
+        ++iCst;
+
+      }  // end tower loop
+    }  // end subsystem loop
+    return;
+
+  }  // end 'AddTowers(PHCompositeNode*, vector<Const::Subsys>)'
+
+
+
+  // --------------------------------------------------------------------------
   //! Add clusters from specified calorimeters to FastJet input
   // --------------------------------------------------------------------------
-  void SCorrelatorJetTreeMaker::AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd) {
+  void SCorrelatorJetTreeMaker::AddClusters(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd) {
 
     // print debug statement
     if (m_config.isDebugOn && (m_config.verbosity > 3)) {
@@ -393,16 +463,25 @@ namespace SColdQcdCorrelatorAnalysis {
 
     // abort if jets should be charged
     if (m_config.jetType == Const::JetType::Charged) {
-      cerr << "SCorrelatorJetTreeMaker::AddClusts: ABORT: trying to add calo clusters to charged jets! Aborting" << endl;
+      cerr << "SCorrelatorJetTreeMaker::AddClusters: ABORT: trying to add calo clusters to charged jets! Aborting" << endl;
       assert(m_config.jetType != Const::JetType::Charged);
     }
+
+    // abort if jets should be tower-based
+    if (m_config.jetType == Const::JetType::Tower) {
+      cerr << "SCorrelatorJetTreeMaker::AddClusters: ABORT: trying to add calo clusters to tower jets! Aborting" << endl;
+      assert(m_config.jetType != Const::JetType::Tower);
+    }
+
+    // get primary reconstructed vtx
+    ROOT::Math::XYZVector vtx = Interfaces::GetRecoVtx(topNode);
 
     // loop over subsystems to add
     int64_t iCst = m_recoJetInput.size();
     for (Const::Subsys subsys : vecSubsysToAdd) {
 
       // loop over clusters
-      RawClusterContainer::ConstRange clusters = Interfaces::GetClusters(topNode, Const::MapIndexOntoNode()[ subsys ]);
+      RawClusterContainer::ConstRange clusters = Interfaces::GetClusters(topNode, Const::MapIndexOntoClusters()[ subsys ]);
       for (
         RawClusterContainer::ConstIterator itClust = clusters.first;
         itClust != clusters.second;
@@ -412,9 +491,6 @@ namespace SColdQcdCorrelatorAnalysis {
         // get cluster
         RawCluster* cluster = itClust -> second;
         if (!cluster) continue;
-
-        // get primary reconstructed vtx
-        ROOT::Math::XYZVector vtx = Interfaces::GetRecoVtx(topNode);
 
         // grab info
         Types::ClustInfo info(cluster, vtx, subsys);
@@ -440,7 +516,7 @@ namespace SColdQcdCorrelatorAnalysis {
     }  // end subsystem loop
     return;
 
-  }  // end 'AddClusts(PHCompositeNode* topNode, vector<Const::Subsys>)'
+  }  // end 'AddClusters(PHCompositeNode* topNode, vector<Const::Subsys>)'
 
 
 
@@ -556,6 +632,44 @@ namespace SColdQcdCorrelatorAnalysis {
 
 
   // --------------------------------------------------------------------------
+  //! Check if a tower satisfies selection criteria
+  // --------------------------------------------------------------------------
+  bool SCorrelatorJetTreeMaker::IsGoodTower(Types::TwrInfo& info, Const::Subsys subsys) {
+
+    // print debug statement
+    if (m_config.isDebugOn && (m_config.verbosity > 4)) {
+      cout << "SCorrelatorJetTreeMaker::IsGoodTower(types::TwrInfo&, Const::subsys) Checking if cluster is good..." << endl;
+    }
+
+    // check if in acceptance
+    bool isInAccept;
+    switch (subsys) {
+
+      case Const::Subsys::EMCal:
+        [[fallthrough]];
+
+      case Const::Subsys::RECal:
+        isInAccept = info.IsInAcceptance(m_config.eTwrAccept);
+        break;
+
+      case Const::Subsys::IHCal:
+        [[fallthrough]];
+
+      case Const::Subsys::OHCal:
+        isInAccept = info.IsInAcceptance(m_config.hTwrAccept);
+        break;
+
+      default:
+        isInAccept = true;
+        break;
+    }
+    return (isInAccept && info.IsGood());
+
+  }  // end 'IsGoodTower(Types::TwrInfo&, Const::Subsys)'
+
+
+
+  // --------------------------------------------------------------------------
   //! Check if a cluster satisfies selection criteria
   // --------------------------------------------------------------------------
   bool SCorrelatorJetTreeMaker::IsGoodCluster(Types::ClustInfo& info, Const::Subsys subsys) {
@@ -570,14 +684,14 @@ namespace SColdQcdCorrelatorAnalysis {
     switch (subsys) {
 
       case Const::Subsys::EMCal:
-        isInAccept = info.IsInAcceptance(m_config.ecalAccept);
+        isInAccept = info.IsInAcceptance(m_config.eClustAccept);
         break;
 
       case Const::Subsys::IHCal:
         [[fallthrough]];
 
       case Const::Subsys::OHCal:
-        isInAccept = info.IsInAcceptance(m_config.hcalAccept);
+        isInAccept = info.IsInAcceptance(m_config.hClustAccept);
         break;
 
       default:
@@ -609,9 +723,11 @@ namespace SColdQcdCorrelatorAnalysis {
         isGoodCharge = (info.GetCharge() != 0.);
         break;
 
-      case Const::JetType::Neutral:
-        isGoodCharge = (info.GetCharge() == 0.);
-        break;
+      case Const::JetType::Tower:
+        [[fallthrough]];
+
+      case Const::JetType::Cluster:
+        [[fallthrough]];
 
       case Const::JetType::Full:
         [[fallthrough]];
@@ -658,10 +774,18 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::GetRecoCstType() Getting cst type..." << endl;
     }
 
-    int type = Const::Object::Unknown;
+    int type;
     switch (m_config.jetType) {
 
-      case Const::JetType::Neutral:
+      case Const::JetType::Charged:
+        type = Const::Object::Track;
+        break;
+
+      case Const::JetType::Tower:
+        type = Const::Object::Tower;
+        break;
+
+      case Const::JetType::Cluster:
         type = Const::Object::Cluster;
         break;
 
@@ -669,12 +793,8 @@ namespace SColdQcdCorrelatorAnalysis {
         type = Const::Object::Flow;
         break;
 
-      case Const::JetType::Charged:
-        type = Const::Object::Track;
-        break;
-
       default:
-        type = Const::Object::Unknown;
+        type = Const::Object::Mystery;
         break;
     }
     return type;

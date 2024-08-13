@@ -52,11 +52,11 @@
 #include <g4main/PHG4TruthInfoContainer.h>
 #include <phhepmc/PHHepMCGenEvent.h>
 #include <phhepmc/PHHepMCGenEventMap.h>
-// jet utilities
+// jet libraries
 #include <jetbase/Jet.h>
 #include <jetbase/FastJetAlgo.h>
 #include <jetbase/JetContainer.h>
-// calo utilities
+// calo libraries
 #include <calobase/RawCluster.h>
 #include <calobase/RawClusterUtility.h>
 #include <calobase/RawClusterContainer.h>
@@ -64,17 +64,19 @@
 #include <calobase/RawTowerGeom.h>
 #include <calobase/RawTowerContainer.h>
 #include <calobase/RawTowerGeomContainer.h>
+#include <calobase/TowerInfo.h>
+#include <calobase/TowerInfoContainer.h>
 #include <calotrigger/CaloTriggerInfo.h>
-// trackng utilities
+// tracking utilities
 #include <g4eval/SvtxTrackEval.h>
 #include <g4eval/SvtxEvalStack.h>
 #include <trackbase_historic/SvtxTrack.h>
 #include <trackbase_historic/SvtxTrackMap.h>
 #include <trackbase_historic/TrackAnalysisUtils.h>
-// particle flow utilities
+// particle flow libraries
 #include <particleflowreco/ParticleFlowElement.h>
 #include <particleflowreco/ParticleFlowElementContainer.h>
-// vtx utilities
+// vtx libraries
 #include <globalvertex/GlobalVertex.h>
 #include <globalvertex/GlobalVertexMap.h>
 // analysis utilities
@@ -136,10 +138,12 @@ namespace SColdQcdCorrelatorAnalysis {
       void MakeTrueJets(PHCompositeNode* topNode);
       void AddTracks(PHCompositeNode* topNode);
       void AddFlow(PHCompositeNode* topNode);
-      void AddClusts(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd);
+      void AddTowers(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd);
+      void AddClusters(PHCompositeNode* topNode, vector<Const::Subsys> vecSubsysToAdd);
       void AddParticles(PHCompositeNode* topNode);
       bool IsGoodTrack(Types::TrkInfo& info, SvtxTrack* track, PHCompositeNode* topNode);
       bool IsGoodFlow(Types::FlowInfo& info);
+      bool IsGoodTower(Types::TwrInfo& info, const Const::Subsys subsys);
       bool IsGoodCluster(Types::ClustInfo& info, const Const::Subsys subsys);
       bool IsGoodParticle(Types::ParInfo& info);
       bool IsGoodVertex(const ROOT::Math::XYZVector vtx);
