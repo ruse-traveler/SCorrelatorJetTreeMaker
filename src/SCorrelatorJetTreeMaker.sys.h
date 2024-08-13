@@ -3,9 +3,9 @@
  *  \author Derek Anderson
  *  \date   01.18.2023
  *
- * A module to produce a tree of jets for the sPHENIX
- * Cold QCD Energy-Energy Correlator analysis. Initially
- * derived from code by Antonio Silva.
+ *  A module to produce a tree of jets for the sPHENIX
+ *  Cold QCD Energy-Energy Correlator analysis. Initially
+ *  derived from code by Antonio Silva.
  */
 /// ---------------------------------------------------------------------------
 

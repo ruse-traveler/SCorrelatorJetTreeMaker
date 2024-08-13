@@ -1,18 +1,19 @@
-// ----------------------------------------------------------------------------
-// 'SCorrelatorJetTreeMaker.ana.h'
-// Derek Anderson
-// 03.28.2024
-//
-// A module to produce a tree of jets for the sPHENIX
-// Cold QCD Energy-Energy Correlator analysis.
-//
-// Initially derived from code by Antonio Silva (thanks!!)
-// ----------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+/*! \file   SCorrelatorJetTreeMaker.ana.h
+ *  \author Derek Anderson
+ *  \date   03.28.2024
+ *
+ *  A module to produce a tree of jets for the sPHENIX
+ *  Cold QCD Energy-Energy Correlator analysis. Initially
+ *  derived from code by Antonio Silva.
+ */
+/// ---------------------------------------------------------------------------
 
 #pragma once
 
 using namespace std;
 using namespace findNode;
+
 
 
 // analysis methods ===========================================================
