@@ -32,7 +32,7 @@ using namespace SColdQcdCorrelatorAnalysis;
 
 namespace JetTreeMakerOptions {
 
-  // acceptance cuts ----------------------------------------------------------
+  // acceptance cuts ==========================================================
 
   // event acceptances
   const pair<float, float> vzEvtRange = {-10., 10.};
@@ -59,11 +59,17 @@ namespace JetTreeMakerOptions {
   const pair<float, float> ptFlowRange  = {0.2, 100.};
   const pair<float, float> etaFlowRange = {-1.1, 1.1};
 
-  // calo acceptances
-  const pair<float, float> eECalRange   = {0.3, 100.};
-  const pair<float, float> etaECalRange = {-1.1, 1.1};
-  const pair<float, float> eHCalRange   = {0.3, 100.};
-  const pair<float, float> etaHCalRange = {-1.1, 1.1};
+  // calo tower acceptances
+  const pair<float, float> eETwrRange   = {0.2, 100.};
+  const pair<float, float> etaETwrRange = {-1.1, 1.1};
+  const pair<float, float> eHTwrRange   = {0.2, 100.};
+  const pair<float, float> etaHTwrRange = {-1.1, 1.1};
+
+  // calo cluster acceptances
+  const pair<float, float> eEClustRange   = {0.3, 100.};
+  const pair<float, float> etaEClustRange = {-1.1, 1.1};
+  const pair<float, float> eHClustRange   = {0.3, 100.};
+  const pair<float, float> etaHClustRange = {-1.1, 1.1};
 
   // particle acceptances
   const pair<float, float> ptParRange  = {0., 100.};
@@ -71,8 +77,11 @@ namespace JetTreeMakerOptions {
 
 
 
-  // bundle acceptances into pairs --------------------------------------------
+  // bundle acceptances into pairs ============================================
 
+  // --------------------------------------------------------------------------
+  //! Bundle track acceptance cuts into a pair
+  // --------------------------------------------------------------------------
   pair<Types::TrkInfo, Types::TrkInfo> GetTrkAccept(const bool doSigmaCut = false) {
 
     // create maximal range
@@ -110,6 +119,9 @@ namespace JetTreeMakerOptions {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Bundle particle flow acceptance cuts into a pair
+  // --------------------------------------------------------------------------
   pair<Types::FlowInfo, Types::FlowInfo> GetFlowAccept() {
 
     // create maximal range
@@ -129,7 +141,13 @@ namespace JetTreeMakerOptions {
 
 
 
-  pair<Types::ClustInfo, Types::ClustInfo> GetClustAccept(pair<double, double> eRange, pair<double, double> etaRange) {
+  // --------------------------------------------------------------------------
+  //! Bundle calo cluster acceptance cuts into a pair
+  // --------------------------------------------------------------------------
+  pair<Types::ClustInfo, Types::ClustInfo> GetClustAccept(
+    pair<double, double> eRange,
+    pair<double, double> etaRange
+  ) {
 
     // create maximal range
     pair<Types::ClustInfo, Types::ClustInfo> clustAccept = {
@@ -148,6 +166,9 @@ namespace JetTreeMakerOptions {
 
 
 
+  // --------------------------------------------------------------------------
+  //! Bundle MC particle acceptance cuts into a pair
+  // --------------------------------------------------------------------------
   pair<Types::ParInfo, Types::ParInfo> GetParAccept() {
 
     // create maximal range
@@ -167,8 +188,11 @@ namespace JetTreeMakerOptions {
 
 
 
-  // make sigma-dca fit funtions ----------------------------------------------
+  // make sigma-dca fit funtions ==============================================
 
+  // --------------------------------------------------------------------------
+  //! Construct DCA sigma functions
+  // --------------------------------------------------------------------------
   pair<TF1*, TF1*> GetSigmaDcaFunctions() {
 
     TF1* fSigmaDcaXY = Interfaces::GetSigmaDcaTF1( "fSigmaDcaXY", dcaSigmaParsXY, make_pair(ptTrkRange.first, dcaPtFitMax.first) );
@@ -179,9 +203,16 @@ namespace JetTreeMakerOptions {
 
 
 
-  // set up configuration -----------------------------------------------------
+  // set up configuration =====================================================
 
-  SCorrelatorJetTreeMakerConfig GetConfig(const int verbosity, const string outFile, const bool doDcaSigmaCut = false) {
+  // --------------------------------------------------------------------------
+  //! Generate tree-maker configuration
+  // --------------------------------------------------------------------------
+  SCorrelatorJetTreeMakerConfig GetConfig(
+    const int verbosity,
+    const string outFile,
+    const bool doDcaSigmaCut = false
+  ) {
 
     SCorrelatorJetTreeMakerConfig cfg {
       .verbosity       = verbosity,
@@ -209,8 +240,8 @@ namespace JetTreeMakerOptions {
       .vzAccept        = vzEvtRange,
       .trkAccept       = GetTrkAccept(doDcaSigmaCut),
       .flowAccept      = GetFlowAccept(),
-      .ecalAccept      = GetClustAccept(eECalRange, etaECalRange),
-      .hcalAccept      = GetClustAccept(eHCalRange, etaHCalRange),
+      .ecalAccept      = GetClustAccept(eEClustRange, etaEClustRange),
+      .hcalAccept      = GetClustAccept(eHClustRange, etaHClustRange),
       .parAccept       = GetParAccept(),
       .nSigCut         = nDcaSigmaTrk,
       .ptFitMax        = dcaPtFitMax,
@@ -225,4 +256,3 @@ namespace JetTreeMakerOptions {
 #endif
 
 // end ------------------------------------------------------------------------
-
