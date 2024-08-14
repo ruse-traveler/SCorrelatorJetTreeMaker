@@ -417,7 +417,7 @@ namespace SColdQcdCorrelatorAnalysis {
     for (Const::Subsys subsys : vecSubsysToAdd) {
 
       // loop over towers
-      TowerInfoContainer* towers = Interfaces::GetTowerInfoStore(topNode, Const::MapIndexOntoClusters()[ subsys ]);
+      TowerInfoContainer* towers = Interfaces::GetTowerInfoStore(topNode, Const::MapIndexOntoTowerInfo()[ subsys ]);
       for (uint32_t channel = 0; channel < towers -> size(); channel++) {
 
         // get tower
