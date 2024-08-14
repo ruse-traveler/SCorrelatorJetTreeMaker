@@ -31,12 +31,14 @@
 #include <G4_TrkrSimulation.C>
 #include <g4eval/SvtxEvaluator.h>
 #include <g4eval/SvtxTruthRecoTableEval.h>
-// calo/pf libraries
+// calo/pf/jet libraries
+#include <jetbackground/RetowerCEMC.h>
 #include <caloreco/RawClusterBuilderTopo.h>
 #include <particleflowreco/ParticleFlowReco.h>
 // module definition
 #include <scorrelatorjettreemaker/SCorrelatorJetTreeMaker.h>
 // macro options
+#include "RetowerOptions.h"
 #include "TopoClusterOptions.h"
 #include "JetTreeMakerOptions.h"
 
@@ -49,6 +51,7 @@ R__LOAD_LIBRARY(libg4eval.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libparticleflow.so)
+R__LOAD_LIBRARY(libjetbackground.so)
 R__LOAD_LIBRARY(libscorrelatorutilities.so)
 R__LOAD_LIBRARY(libscorrelatorjettreemaker.so)
 
@@ -67,8 +70,8 @@ static const vector<string> VecInFilesDefault = {
 static const string OutFileDefault = "test.root";
 
 // other default arguments
-static const int NEvtDefault = 10;
-static const int VerbDefault = 0;
+static const int    NEvtDefault = 10;
+static const int    VerbDefault = 0;
 static const size_t NTopoClusts = 2;
 static const size_t NTopoPar    = 3;
 
@@ -85,11 +88,15 @@ void Fun4All_RunCorrelatorJetTreeMaker(
 
   // options ------------------------------------------------------------------
 
-  // tracking/pf options
+  // tracking/pf/tower options
   const bool   runTracking(false);
   const bool   runParticleFlow(false);
   const bool   doTruthTableReco(false);
+  const bool   doEMCalRetower(true);
   const double nSigma(1.5);
+
+  // get retower configuration
+  RetowerOptions::RetowerConfig cfg_retower = RetowerOptions::GetConfig();
 
   // get topocluster configurations
   TopoClusterOptions::TopoClusterConfig cfg_topoClustECal = TopoClusterOptions::GetConfig(
@@ -162,6 +169,14 @@ void Fun4All_RunCorrelatorJetTreeMaker(
     if (runTracking) {
       ffaServer -> registerSubsystem(tables);
     }
+  }
+
+  // do EMCal retowering ------------------------------------------------------
+
+  if (doEMCalRetower) {
+    RetowerCEMC* retower = RetowerOptions::CreateRetowerer(cfg_retower);
+    retower   -> Verbosity(verbosity);
+    ffaServer -> registerSubsystem(retower);
   }
 
   // do particle flow reconstruction ------------------------------------------

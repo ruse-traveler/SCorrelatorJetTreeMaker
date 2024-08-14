@@ -20,6 +20,7 @@ to_copy = [
   "README.md",
   "Fun4All_RunCorrelatorJetTreeMaker.C",
   "JetTreeMakerOptions.h",
+  "RetowerOptions.h",
   "TopoClusterOptions.h",
   "RunCorrelatorJetTreeMaker.rb",
   "macros/MergeFiles.C",

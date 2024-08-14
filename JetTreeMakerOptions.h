@@ -255,7 +255,7 @@ namespace JetTreeMakerOptions {
       .jetAlgo         = "antikt",
       .jetRecomb       = "pt",
       .jetArea         = "active",
-      .jetType         = Const::JetType::Charged,
+      .jetType         = Const::JetType::Tower,
       .doVtxCut        = false,
       .doDcaSigmaCut   = doDcaSigmaCut,
       .requireSiSeeds  = true,
