@@ -142,6 +142,31 @@ namespace JetTreeMakerOptions {
 
 
   // --------------------------------------------------------------------------
+  //! Bundle calo tower acceptance cuts into a pair
+  // --------------------------------------------------------------------------
+  pair<Types::TwrInfo, Types::TwrInfo> GetTowerAccept(
+    pair<double, double> eRange,
+    pair<double, double> etaRange
+  ) {
+
+    // create maximal range
+    pair<Types::TwrInfo, Types::TwrInfo> twrAccept = {
+      Types::TwrInfo(Const::Init::Minimize),
+      Types::TwrInfo(Const::Init::Maximize)
+    };
+
+    // set specific bounds
+    twrAccept.first.SetEne( eRange.first );
+    twrAccept.first.SetEta( etaRange.first );
+    twrAccept.second.SetEne( eRange.second );
+    twrAccept.second.SetEta( etaRange.second );
+    return twrAccept;
+
+  }  // end 'GetTowerAccept(pair<double, double>, pair<double, double>)'
+
+
+
+  // --------------------------------------------------------------------------
   //! Bundle calo cluster acceptance cuts into a pair
   // --------------------------------------------------------------------------
   pair<Types::ClustInfo, Types::ClustInfo> GetClustAccept(
@@ -240,8 +265,10 @@ namespace JetTreeMakerOptions {
       .vzAccept        = vzEvtRange,
       .trkAccept       = GetTrkAccept(doDcaSigmaCut),
       .flowAccept      = GetFlowAccept(),
-      .ecalAccept      = GetClustAccept(eEClustRange, etaEClustRange),
-      .hcalAccept      = GetClustAccept(eHClustRange, etaHClustRange),
+      .eTwrAccept      = GetTowerAccept(eETwrRange, etaETwrRange),
+      .hTwrAccept      = GetTowerAccept(eHTwrRange, etaHTwrRange),
+      .eClustAccept    = GetClustAccept(eEClustRange, etaEClustRange),
+      .hClustAccept    = GetClustAccept(eHClustRange, etaHClustRange),
       .parAccept       = GetParAccept(),
       .nSigCut         = nDcaSigmaTrk,
       .ptFitMax        = dcaPtFitMax,
