@@ -69,8 +69,7 @@ namespace SColdQcdCorrelatorAnalysis {
         // grab cst info
         Types::CstInfo cstInfo( cst );
         cstInfo.SetEmbedID( 0 );  // FIXME set to signal
-        cstInfo.SetJetInfo( m_recoOutput.jets[iJet] );
-        cstInfo.SetJetID( iJet );
+        cstInfo.SetJetInfo( iJet, m_recoOutput.jets[iJet] );
         cstInfo.SetType( GetRecoCstType() );
         cstInfo.SetPID( 211 );  // FIXME should use PID when/if ready
         m_recoOutput.csts[iJet].push_back( cstInfo );
@@ -97,8 +96,7 @@ namespace SColdQcdCorrelatorAnalysis {
           // grab cst info
           Types::CstInfo cstInfo( cst );
           cstInfo.SetEmbedID( m_mapCstToEmbedID[cst.user_index()] );
-          cstInfo.SetJetInfo( m_trueOutput.jets[iJet] );
-          cstInfo.SetJetID( iJet );
+          cstInfo.SetJetInfo( iJet, m_trueOutput.jets[iJet] );
           cstInfo.SetType( Const::Object::Particle );
           cstInfo.SetPID( par -> pdg_id() );
           m_trueOutput.csts[iJet].push_back( cstInfo );
@@ -154,8 +152,18 @@ namespace SColdQcdCorrelatorAnalysis {
       m_recoOutput.jets[iRecoJet].SetInfo( *jet );
       m_recoOutput.jets[iRecoJet].SetJetID( iRecoJet );
 
-      /* TODO add constituents */
-
+      // loop through constituents
+      for (const auto& cst : jet -> get_comp_vec()) {
+        Types::CstInfo cstInfo(
+          cst,
+          topNode,
+          Interfaces::GetRecoVtx(topNode)
+        );
+        cstInfo.SetEmbedID( 0 );  // FIXME set to signal
+        cstInfo.SetJetInfo( iRecoJet, m_recoOutput.jets[iRecoJet] );
+        cstInfo.SetPID( 211 );  // FIXME should use PID when/if ready
+        m_recoOutput.csts[iRecoJet].push_back( cstInfo );
+      }  // end cst loop
     }  // end jet loop
 
 
@@ -173,8 +181,17 @@ namespace SColdQcdCorrelatorAnalysis {
         m_trueOutput.jets[iTrueJet].SetInfo( *jet );
         m_trueOutput.jets[iTrueJet].SetJetID( iTrueJet );
 
-        /* TODO add constituents */
-
+        // loop through constituents
+        for (const auto& cst : jet -> get_comp_vec()) {
+          Types::CstInfo cstInfo(
+            cst,
+            topNode,
+            nullopt,
+            0  // FIXME hunt down embedding ID
+          );
+          cstInfo.SetJetInfo( iTrueJet, m_trueOutput.jets[iTrueJet] );
+          m_trueOutput.csts[iTrueJet].push_back( cstInfo );
+        }  // end cst loop
       }  // end jet loop
     }
     return;
