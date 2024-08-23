@@ -187,7 +187,7 @@ namespace SColdQcdCorrelatorAnalysis {
             cst,
             topNode,
             nullopt,
-            0  // FIXME hunt down embedding ID
+            Tools::GetEmbedIDFromTrackID(cst.second, topNode)
           );
           cstInfo.SetJetInfo( iTrueJet, m_trueOutput.jets[iTrueJet] );
           m_trueOutput.csts[iTrueJet].push_back( cstInfo );
