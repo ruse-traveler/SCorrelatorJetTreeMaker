@@ -3,8 +3,8 @@
  *  \author Derek Anderson
  *  \date   12.11.2022
  *
- * A F4A macro to run the correlator jet tree maker module. Initially
- * derived from code by Cameron Dean and Antonio Silva.
+ *  A F4A macro to run the correlator jet tree maker module. Initially
+ *  derived from code by Cameron Dean and Antonio Silva.
  */
 /// ---------------------------------------------------------------------------
 
@@ -18,17 +18,9 @@
 #include <utility>
 // f4a/sphenix utilities
 #include <FROG.h>
-#include <G4_Magnet.C>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <g4main/Fun4AllDstPileupInputManager.h>
 // tracking utilities
-#include <Trkr_QA.C>
-#include <Trkr_Reco.C>
-#include <Trkr_Eval.C>
-#include <Trkr_RecoInit.C>
-#include <Trkr_Clustering.C>
-#include <Trkr_Diagnostics.C>
-#include <G4_TrkrSimulation.C>
 #include <g4eval/SvtxEvaluator.h>
 #include <g4eval/SvtxTruthRecoTableEval.h>
 // calo/pf/jet libraries
@@ -41,6 +33,16 @@
 #include "RetowerOptions.h"
 #include "TopoClusterOptions.h"
 #include "JetTreeMakerOptions.h"
+
+// sphenix macros
+#include <G4_Magnet.C>
+#include <G4_TrkrSimulation.C>
+#include <Trkr_QA.C>
+#include <Trkr_Reco.C>
+#include <Trkr_Eval.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Clustering.C>
+#include <Trkr_Diagnostics.C>
 
 // make common namespaces implicit
 using namespace std;
