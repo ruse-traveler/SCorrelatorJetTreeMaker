@@ -243,6 +243,7 @@ namespace JetTreeMakerOptions {
       .verbosity       = verbosity,
       .readJetNodes    = false,
       .isDebugOn       = true,
+      .isSimulation    = true,
       .isEmbed         = false,
       .isLegacy        = true,
       .moduleName      = "SCorrelatorJetTreeMaker",
