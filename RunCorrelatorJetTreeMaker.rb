@@ -7,6 +7,10 @@
 # Short script to run the 'Fun4All_RunCorrelatorJetTreeMaker.C' macro.
 # -----------------------------------------------------------------------------
 
-exec("root -b -q Fun4All_RunCorrelatorJetTreeMaker.C")
+if ARGV[0] == "HIJetReco"
+  exec("root -b -q Fun4All_RunJetTreeMakerOnHIJetReco.C")
+else
+  exec("root -b -q Fun4All_RunCorrelatorJetTreeMaker.C")
+end
 
 # end -------------------------------------------------------------------------
