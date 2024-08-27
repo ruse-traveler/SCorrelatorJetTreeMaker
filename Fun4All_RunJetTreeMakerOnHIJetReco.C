@@ -9,8 +9,8 @@
  */
 /// ---------------------------------------------------------------------------
 
-#ifndef FUN4ALL_RUNCORRELATORJETTREEMAKER_C
-#define FUN4ALL_RUNCORRELATORJETTREEMAKER_C
+#ifndef FUN4ALL_RUNJETTREEMAKERONHIJETRECO_C
+#define FUN4ALL_RUNJETTREEMAKERONHIJETRECO_C
 
 // c++ utilities
 #include <vector>
