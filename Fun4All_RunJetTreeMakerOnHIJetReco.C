@@ -97,22 +97,8 @@ void Fun4All_RunJetTreeMakerOnHIJetReco(
   const bool   doEMCalRetower(true);
   const double nSigma(1.5);
 
-  // get retower configuration
-  RetowerOptions::RetowerConfig cfg_retower = RetowerOptions::GetConfig();
-
-  // get topocluster configurations
-  TopoClusterOptions::TopoClusterConfig cfg_topoClustECal = TopoClusterOptions::GetConfig(
-    TopoClusterOptions::Combo::ECalOnly,
-    verbosity,
-    "EcalRawClusterBuilderTopo",
-    "TOPOCLUSTER_EMCAL"
-  );
-  TopoClusterOptions::TopoClusterConfig cfg_topoClustBoth = TopoClusterOptions::GetConfig(
-    TopoClusterOptions::Combo::BothCalos,
-     verbosity,
-    "HcalRawClusterBuilderTopo",
-    "TOPOCLUSTER_HCAL"
-  );
+  // adjust verbosity
+  Enable::VERBOSITY = verbosity;
 
   // get jet tree maker configuration
   SCorrelatorJetTreeMakerConfig cfg_jetTree = JetTreeMakerOptions::GetConfig(verbosity, outFile);
@@ -138,12 +124,12 @@ void Fun4All_RunJetTreeMakerOnHIJetReco(
 
   // set options and run jet reco
   HIJETS::is_pp = true;
-  if (cfg_jetTree.isSimulation {
-    ENABLE::HIJETS_MC    = true;
-    ENABLE::HIJETS_TRUTH = true;
+  if (cfg_jetTree.isSimulation) {
+    Enable::HIJETS_MC    = true;
+    Enable::HIJETS_TRUTH = true;
   } else {
-    ENABLE::HIJETS_MC    = false;
-    ENABLE::HIJETS_TRUTH = false;
+    Enable::HIJETS_MC    = false;
+    Enable::HIJETS_TRUTH = false;
   }
   HIJetReco();
 
