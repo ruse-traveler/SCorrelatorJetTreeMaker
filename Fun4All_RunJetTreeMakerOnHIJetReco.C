@@ -59,21 +59,21 @@ R__LOAD_LIBRARY(libscorrelatorjettreemaker.so)
 
 // default input/output
 static const vector<string> VecInFilesDefault = {
-  "DST_GLOBAL_pythia8_Jet30_3MHz-0000000011-00042.root",
-  "DST_TRKR_G4HIT_pythia8_Jet30_3MHz-0000000011-00042.root",
-  "DST_TRACKSEEDS_pythia8_Jet30_3MHz-0000000011-00042.root",
-  "DST_TRKR_CLUSTER_pythia8_Jet30_3MHz-0000000011-00042.root",
-  "DST_TRACKS_pythia8_Jet30_3MHz-0000000011-00042.root",
-  "DST_CALO_G4HIT_pythia8_Jet30_3MHz-0000000011-00042.root",
-  "DST_CALO_CLUSTER_pythia8_Jet30_3MHz-0000000011-00042.root",
-  "DST_TRUTH_G4HIT_pythia8_Jet30_3MHz-0000000011-00042.root",
-  "DST_TRUTH_pythia8_Jet30_3MHz-0000000011-00042.root"
+  "DST_GLOBAL_pythia8_Jet10_3MHz-0000000011-00042.root",
+  "DST_TRKR_G4HIT_pythia8_Jet10_3MHz-0000000011-00042.root",
+  "DST_TRACKSEEDS_pythia8_Jet10_3MHz-0000000011-00042.root",
+  "DST_TRKR_CLUSTER_pythia8_Jet10_3MHz-0000000011-00042.root",
+  "DST_TRACKS_pythia8_Jet10_3MHz-0000000011-00042.root",
+  "DST_CALO_G4HIT_pythia8_Jet10_3MHz-0000000011-00042.root",
+  "DST_CALO_CLUSTER_pythia8_Jet10_3MHz-0000000011-00042.root",
+  "DST_TRUTH_G4HIT_pythia8_Jet10_3MHz-0000000011-00042.root",
+  "DST_TRUTH_pythia8_Jet10_3MHz-0000000011-00042.root"
 };
 static const string OutFileDefault = "test.root";
 
 // other default arguments
 static const int    NEvtDefault = 10;
-static const int    VerbDefault = 0;
+static const int    VerbDefault = 10;
 static const size_t NTopoClusts = 2;
 static const size_t NTopoPar    = 3;
 
@@ -101,7 +101,13 @@ void Fun4All_RunJetTreeMakerOnHIJetReco(
   Enable::VERBOSITY = verbosity;
 
   // get jet tree maker configuration
-  SCorrelatorJetTreeMakerConfig cfg_jetTree = JetTreeMakerOptions::GetConfig(verbosity, outFile);
+  SCorrelatorJetTreeMakerConfig cfg_jetTree = JetTreeMakerOptions::GetConfig(
+    verbosity,
+    0.4,
+    "AntiKt_Tower_r04_Sub1",
+    "AntiKt_Truth_r04",
+    outFile
+  );
 
   // initialize f4a -----------------------------------------------------------
 
