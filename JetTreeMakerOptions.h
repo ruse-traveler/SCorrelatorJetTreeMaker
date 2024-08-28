@@ -231,7 +231,7 @@ namespace JetTreeMakerOptions {
   // set up configuration =====================================================
 
   // --------------------------------------------------------------------------
-  //! Generate tree-maker configuration
+  //! Generate configuration for running jet reconstruction in module
   // --------------------------------------------------------------------------
   SCorrelatorJetTreeMakerConfig GetConfig(
     const int verbosity,
@@ -278,6 +278,59 @@ namespace JetTreeMakerOptions {
     return cfg;
 
   }  // end 'GetConfig(int, string, bool)'
+
+
+
+  // --------------------------------------------------------------------------
+  //! Generate configuration for reading in a jet node
+  // --------------------------------------------------------------------------
+  SCorrelatorJetTreeMakerConfig GetConfig(
+    const int verbosity,
+    const float reso,
+    const string inRecoNode,
+    const string inTrueNode,
+    const string outFile
+  ) {
+
+    SCorrelatorJetTreeMakerConfig cfg {
+      .verbosity       = verbosity,
+      .readJetNodes    = true,
+      .isDebugOn       = true,
+      .isSimulation    = true,
+      .isEmbed         = false,
+      .isLegacy        = true,
+      .moduleName      = "SCorrelatorJetTreeMaker",
+      .inRecoNodeName  = inRecoNode,
+      .inTrueNodeName  = inTrueNode,
+      .outFileName     = outFile,
+      .recoJetTreeName = "RecoJetTree",
+      .trueJetTreeName = "TrueJetTree",
+      .rJet            = reso,
+      .jetAlgo         = "",
+      .jetRecomb       = "",
+      .jetArea         = "",
+      .jetType         = Const::JetType::Tower,
+      .doVtxCut        = false,
+      .doDcaSigmaCut   = false,
+      .requireSiSeeds  = false,
+      .useOnlyPrimVtx  = true,
+      .subEvtOpt       = Const::SubEvtOpt::Everything,
+      .vrAccept        = vrEvtRange,
+      .vzAccept        = vzEvtRange,
+      .trkAccept       = GetTrkAccept(false),
+      .flowAccept      = GetFlowAccept(),
+      .eTwrAccept      = GetTowerAccept(eETwrRange, etaETwrRange),
+      .hTwrAccept      = GetTowerAccept(eHTwrRange, etaHTwrRange),
+      .eClustAccept    = GetClustAccept(eEClustRange, etaEClustRange),
+      .hClustAccept    = GetClustAccept(eHClustRange, etaHClustRange),
+      .parAccept       = GetParAccept(),
+      .nSigCut         = nDcaSigmaTrk,
+      .ptFitMax        = dcaPtFitMax,
+      .fSigDca         = GetSigmaDcaFunctions()
+    };
+    return cfg;
+
+  }  // end 'GetConfig(int, float, string, string, string)'
 
 }  // end JetTreeMakerOptions namespace
 
