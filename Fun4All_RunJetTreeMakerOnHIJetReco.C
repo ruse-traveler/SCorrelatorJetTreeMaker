@@ -59,15 +59,15 @@ R__LOAD_LIBRARY(libscorrelatorjettreemaker.so)
 
 // default input/output
 static const vector<string> VecInFilesDefault = {
-  "DST_GLOBAL_pythia8_Jet10_3MHz-0000000011-00042.root",
-  "DST_TRKR_G4HIT_pythia8_Jet10_3MHz-0000000011-00042.root",
-  "DST_TRACKSEEDS_pythia8_Jet10_3MHz-0000000011-00042.root",
-  "DST_TRKR_CLUSTER_pythia8_Jet10_3MHz-0000000011-00042.root",
-  "DST_TRACKS_pythia8_Jet10_3MHz-0000000011-00042.root",
-  "DST_CALO_G4HIT_pythia8_Jet10_3MHz-0000000011-00042.root",
-  "DST_CALO_CLUSTER_pythia8_Jet10_3MHz-0000000011-00042.root",
-  "DST_TRUTH_G4HIT_pythia8_Jet10_3MHz-0000000011-00042.root",
-  "DST_TRUTH_pythia8_Jet10_3MHz-0000000011-00042.root"
+  "DST_GLOBAL_pythia8_Jet10_2MHz-0000000015-000042.root",
+  "DST_TRKR_G4HIT_pythia8_Jet10_2MHz-0000000015-000042.root",
+  "DST_TRACKSEEDS_pythia8_Jet10_2MHz-0000000015-000042.root",
+  "DST_TRKR_CLUSTER_pythia8_Jet10_2MHz-0000000015-000042.root",
+  "DST_TRACKS_pythia8_Jet10_2MHz-0000000015-000042.root",
+  "DST_CALO_G4HIT_pythia8_Jet10_2MHz-0000000015-000042.root",
+  "DST_CALO_CLUSTER_pythia8_Jet10_2MHz-0000000015-000042.root",
+  "DST_TRUTH_G4HIT_pythia8_Jet10_2MHz-0000000015-000042.root",
+  "DST_TRUTH_pythia8_Jet10_2MHz-0000000015-000042.root"
 };
 static const string OutFileDefault = "test.root";
 
