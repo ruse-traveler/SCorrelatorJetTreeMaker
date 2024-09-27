@@ -117,29 +117,20 @@ void Fun4All_RunJetTreeMakerOnHIJetRecoViaCondor(
   }
 
   // create output names
-  string outputFileNameR02 = "outputData_" + recoName + "R02_" + fileNumber + ".root";
-  string outputFileNameR04 = "outputData_" + recoName + "R04_" + fileNumber + ".root";
+  string outputFileName = "outputData_" + recoName + "_" + fileNumber + ".root";
   string outputRecoDir  = outDirUse + "/inReconstruction/";
   string makeDirectory  = "mkdir -p " + outputRecoDir;
 
   system(makeDirectory.c_str());
-  string outputRecoFileR02 = outputRecoDir + outputFileNameR02;
-  string outputRecoFileR04 = outputRecoDir + outputFileNameR04;
+  string outputRecoFile = outputRecoDir + outputFileName;
 
-  // get jet tree maker configurations
-  SCorrelatorJetTreeMakerConfig cfg_jetTreeR02 = JetTreeMakerOptions::GetConfig(
-    verbosity,
-    0.2,
-    "AntiKt_Tower_r02_Sub1",
-    "AntiKt_Truth_r02",
-    outputRecoFileR02
-  );
-  SCorrelatorJetTreeMakerConfig cfg_jetTreeR04 = JetTreeMakerOptions::GetConfig(
+  // get jet tree maker configuration
+  SCorrelatorJetTreeMakerConfig cfg_jetTree = JetTreeMakerOptions::GetConfig(
     verbosity,
     0.4,
     "AntiKt_Tower_r04_Sub1",
     "AntiKt_Truth_r04",
-    outputRecoFileR04
+    outputRecoFile
   );
 
   // initialize f4a -----------------------------------------------------------
@@ -174,33 +165,20 @@ void Fun4All_RunJetTreeMakerOnHIJetRecoViaCondor(
 
   // register jet tree maker --------------------------------------------------
 
-  // create correlator jet trees
-  SCorrelatorJetTreeMaker* jetTreeMakerR02 = new SCorrelatorJetTreeMaker(cfg_jetTreeR02);
-  SCorrelatorJetTreeMaker* jetTreeMakerR04 = new SCorrelatorJetTreeMaker(cfg_jetTreeR04);
-  ffaServer -> registerSubsystem(jetTreeMakerR02);
-  ffaServer -> registerSubsystem(jetTreeMakerR04); 
+  // create correlator jet tree
+  SCorrelatorJetTreeMaker* jetTreeMaker = new SCorrelatorJetTreeMaker(cfg_jetTree);
+  ffaServer -> registerSubsystem(jetTreeMaker);
 
   // run and close f4a --------------------------------------------------------
 
   // move output and clean up logs
   //   - TODO this also should be folded into utilities namespace
-  ifstream fileR02(outputRecoFileR02.c_str());
-  if (fileR02.good()) {
-    string moveOutput = "mv " + outputRecoFileR02 + " " + outDirUse;
+  ifstream file(outputRecoFile.c_str());
+  if (file.good()) {
+    string moveOutput = "mv " + outputRecoFile + " " + outDirUse;
     system(moveOutput.c_str());
   } else {
-    string rmOutput = "rm " + outDirUse + recoName +  "R02_" + fileNumber + ".root";
-    string rmLog    = "rm " + outDirUse + "/logs/" + fileNumber + ".*";
-    system(rmOutput.c_str());
-    system(rmLog.c_str());
-  }
-
-  ifstream fileR04(outputRecoFileR04.c_str());
-  if (fileR04.good()) {
-    string moveOutput = "mv " + outputRecoFileR04 + " " + outDirUse;
-    system(moveOutput.c_str());
-  } else {
-    string rmOutput = "rm " + outDirUse + recoName + "R04_" + fileNumber + ".root";
+    string rmOutput = "rm " + outDirUse + recoName +  "_" + fileNumber + ".root";
     string rmLog    = "rm " + outDirUse + "/logs/" + fileNumber + ".*";
     system(rmOutput.c_str());
     system(rmLog.c_str());
