@@ -154,7 +154,7 @@ void Fun4All_RunJetTreeMakerOnHIJetRecoViaCondor(
 
   // set options and run jet reco
   HIJETS::is_pp = true;
-  if (cfg_jetTreeR02.isSimulation) {
+  if (cfg_jetTree.isSimulation) {
     Enable::HIJETS_MC    = true;
     Enable::HIJETS_TRUTH = true;
   } else {
