@@ -30,7 +30,6 @@ namespace SColdQcdCorrelatorAnalysis {
     bool   isDebugOn       {false};
     bool   isSimulation    {true};
     bool   isEmbed         {false};
-    bool   isLegacy        {true};
     string moduleName      {""};
     string inRecoNodeName  {""};
     string inTrueNodeName  {""};

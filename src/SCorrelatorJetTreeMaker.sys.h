@@ -51,21 +51,13 @@ namespace SColdQcdCorrelatorAnalysis {
     }
 
     // initialize reco tree
-    m_recoTree = new TTree("RecoJetTree",  "A tree of reconstructed jets");
-    if (m_config.isLegacy) {
-      m_recoLegacy.SetTreeAddresses(m_recoTree);
-    } else {
-      m_recoOutput.SetTreeAddresses(m_recoTree);
-    }
+    m_recoTree = new TTree("RecoJetTree", "A tree of reconstructed jets");
+    m_recoInterface.SetTreeAddresses(m_recoTree);
 
     // initialize truth tree
     if (m_config.isSimulation) {
       m_trueTree = new TTree("TruthJetTree", "A tree of truth jets");
-      if (m_config.isLegacy) {
-        m_trueLegacy.SetTreeAddresses(m_trueTree);
-      } else {
-        m_trueOutput.SetTreeAddresses(m_trueTree);
-      }
+      m_trueInterface.SetTreeAddresses(m_trueTree);
     }
     return;
 
@@ -145,12 +137,10 @@ namespace SColdQcdCorrelatorAnalysis {
       cout << "SCorrelatorJetTreeMaker::FillTrueTree() Filling jet trees..." << endl;
     }
 
-    // if making legacy output, translate output
-    if (m_config.isLegacy) {
-      m_recoLegacy.GetTreeMakerOutput(m_recoOutput);
-      if (m_config.isSimulation) {
-        m_trueLegacy.GetTreeMakerOutput(m_trueOutput);
-      }
+    // fill tree addresses from output structs
+    m_recoInterface.GetTreeMakerOutput(m_recoOutput);
+    if (m_config.isSimulation) {
+      m_trueInterface.GetTreeMakerOutput(m_trueOutput);
     }
 
     // fill output trees
@@ -234,8 +224,8 @@ namespace SColdQcdCorrelatorAnalysis {
 
     m_recoOutput.Reset();
     m_trueOutput.Reset();
-    m_recoLegacy.Reset();
-    m_trueLegacy.Reset();
+    m_recoInterface.Reset();
+    m_trueInterface.Reset();
     return;
 
   }  // end 'ResetOutVariables()'

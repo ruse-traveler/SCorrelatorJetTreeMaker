@@ -165,10 +165,10 @@ namespace SColdQcdCorrelatorAnalysis {
       SCorrelatorJetTreeMakerConfig m_config;
 
       // outputs
-      SCorrelatorJetTreeMakerRecoOutput        m_recoOutput;
-      SCorrelatorJetTreeMakerTruthOutput       m_trueOutput;
-      SCorrelatorJetTreeMakerLegacyRecoOutput  m_recoLegacy;
-      SCorrelatorJetTreeMakerLegacyTruthOutput m_trueLegacy;
+      SCorrelatorJetTreeMakerRecoOutput  m_recoOutput;
+      SCorrelatorJetTreeMakerTruthOutput m_trueOutput;
+      SJetTreeMakerRecoOutputInterface   m_recoInterface;
+      SJetTreeMakerTruthOutputInterface  m_trueInterface;
 
       // io members
       TFile*        m_outFile  = NULL;
