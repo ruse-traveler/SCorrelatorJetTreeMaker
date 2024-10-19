@@ -1,8 +1,8 @@
 #!/bin/bash
 # -----------------------------------------------------------------------------
-# 'RunCorrelatorJetTreeOnHIJetRecoViaCondor.sh'
-# Derek Anderson
-# 09.23.2024
+# @file   RunCorrelatorJetTreeOnHIJetRecoViaCondor.sh
+# @author Derek Anderson
+# @date   09.23.2024
 #
 # Script to run correlator jet tree
 # module via condor.
@@ -19,7 +19,6 @@ export MYINSTALL=/sphenix/u/danderson/install
 source /opt/sphenix/core/bin/sphenix_setup.sh
 printenv
 
-# TEST
 # add install path to LD_LIBRARY_PATH
 echo $MYINSTALL
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MYINSTALL/lib
