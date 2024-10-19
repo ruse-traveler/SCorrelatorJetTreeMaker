@@ -3,7 +3,7 @@
  *  \author Derek Anderson
  *  \date   04.11.2024
  *
- * Options for the SCorrelatorJetTreeMaker module
+ *  Options for the SCorrelatorJetTreeMaker module
  */
 /// ---------------------------------------------------------------------------
 
